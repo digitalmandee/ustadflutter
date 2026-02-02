@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 
@@ -51,66 +50,94 @@ enum ToastType { success, error }
 
 class AppToast {
   static OverlayEntry? _overlayEntry;
+  static Timer? _timer;
+  static bool _isRemoving = false;
 
   static void show(
     BuildContext context, {
     required String message,
     required ToastType type,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 2),
   }) {
     if (!context.mounted) return;
 
-    try {
-      if (_overlayEntry?.mounted ?? false) {
-        _overlayEntry?.remove();
-      }
+    _removeToast();
 
-      _overlayEntry = _createOverlay(context, message, type);
-
-      final overlay = Overlay.of(context);
-      // ignore: unnecessary_null_comparison
-      if (overlay != null && _overlayEntry != null) {
-        overlay.insert(_overlayEntry!);
-      }
-      Timer(duration, () {
-        if (_overlayEntry?.mounted ?? false) {
-          _overlayEntry?.remove();
-          _overlayEntry = null;
-        }
-      });
-    } catch (e) {
-      if (kDebugMode) debugPrint("Failed to show toast: $e");
-    }
-  }
-
-  static OverlayEntry _createOverlay(
-      BuildContext context, String message, ToastType type) {
-    return OverlayEntry(
+    _overlayEntry = OverlayEntry(
       builder: (_) => Positioned(
         top: 60,
         left: 16,
         right: 16,
-        child: Dismissible(
-          key: UniqueKey(),
-          direction: DismissDirection.up,
-          onDismissed: (_) {
-            if (_overlayEntry?.mounted ?? false) {
-              _overlayEntry?.remove();
-              _overlayEntry = null;
-            }
-          },
-          child: _ToastView(message: message, type: type),
+        child: _ToastContainer(
+          message: message,
+          type: type,
+          onDismissed: _removeToast,
         ),
       ),
     );
+
+    Overlay.of(context)?.insert(_overlayEntry!);
+    _timer = Timer(duration, _removeToast);
   }
 
-  static void success({context, required String msg}) {
+  static void _removeToast() {
+    if (_isRemoving) return;
+    _isRemoving = true;
+
+    _timer?.cancel();
+    _timer = null;
+
+    if (_overlayEntry?.mounted ?? false) {
+      _overlayEntry?.remove();
+    }
+
+    _overlayEntry = null;
+    _isRemoving = false;
+  }
+
+  static void success({required BuildContext context, required String msg}) {
     show(context, message: msg, type: ToastType.success);
   }
 
-  static void error({context, required String msg}) {
+  static void error({required BuildContext context, required String msg}) {
     show(context, message: msg, type: ToastType.error);
+  }
+}
+
+class _ToastContainer extends StatefulWidget {
+  final String message;
+  final ToastType type;
+  final VoidCallback onDismissed;
+
+  const _ToastContainer({
+    required this.message,
+    required this.type,
+    required this.onDismissed,
+  });
+
+  @override
+  State<_ToastContainer> createState() => _ToastContainerState();
+}
+
+class _ToastContainerState extends State<_ToastContainer> {
+  bool _dismissed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_dismissed) return const SizedBox.shrink();
+
+    return Dismissible(
+      key: UniqueKey(),
+      direction: DismissDirection.up,
+      onDismissed: (_) {
+        setState(() => _dismissed = true);
+        widget.onDismissed();
+      },
+      child: _ToastView(
+        message: widget.message,
+        type: widget.type,
+      ),
+    );
   }
 }
 
@@ -162,7 +189,7 @@ class _ToastViewState extends State<_ToastView>
                     width: 2)),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 10,
                   offset: const Offset(0, 5)),
             ],

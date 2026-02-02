@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ustaad/Custom%20widgets/app_field.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Screens/Authentication/SignIn/login_screen.dart';
 import 'package:ustaad/Screens/Authentication/widgets/signUp_popUp.dart';
+import 'package:ustaad/Screens/Policies/policies_screen.dart';
 
 Widget customLableField(
     {lable,
@@ -43,7 +43,7 @@ Widget customLableField(
   );
 }
 
-Widget loginFooter() {
+Widget loginFooter(context) {
   return Center(
     child: Text.rich(
       TextSpan(
@@ -63,11 +63,17 @@ Widget loginFooter() {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
-                final url =
-                    Uri.parse("https://ustaad.online/terms-and-conditions/");
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                }
+                push(
+                    context,
+                    PoliciesScreen(
+                      isPrivacy: false,
+                    ));
+
+                //   final url =
+                //       Uri.parse("https://ustaad.online/terms-and-conditions/");
+                //   if (await canLaunchUrl(url)) {
+                //     await launchUrl(url, mode: LaunchMode.externalApplication);
+                //   }
               },
           ),
           TextSpan(
@@ -87,10 +93,16 @@ Widget loginFooter() {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
-                final url = Uri.parse("https://ustaad.online/privacy-policy/");
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                }
+                push(
+                    context,
+                    PoliciesScreen(
+                      isPrivacy: true,
+                    ));
+
+                // final url = Uri.parse("https://ustaad.online/privacy-policy/");
+                // if (await canLaunchUrl(url)) {
+                //   await launchUrl(url, mode: LaunchMode.externalApplication);
+                // }
               },
           ),
         ],
@@ -221,81 +233,3 @@ Widget authHeader({
     ),
   );
 }
-
-// class CardNumberField extends StatefulWidget {
-//   final TextEditingController controller;
-//   const CardNumberField({super.key, required this.controller});
-
-//   @override
-//   State<CardNumberField> createState() => _CardNumberFieldState();
-// }
-
-// class _CardNumberFieldState extends State<CardNumberField> {
-//   String get rawCardNumber => widget.controller.text.replaceAll(' ', '');
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     widget.controller.addListener(() {
-//       final text = widget.controller.text;
-//       final formatted = _formatCardNumber(text);
-
-//       if (text != formatted) {
-//         final cursorPosition = widget.controller.selection.baseOffset;
-//         widget.controller.value = TextEditingValue(
-//           text: formatted,
-//           selection: TextSelection.collapsed(
-//               offset: _adjustCursorPosition(cursorPosition, text, formatted)),
-//         );
-//       }
-//     });
-//   }
-
-//   String _formatCardNumber(String input) {
-//     final digits = input.replaceAll(RegExp(r'\D'), '');
-//     final buffer = StringBuffer();
-//     for (int i = 0; i < digits.length; i++) {
-//       buffer.write(digits[i]);
-//       if ((i + 1) % 4 == 0 && i + 1 != digits.length) {
-//         buffer.write(' ');
-//       }
-//     }
-//     return buffer.toString();
-//   }
-
-//   int _adjustCursorPosition(int oldPosition, String oldText, String newText) {
-//     int diff = newText.length - oldText.length;
-//     return (oldPosition + diff).clamp(0, newText.length);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 40,
-//       width: MediaQuery.of(context).size.width,
-//       decoration: BoxDecoration(
-//         border: Border.all(color: const Color(0xffD4D8E2)),
-//         color: const Color(0xffFFFFFF),
-//         borderRadius: BorderRadius.circular(8),
-//       ),
-//       child: TextFormField(
-//         maxLines: 1,
-//         controller: widget.controller,
-//         keyboardType: TextInputType.name,
-//         cursorColor: AppTheme.appColor,
-//         decoration: InputDecoration(
-//           isDense: true,
-//           border: InputBorder.none,
-//           contentPadding: const EdgeInsets.all(8),
-//           hintText: "1234 1234 1234 1234",
-//           hintStyle: TextStyle(
-//             color: AppTheme.hintColor,
-//             fontSize: 14,
-//             fontWeight: FontWeight.w400,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }

@@ -55,6 +55,7 @@ class _BottomNavViewState extends State<BottomNavView> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewPadding.bottom;
     return WillPopScope(
       onWillPop: () async {
         if (_currentIndex != 0) {
@@ -74,10 +75,7 @@ class _BottomNavViewState extends State<BottomNavView> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: SafeArea(
-                top: false,
-                child: _customBottomNav(),
-              ),
+              child: _customBottomNav(bottomInset),
             ),
           ],
         ),
@@ -87,10 +85,10 @@ class _BottomNavViewState extends State<BottomNavView> {
 
   // ===================== CUSTOM NAV BAR =====================
 
-  Widget _customBottomNav() {
+  Widget _customBottomNav(double bottomInset) {
     return Container(
       color: Colors.transparent,
-      height: 90,
+      height: 90 + bottomInset,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [

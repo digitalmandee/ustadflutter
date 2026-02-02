@@ -10,7 +10,6 @@ import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Providers/Contracts/contract_provider.dart';
 import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
 import 'package:ustaad/Providers/Tutor Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
 import 'package:ustaad/config/keys/global.dart';
 
 class ContractScreen extends StatefulWidget {

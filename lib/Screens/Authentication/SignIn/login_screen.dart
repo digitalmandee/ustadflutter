@@ -191,7 +191,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           image: "assets/images/google.png",
                         ),
                   const SizedBox(height: 40),
-                  loginFooter(),
+                  loginFooter(context),
                 ],
               ),
             )

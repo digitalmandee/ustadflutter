@@ -184,49 +184,56 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              AppText.appText(
-                                  widget.isParentSide == true
-                                      ? capitalizeEachWord("${widget.name}")
-                                      : capitalizeEachWord(name!),
-                                  fontSize: 30,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppTheme.black),
-                              if (showVerifiedBadge)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: Icon(
-                                    Icons.verified,
-                                    color: AppTheme.appColor,
-                                  ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  fit: FlexFit.loose,
+                                  child: AppText.appText("Abdul Wahab Tariq",
+                                      // widget.isParentSide == true
+                                      //     ? capitalizeEachWord("${widget.name}")
+                                      //     : capitalizeEachWord(name!),
+                                      fontSize: 30,
+                                      maxlines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontWeight: FontWeight.w500,
+                                      textColor: AppTheme.black),
                                 ),
-                            ],
-                          ),
-                          Consumer<AboutProvider>(
-                              builder: (context, exp, child) {
-                            return AppText.appText(
-                                widget.isParentSide == true
-                                    ? widget.isFromChat == true
-                                        ? tutorData == null
-                                            ? "0 years Experience"
-                                            : formatExperienceFromMonths(
-                                                tutorData![
-                                                    "totalExperienceMonths"],
-                                              )
-                                        : widget.experience == null
-                                            ? "0 years Experience"
-                                            : "${widget.experience} years Experience"
-                                    : "${exp.totalExp} years Experience",
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                textColor: AppTheme.grey);
-                          }),
-                        ],
+                                if (showVerifiedBadge)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4),
+                                    child: Icon(
+                                      Icons.verified,
+                                      color: AppTheme.appColor,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            Consumer<AboutProvider>(
+                                builder: (context, exp, child) {
+                              return AppText.appText(
+                                  widget.isParentSide == true
+                                      ? widget.isFromChat == true
+                                          ? tutorData == null
+                                              ? "0 years Experience"
+                                              : formatExperienceFromMonths(
+                                                  tutorData![
+                                                      "totalExperienceMonths"],
+                                                )
+                                          : widget.experience == null
+                                              ? "0 years Experience"
+                                              : "${widget.experience} years Experience"
+                                      : "${exp.totalExp} years Experience",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  textColor: AppTheme.grey);
+                            }),
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20.0),

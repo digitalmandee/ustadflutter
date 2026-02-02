@@ -69,7 +69,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   bool _showOptions = false;
   ChatMessage? _previewMessage;
   File? selectedFile;
-  final record = AudioRecorder();
+  // final record = AudioRecorder();
   bool isRecording = false;
   List<dynamic> childrensData = [];
   bool isConversationLoading = false;
@@ -91,7 +91,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       ..androidEncoder = AndroidEncoder.aac
       ..androidOutputFormat = AndroidOutputFormat.mpeg4
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..sampleRate = 44100;
+      ..sampleRate = 44100
+      ..bitRate = 192000;
     _initializeSocket();
   }
 
@@ -356,34 +357,32 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> startRecording() async {
-    if (await record.hasPermission()) {
-      final dir = Directory.systemTemp;
-      final path =
-          '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
-      await record.start(
-        const RecordConfig(
-            encoder: AudioEncoder.aacLc, bitRate: 128000, sampleRate: 44100),
-        path: path,
-      );
+    final dir = Directory.systemTemp;
+    final path =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
+    // await record.start(
+    //   const RecordConfig(
+    //       encoder: AudioEncoder.aacLc, bitRate: 192000, sampleRate: 44100),
+    //   path: path,
+    // );
 
-      await recorderController.record(path: path); // 👈 important
+    await recorderController.record(path: path); // 👈 important
 
+    setState(() {
+      isRecording = true;
+      _recordDuration = 0;
+    });
+
+    _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        isRecording = true;
-        _recordDuration = 0;
+        _recordDuration++;
       });
-
-      _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        setState(() {
-          _recordDuration++;
-        });
-      });
-    }
+    });
   }
 
   Future<void> stopRecording({bool cancelled = false}) async {
-    final path = await record.stop();
-    await recorderController.stop(); // 👈 important
+    final path = await recorderController.stop();
+    // await recorderController.stop(); // 👈 important
     _recordTimer?.cancel();
 
     setState(() => isRecording = false);
@@ -491,7 +490,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                                 _isSameMinute(next.time, current.time);
 
                             if (sameSender && sameMinute) {
-                              showTime = false; // not last message yet
+                              showTime = false;
                             }
                           }
 

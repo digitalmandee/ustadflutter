@@ -390,7 +390,7 @@ class _EditTeachingPrefsBottomSheetState
                                   .toList(),
                               itemLabel: (s) => s.name,
                               onSelect: (s) {
-                                final name = (s as SubjectsModel).name;
+                                final name = (s).name;
                                 provider.toggleSelection(
                                     name, provider.tempSubjects);
                                 setState(() {}); // ✅ update dropdown UI
