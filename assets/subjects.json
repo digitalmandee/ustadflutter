@@ -1,0 +1,103 @@
+[
+    {
+        "name": "Urdu",
+        "image": "assets/images/Books/urdu.jpeg"
+    },
+    {
+        "name": "English",
+        "image": "assets/images/Books/english.jpeg"
+    },
+    {
+        "name": "Mathematics",
+        "image": "assets/images/Books/Maths.jpeg"
+    },
+    {
+        "name": "General Science",
+        "image": "assets/images/Books/general science.jpeg"
+    },
+    {
+        "name": "Biology",
+        "image": "assets/images/Books/biology.jpeg"
+    },
+    {
+        "name": "Physics",
+        "image": "assets/images/Books/physics.jpeg"
+    },
+    {
+        "name": "Chemistry",
+        "image": "assets/images/Books/chemistry.jpeg"
+    },
+    {
+        "name": "Computer Science",
+        "image": "assets/images/Books/computer_science.jpeg"
+    },
+    {
+        "name": "Social Studies",
+        "image": "assets/images/Books/social.jpeg"
+    },
+    
+    {
+        "name": "Islamiat (Compulsory)",
+        "image": "assets/images/Books/islamiyat.jpeg"
+    },
+    {
+        "name": "Ethics (for Non-Muslims)",
+        "image": "assets/images/Books/ethics.jpeg"
+    },
+    {
+        "name": "Nazra Quran",
+        "image": "assets/images/Books/nazra_quran.jpeg"
+    },
+    {
+        "name": "Drawing / Art",
+        "image": "assets/images/Books/arts.jpeg"
+    },
+    {
+        "name": "Education",
+        "image": "assets/images/Books/education.jpeg"
+    },
+    {
+        "name": "Civics",
+        "image": "assets/images/Books/civics.jpeg"
+    },
+    {
+        "name": "Sociology",
+        "image": "assets/images/Books/sociology.jpeg"
+    },
+    {
+        "name": "Psychology",
+        "image": "assets/images/Books/psycology.jpeg"
+    },
+    {
+        "name": "Economics",
+        "image": "assets/images/Books/economics.jpeg"
+    },
+    {
+        "name": "Principles of Accounting",
+        "image": "assets/images/Books/accounting.jpeg"
+    },
+    {
+        "name": "Principles of Commerce",
+        "image": "assets/images/Books/commerce.jpeg"
+    },
+    {
+        "name": "Statistics",
+        "image": "assets/images/Books/statistics.jpeg"
+    },
+    {
+        "name": "History",
+        "image": "assets/images/Books/history.jpeg"
+    },
+    {
+        "name": "Geography",
+        "image": "assets/images/Books/geography.jpeg"
+    },
+    {
+        "name": "Persian",
+        "image": "assets/images/Books/persian.jpeg"
+    },
+    {
+        "name": "Arabic",
+        "image": "assets/images/Books/arabic.jpeg"
+    }
+]
