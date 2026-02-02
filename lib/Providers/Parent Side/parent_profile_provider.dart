@@ -297,8 +297,8 @@ class ParentProfileProvider with ChangeNotifier {
         unReadMessages = data["unreadMessageCount"]?.toString() ?? "0";
         final prefs = await SharedPreferences.getInstance();
 
-        await prefs.setString(PrefKey.unreadMessageCount, unReadMessages);
-        globalUnreadChat = unReadMessages;
+        await prefs.setString(PrefKey.notiCount, unReadMessages);
+        globalNotiCount = unReadMessages;
       } else {
         AppToast.error(
           context: context,

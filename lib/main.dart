@@ -27,10 +27,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
-@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  print("Handling a background message: ${message.messageId}");
 }
+
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel',
   'High Importance Notifications',
@@ -45,8 +48,14 @@ Future<void> setupFlutterNotifications() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  const InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
+  final DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings();
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+    macOS: initializationSettingsDarwin,
+  );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
@@ -60,12 +69,17 @@ Future<void> setupFlutterNotifications() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await initializeDateFormatting();
-  await setupFlutterNotifications();
-  if (Platform.isAndroid) {
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await initializeDateFormatting();
+    await setupFlutterNotifications();
+  } catch (e) {
+    print("Error during initialization: $e");
+  }
+
+  if (!kIsWeb && Platform.isAndroid) {
     WebViewPlatform.instance = AndroidWebViewPlatform();
   }
   await getPrefData();
@@ -95,10 +109,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _initFCM() async {
-    String? token = await FirebaseMessaging.instance.getToken();
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('fcm_token', token ?? '');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('fcm_token', token ?? '');
+    } catch (e) {
+      print("Error getting FCM token: $e");
+    }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;

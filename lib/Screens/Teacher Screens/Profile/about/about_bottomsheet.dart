@@ -390,7 +390,7 @@ class _EditTeachingPrefsBottomSheetState
                                   .toList(),
                               itemLabel: (s) => s.name,
                               onSelect: (s) {
-                                final name = (s).name;
+                                final name = (s as SubjectsModel).name;
                                 provider.toggleSelection(
                                     name, provider.tempSubjects);
                                 setState(() {}); // ✅ update dropdown UI
@@ -492,7 +492,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppTheme.appColor.withValues(alpha: 0.2)
+                        ? AppTheme.appColor.withOpacity(.2)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                   ),

@@ -387,6 +387,7 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
         child.schoolName.text.isEmpty &&
         child.selectedGender == null &&
         child.selectedImage == null;
+    print("nfelfmlfm $isAllEmpty and ${childList.length}");
     if (isAllEmpty && childList.length == 1) {
       AppToast.error(
           context: context,

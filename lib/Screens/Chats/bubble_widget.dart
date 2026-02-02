@@ -139,6 +139,8 @@ class ChatBubble extends StatelessWidget {
       BuildContext context, CrossAxisAlignment alignment, String url) {
     final audioUrl = "http://15.235.204.49:305/$url";
 
+    print("here is the timing of the voice recrd : ${message.audioDuration}");
+
     return Column(
       crossAxisAlignment: alignment,
       children: [
@@ -486,6 +488,7 @@ class ChatBubble extends StatelessWidget {
   }) {
     final bgColor = isMe ? AppTheme.primaryCOlor : Color(0xffF2F7FB);
     final textColor = isMe ? Colors.white : AppTheme.black;
+    print("here is the message of the ofer ${text}");
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       margin: const EdgeInsets.symmetric(vertical: 4),

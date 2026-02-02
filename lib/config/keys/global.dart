@@ -30,7 +30,7 @@ String? globalUserRole;
 String? globalToken;
 String? globalUserPic;
 double? globalParentLatitutde;
-String? globalUnreadChat;
+String? globalNotiCount;
 double? globalParentLongitude;
 String? globalUserOnBoardStatus;
 
@@ -44,7 +44,7 @@ Future<void> getPrefData() async {
   globalUserPic = prefs.getString(PrefKey.userPic) ?? '';
   globalToken = prefs.getString(PrefKey.authorization) ?? '';
   globalUserOnBoardStatus = prefs.getString(PrefKey.onBoard) ?? '';
-  globalUnreadChat = prefs.getString(PrefKey.unreadMessageCount) ?? '0';
+  globalNotiCount = prefs.getString(PrefKey.notiCount) ?? '0';
 }
 
 void handleTokenExpiration() async {
@@ -54,7 +54,7 @@ void handleTokenExpiration() async {
   globalUserFirstName = null;
   globalUserLastName = null;
   globalUserRole = null;
-  globalUnreadChat = null;
+  globalNotiCount = null;
   globalToken = null;
   globalUserPic = null;
   globalParentLatitutde = null;
@@ -85,8 +85,14 @@ void handleLogOut(context, {bool isLogout = false}) async {
   Provider.of<TutorEditProfileProvider>(context, listen: false).clear();
   Provider.of<NotificationProvider>(context, listen: false).clear();
 
+  print("🗑 Global session cleared");
+
   await FirebaseMessaging.instance.deleteToken();
+  print("📱 FCM token deleted");
+
   SocketService().dispose();
+  print("🧹 Socket disposed on logout");
+
   if (isLogout == true) {
     AppToast.success(
       context: context,
@@ -107,7 +113,7 @@ Future<void> clearAppSession() async {
   globalUserRole = null;
   globalToken = null;
   globalUserPic = null;
-  globalUnreadChat = null;
+  globalNotiCount = null;
   globalParentLatitutde = null;
   globalParentLongitude = null;
   globalUserOnBoardStatus = null;

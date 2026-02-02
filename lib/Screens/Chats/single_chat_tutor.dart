@@ -135,6 +135,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   void _initializeSocket() async {
+    print("Here socket is Initializing....!");
 
     if (_isSocketInitialized) return;
 
@@ -242,6 +243,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         (m) => m.text == msgText && m.type == msgType,
       );
       if (index != -1) {
+        print("audiolength is this $audioLength");
         setState(() {
           messages[index] = messages[index].copyWith(
               id: messageId,
@@ -1096,6 +1098,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
 //////////////////////////////  Send Media Messages ////////////////////////////////////
 
   Widget _mediaPreview(ChatMessage message) {
+    print("here is the message ${message.text}  type: ${message.type}");
     return Container(
       margin: EdgeInsets.all(8),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),

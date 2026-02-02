@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Models/Tutor Side/earning_model.dart'; 
+import 'package:ustaad/Models/Tutor Side/earning_model.dart'; // <-- apna earning model import karo
 import 'package:ustaad/config/dio/dio.dart';
 import 'package:ustaad/config/keys/global.dart';
 import 'package:ustaad/config/keys/pref_keys.dart';
@@ -64,9 +64,9 @@ class TutorDashBoardProvider extends ChangeNotifier {
         unReadMessages = data["unreadMessageCount"]?.toString() ?? "0";
         final prefs = await SharedPreferences.getInstance();
 
-        await prefs.setString(PrefKey.unreadMessageCount, unReadMessages);
+        await prefs.setString(PrefKey.notiCount, unReadMessages);
 
-        globalUnreadChat = unReadMessages;
+        globalNotiCount = unReadMessages;
       } else {
         AppToast.error(
           context: context,
@@ -75,13 +75,13 @@ class TutorDashBoardProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      String message = "Something went wrong $e";
+      String message = "Something went wrong";
 
-      // if (e is DioException) {
-      //   message = e.error?.toString() ?? "Check Internet Connection";
-      // } else {
-      //   message = e.toString();
-      // }
+      if (e is DioException) {
+        message = e.error?.toString() ?? "Check Internet Connection";
+      } else {
+        message = e.toString();
+      }
 
       AppToast.error(
         context: context,
@@ -186,11 +186,13 @@ class TutorDashBoardProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      String message = "Something went wrong $e";
+      String message = "Something went wrong";
 
-      // if (e is DioException) {
-      //   message = e.error?.toString() ?? "Check Internet Connection";
-      // }
+      if (e is DioException) {
+        message = e.error?.toString() ?? "Check Internet Connection";
+
+        print("here is the error $message");
+      }
 
       AppToast.error(
         context: context,
@@ -211,6 +213,7 @@ class TutorDashBoardProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data["data"];
+        print("Here is the Data of the Payment Requests $data");
         tranferredHistory = data["paymentRequests"];
       } else {
         AppToast.error(

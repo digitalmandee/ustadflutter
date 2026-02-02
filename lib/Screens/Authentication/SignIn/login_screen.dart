@@ -55,10 +55,17 @@ class _LogInScreenState extends State<LogInScreen> {
 
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   Future<String> getDeviceToken() async {
-    String? token = await messaging.getToken();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("fcm_token", token!);
-    return token;
+    try {
+      String? token = await messaging.getToken();
+      if (token != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("fcm_token", token);
+        return token;
+      }
+    } catch (e) {
+      print("Error getting device token: $e");
+    }
+    return "";
   }
 
   void isTokenRefresh() async {
@@ -240,13 +247,13 @@ class _LogInScreenState extends State<LogInScreen> {
         );
       }
     } catch (e) {
-      String message = "Something went wrong $e";
+      String message = "Something went wrong";
 
-      // if (e is DioException) {
-      //   message = e.error?.toString() ?? "Check Internet Connection";
-      // } else {
-      //   message = e.toString();
-      // }
+      if (e is DioException) {
+        message = e.error?.toString() ?? "Check Internet Connection";
+      } else {
+        message = e.toString();
+      }
 
       AppToast.error(
         context: context,

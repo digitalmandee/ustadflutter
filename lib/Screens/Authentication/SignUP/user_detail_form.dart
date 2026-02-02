@@ -191,6 +191,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
   }
 
   void _validateUserDetails() {
+    print("nfkf{${widget.signupData.selectedGender}");
     final firstName = widget.signupData.fNameController.text.trim();
     final lastName = widget.signupData.lNameController.text.trim();
     final email = widget.signupData.emailController.text.trim();

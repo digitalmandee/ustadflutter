@@ -137,7 +137,10 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                         ? GifLoader()
                         : AppButton.appButton("Continue", context: context,
                             onTap: () {
+                            print("nfjn3f3f  $isEmail");
                             if (isEmail == true) {
+                              print("nfjn3f3f  $isEmail");
+
                               String email = _emailController.text.trim();
                               final emailPattern =
                                   RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -174,6 +177,8 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
   }
 
   void forgotPass(context, {text, isPhone}) async {
+    print("ldml3rlr $text");
+    print("ldml3rlr $isPhone");
     setState(() {
       isLoading = true;
     });

@@ -48,6 +48,7 @@ class _SplashScreenState extends State<SplashScreen>
       String? token = prefs.getString(PrefKey.authorization);
       String? role = prefs.getString(PrefKey.userRole);
       String? isOnBoard = prefs.getString(PrefKey.onBoard);
+      print("nflm3f3mf $isOnBoard");
       if (token != null && token.isNotEmpty) {
         if (role == "PARENT" && isOnBoard != "required") {
           pushReplacement(

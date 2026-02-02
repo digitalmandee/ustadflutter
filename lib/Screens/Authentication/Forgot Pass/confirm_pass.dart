@@ -288,13 +288,13 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
             context: context, msg: "${responseData["errors"][0]["message"]}");
       }
     } catch (e) {
-      String message = "Something went wrong $e";
+      String message = "Something went wrong";
 
-      // if (e is DioException) {
-      //   message = e.error?.toString() ?? "Check Internet Connection";
-      // } else {
-      //   message = e.toString();
-      // }
+      if (e is DioException) {
+        message = e.error?.toString() ?? "Check Internet Connection";
+      } else {
+        message = e.toString();
+      }
 
       AppToast.error(
         context: context,

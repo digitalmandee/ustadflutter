@@ -132,13 +132,13 @@ class AboutProvider with ChangeNotifier {
         handleTokenExpiration();
       }
     } catch (e) {
-      String message = "Something went wrong $e";
+      String message = "Something went wrong";
 
-      // if (e is DioException) {
-      //   message = e.error?.toString() ?? "Check Internet Connection";
-      // } else {
-      //   message = e.toString();
-      // }
+      if (e is DioException) {
+        message = e.error?.toString() ?? "Check Internet Connection";
+      } else {
+        message = e.toString();
+      }
 
       AppToast.error(
         context: context,

@@ -213,6 +213,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         width: 32,
                         child: Stack(
                           children: [
+                            if (globalNotiCount != "0")
                               Align(
                                 alignment: Alignment.topRight,
                                 child: Container(

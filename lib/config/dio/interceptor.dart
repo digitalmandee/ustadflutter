@@ -10,19 +10,20 @@ class AppDioInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    String errorMessage = "Something went wrong";
 
-    // if (err.type == DioExceptionType.connectionError ||
-    //     err.type == DioExceptionType.connectionTimeout ||
-    //     err.type == DioExceptionType.receiveTimeout) {
-    //   errorMessage = "Check Internet Connection";
-    // } else if (err.type == DioExceptionType.badResponse) {
-    //   errorMessage = err.response?.data?['message'] ?? "Server error occurred";
-    // } else if (err.type == DioExceptionType.cancel) {
-    //   errorMessage = "Request cancel ";
-    // }
+    if (err.type == DioExceptionType.connectionError ||
+        err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout) {
+      errorMessage = "Check Internet Connection";
+    } else if (err.type == DioExceptionType.badResponse) {
+      errorMessage = err.response?.data?['message'] ?? "Server error occurred";
+    } else if (err.type == DioExceptionType.cancel) {
+      errorMessage = "Request cancel ";
+    }
     Map<String, dynamic> er = {
       "type": err.type.toString(),
-      "message": err.message,
+      "message": errorMessage,
       "status_code": err.response?.statusCode,
       "status_message": err.response?.statusMessage,
       "headers": err.response?.headers,
@@ -31,22 +32,16 @@ class AppDioInterceptor extends Interceptor {
     };
     _logger.e(er);
 
-    // if (err.response != null) {
-    //   handler.resolve(err.response!);
-    // } else {
-    //   handler.reject(
-    //     DioException(
-    //       requestOptions: err.requestOptions,
-    //       error: errorMessage,
-    //       type: err.type,
-    //     ),
-    //   );
-    // }
-
     if (err.response != null) {
       handler.resolve(err.response!);
     } else {
-      handler.next(err);
+      handler.reject(
+        DioException(
+          requestOptions: err.requestOptions,
+          error: errorMessage,
+          type: err.type,
+        ),
+      );
     }
   }
 

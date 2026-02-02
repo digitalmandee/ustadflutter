@@ -10,32 +10,10 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>GIDClientID</key>
-    <string>49544989753-uuuc5khlq4n0148a0j25601lv916sg7h.apps.googleusercontent.com</string>
-    <key>CFBundleURLTypes</key>
-<array>
-	<dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<string>com.googleusercontent.apps.349544989753-uuuc5khlq4n0148a0j25601lv916sg7h</string>
-		</array>
-	</dict>
-</array>
-	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app requires access to your location to show nearby tutors.</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>ustaad</string>
-	<key>NSMicrophoneUsageDescription</key>
-    <string>This app needs microphone access to record voice messages.</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

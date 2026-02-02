@@ -29,6 +29,10 @@ class SocketService {
     Function(String messageId)? onDeleted,
     Function()? onDisconnected,
   }) {
+    print("🔗 CONNECT CALLED");
+    print("🪪 Token: $token");
+    print("👤 UserID: $userId");
+
     dispose();
     _onConnectedCallback = onConnected;
     _onMessageCallback = onMessageReceived;
@@ -45,6 +49,7 @@ class SocketService {
           .setAuth({'token': token})
           .build(),
     );
+    print("🔄 Socket instance created: $_socket");
     _setupEventListeners();
     _socket!.connect();
   }
@@ -77,6 +82,7 @@ class SocketService {
     _socket?.onDisconnect((_) {
       _isConnecting = false;
       debugPrint("🔌 Disconnected");
+      print("Socket Disconnected: ${_socket?.id}");
       _onDisconnectedCallback?.call();
     });
 
@@ -103,6 +109,7 @@ class SocketService {
 
   void dispose() {
     if (_socket != null) {
+      print("🧹 Disposing socket: ${_socket?.id}");
       _socket!.clearListeners();
       _socket!.disconnect();
       _socket!.destroy();

@@ -252,6 +252,9 @@ class _TutorDocVerificationScreenState
 
   /// ---------------- API Call ----------------
   void docVerify(BuildContext context, TutorOnboardData data) async {
+    print("knfg4lgn ${jsonEncode(data.selectedCurriculums)}");
+    print("knfg4lgn ${data.selectedGrades}");
+    print("knfg4lgn ${data.selectedSubjects}");
     setState(() => isLoading = true);
 
     try {

@@ -1,6 +1,6 @@
 class PrefKey {
   static const String authorization = "token";
-  static const String unreadMessageCount= "unreadMsgCount";
+  static const String notiCount = "notiCount";
   static const String id = "id";
   static const String userPic = "profilePic";
   static const String userFirstName = "firstName";

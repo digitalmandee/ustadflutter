@@ -373,6 +373,7 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
       Map<String, dynamic> session, isonTap, BuildContext context) {
     final provider =
         Provider.of<TutorDashBoardProvider>(this.context, listen: false);
+    print("show and $isonTap hh ${provider.runningSessions}");
 
     if (isonTap == true) {
       Navigator.push(

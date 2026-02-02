@@ -29,7 +29,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
 
   /// GRADES
   final List<String> allGrades = [
-    "Pre-KG",
+      "Pre-KG",
     "KG-1",
     "KG-2",
     "Grade 1",
@@ -318,7 +318,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppTheme.appColor.withValues(alpha: .2)
+                          ? AppTheme.appColor.withOpacity(.2)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                     ),

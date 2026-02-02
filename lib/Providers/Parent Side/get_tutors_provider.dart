@@ -99,6 +99,7 @@ class GetTutorsProvider extends ChangeNotifier {
       );
 
       final List data = res.data['data'];
+      print("here is the data: ${data[0]["tutor"]['gender']}");
       _tutors = data.map((e) => TutorModel.fromJson(e)).toList();
       _filteredTutors = List.from(_tutors);
     } catch (e) {

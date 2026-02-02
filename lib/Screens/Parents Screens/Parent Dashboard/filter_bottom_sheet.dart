@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ustaad/Custom%20widgets/app_button.dart';
@@ -164,7 +166,54 @@ class FilterBottomSheetState extends State<FilterBottomSheet> {
   Widget _buildDivider() {
     return Container(height: 1, color: AppTheme.borderCOlor);
   }
-Widget _buildFilterSection(String title, List<String> options) {
+
+  Widget _buildSubjectDropdown() {
+    return Container(
+      height: 44,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xffD4D8E2)),
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<SubjectsModel>(
+          value: selectedSubject,
+          hint: const Text("Select Subject"),
+          items: subjects
+              .map((subject) => DropdownMenuItem(
+                  value: subject,
+                  child: AppText.appText(
+                    subject.name,
+                    textColor: subject == selectedSubject
+                        ? AppTheme.appColor
+                        : Colors.black,
+                  )))
+              .toList(),
+          selectedItemBuilder: (context) {
+            return subjects.map((subject) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: AppText.appText(
+                  subject.name,
+                  fontWeight: FontWeight.w400,
+                ),
+              );
+            }).toList();
+          },
+          onChanged: (value) => setState(() => selectedSubject = value),
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: 150,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5), color: Colors.white),
+            offset: const Offset(0, -10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterSection(String title, List<String> options) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Column(

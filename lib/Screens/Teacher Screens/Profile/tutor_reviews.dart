@@ -20,6 +20,7 @@ class TutorReviews extends StatefulWidget {
 class _TutorReviewsState extends State<TutorReviews> {
   @override
   Widget build(BuildContext context) {
+    print(" nfo4f4mf${widget.tutorRatingData}");
     return widget.tutorRatingData == null || widget.tutorRatingData.isEmpty
         ? Center(
             child: Padding(

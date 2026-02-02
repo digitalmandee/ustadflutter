@@ -69,6 +69,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    print("nfkn4fk4f $profilePic");
     final provider = Provider.of<ParentProfileProvider>(context, listen: false);
     return Padding(
       padding: EdgeInsets.only(
