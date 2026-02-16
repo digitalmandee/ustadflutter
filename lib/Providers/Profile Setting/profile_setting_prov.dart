@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,7 +89,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
         fName = data["user"]["firstName"] ?? '';
         lName = data["user"]["lastName"] ?? '';
         email = data["user"]["email"] ?? '';
-        phone = data["user"]["phone"] ?? '';
+        phone = "+${data["user"]["phone"]}";
         password = "********";
         image = data["user"]["image"] ?? '';
         hasData = true;
@@ -100,10 +101,13 @@ class TutorEditProfileProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      if (kDebugMode) {
+        print("Something went wrong: $e");
+      }
+      // AppToast.error(
+      //   context: context,
+      //   msg: "Something went wrong: $e",
+      // );
     } finally {
       isLoading = false;
       notifyListeners();
@@ -161,7 +165,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deletePicture(
+  Future<bool> deletePicture(
     context,
   ) async {
     picLoading = true;
@@ -172,16 +176,17 @@ class TutorEditProfileProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         image = '';
+        globalUserPic = '';
         AppToast.success(
           context: context,
           msg: "Profile image Deleted successfully",
         );
-        globalUserPic = '';
         SharedPreferences pref = await SharedPreferences.getInstance();
         pref.setString(PrefKey.userPic, image);
         getPrefData();
         picLoading = false;
         notifyListeners();
+        return true;
       } else {
         picLoading = false;
         notifyListeners();
@@ -190,6 +195,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
           msg: response.data["errors"]?[0]?["message"] ??
               "Failed to update image",
         );
+        return false;
       }
     } catch (e) {
       picLoading = false;
@@ -198,6 +204,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
         context: context,
         msg: "Something went wrong: $e",
       );
+      return false;
     } finally {
       picLoading = false;
       notifyListeners();
@@ -208,8 +215,8 @@ class TutorEditProfileProvider extends ChangeNotifier {
 
   Future<void> getParentProfile(context, {bool refresh = false}) async {
     if (!hasData || refresh) {
-      isLoading = true;
-      notifyListeners();
+    isLoading = true;
+    notifyListeners();
     }
 
     try {
@@ -220,23 +227,30 @@ class TutorEditProfileProvider extends ChangeNotifier {
         fName = data["firstName"] ?? '';
         lName = data["lastName"] ?? '';
         email = data["email"] ?? '';
-        phone = data["phone"] ?? '';
+        phone = "+${data["phone"]}";
         password = "********";
         image = data["image"] ?? '';
 
         hasData = true;
       } else {
-        AppToast.error(
-          context: context,
-          msg:
-              response.data["errors"]?[0]?["message"] ?? "Something went wrong",
-        );
+        if (kDebugMode) {
+          print(
+              "Something went wrong: ${response.data["errors"]?[0]?["message"]}");
+        }
+        // AppToast.error(
+        //   context: context,
+        //   msg:
+        //       response.data["errors"]?[0]?["message"] ?? "Something went wrong",
+        // );
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      if (kDebugMode) {
+        print("Something went wrong: $e");
+      }
+      // AppToast.error(
+      //   context: context,
+      //   msg: "Something went wrong: $e",
+      // );
     } finally {
       isLoading = false;
       notifyListeners();
@@ -295,22 +309,21 @@ class TutorEditProfileProvider extends ChangeNotifier {
   }
 
   void clear() {
-  isLoading = false;
-  picLoading = false;
-  hasData = false;
+    isLoading = false;
+    picLoading = false;
+    hasData = false;
 
-  fName = '';
-  lName = '';
-  email = '';
-  phone = '';
-  password = '';
-  image = '';
+    fName = '';
+    lName = '';
+    email = '';
+    phone = '';
+    password = '';
+    image = '';
 
-  isEmailEdit = false;
-  isPhoneEdit = false;
-  isPasswordEdit = false;
+    isEmailEdit = false;
+    isPhoneEdit = false;
+    isPasswordEdit = false;
 
-  notifyListeners();
-}
-
+    notifyListeners();
+  }
 }

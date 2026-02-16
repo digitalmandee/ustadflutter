@@ -16,8 +16,10 @@ import 'package:ustaad/config/keys/urls.dart';
 
 class ParentChildProfile extends StatefulWidget {
   final Function()? onTap;
-  final VoidCallback onBackTap;
-  const ParentChildProfile({super.key, this.onTap, required this.onBackTap});
+  const ParentChildProfile({
+    super.key,
+    this.onTap,
+  });
 
   @override
   State<ParentChildProfile> createState() => _ParentChildProfileState();
@@ -37,6 +39,23 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
     "Sindh Board",
     "Local",
     "Others"
+  ];
+  final List<String> allGrades = [
+    "Pre-KG",
+    "KG-1",
+    "KG-2",
+    "Grade 1",
+    "Grade 2",
+    "Grade 3",
+    "Grade 4",
+    "Grade 5",
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+    "Matriculation",
+    "Intermediate",
+    "O Level",
+    "A Level"
   ];
   @override
   void initState() {
@@ -58,7 +77,7 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
               alignment: Alignment.centerLeft,
               child: InkWell(
                 onTap: () {
-                  widget.onBackTap.call();
+                  Navigator.pop(context);
                 },
                 child: Image.asset(
                   "assets/images/arrowBack.png",
@@ -169,7 +188,8 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
               radius: 45,
               backgroundImage: child.selectedImage != null
                   ? FileImage(child.selectedImage!)
-                  : const AssetImage("assets/images/user.png") as ImageProvider,
+                  : const AssetImage("assets/images/parentProfile.jpeg")
+                      as ImageProvider,
             ),
             Column(
               children: [
@@ -202,7 +222,7 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
         const SizedBox(height: 20),
         AppText.appText(
           "Curriculum",
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w500,
           textColor: AppTheme.lableText,
         ),
@@ -279,16 +299,74 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            customLableField(
-                lable: "Grade",
-                width: ScreenSize(context).width * 0.4,
-                textType: TextInputType.numberWithOptions(),
-                controller: child.grade),
-            customLableField(
-                lable: "Age",
-                textType: TextInputType.numberWithOptions(),
-                width: ScreenSize(context).width * 0.4,
-                controller: child.age),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText.appText(
+                    "Grade",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    textColor: AppTheme.lableText,
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Grade',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppTheme.hintColor,
+                            ),
+                          ),
+                          items: allGrades
+                              .map((e) => DropdownMenuItem<String>(
+                                    value: e,
+                                    child: Text(
+                                      e,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                          value: child.selectedGrade,
+                          onChanged: (value) {
+                            setState(() {
+                              child.selectedGrade = value;
+                            });
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppTheme.borderCOlor),
+                            ),
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 150,
+                            offset:
+                                const Offset(0, -5), // 👈 container ke neeche
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ))),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Expanded(
+              child: customLableField(
+                  lable: "Age",
+                  textType: TextInputType.numberWithOptions(),
+                  width: ScreenSize(context).width * 0.4,
+                  controller: child.age),
+            ),
           ],
         ),
         const SizedBox(height: 20),
@@ -352,7 +430,7 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
       "curriculum": child.selectedCurriculum == "Others"
           ? child.otherCurriculum.text.trim()
           : child.selectedCurriculum,
-      "grade": child.grade.text.trim(),
+      "grade": child.selectedGrade,
       "age": child.age.text.trim(),
       "schoolName": child.schoolName.text.trim(),
       "image": child.selectedImage != null
@@ -382,7 +460,7 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
 
   Future<void> submitLastChildAndProceed(ChildProfileModel child) async {
     final isAllEmpty = child.firstName.text.isEmpty &&
-        child.grade.text.isEmpty &&
+        child.selectedGrade == null &&
         child.age.text.isEmpty &&
         child.schoolName.text.isEmpty &&
         child.selectedGender == null &&
@@ -433,7 +511,10 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
       _showError("Please enter age");
       return false;
     }
-
+    if (!RegExp(r'^[0-9]+$').hasMatch(child.age.text.trim())) {
+      AppToast.error(context: context, msg: "Age must contain only digits");
+      return false;
+    }
     final age = int.tryParse(child.age.text.trim());
     if (age == null || age <= 0 || age > 25) {
       _showError("Please enter a valid age");
@@ -441,8 +522,8 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
     }
 
     // 🔹 Grade
-    if (child.grade.text.trim().isEmpty) {
-      _showError("Please enter grade");
+    if (child.selectedGrade == null) {
+      _showError("Please Select Grade");
       return false;
     }
 

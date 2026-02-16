@@ -3,11 +3,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Contracts/contracts.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Cost%20Setting/cost_setting.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/earning_dashboard.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/location_screen.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Setting/setting_screen.dart';
+import 'package:ustaad/Screens/Drawer/Contracts/contracts.dart';
+import 'package:ustaad/Screens/Drawer/Cost%20Setting/cost_setting.dart';
+import 'package:ustaad/Screens/Drawer/Earnings/parent_refunding.dart';
+import 'package:ustaad/Screens/Drawer/Earnings/tutor_earning_dashboard.dart';
+import 'package:ustaad/Screens/Drawer/location_screen.dart';
+import 'package:ustaad/Screens/Drawer/Setting/setting_screen.dart';
 import 'package:ustaad/Screens/Drawer/logout.dart';
 
 class SideMenuDrawer extends StatefulWidget {
@@ -64,7 +65,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                             },
                                 'Earnings Dashboard',
                                 "assets/images/earningDashBoard.png",
-                                "View your total earnings, completed sessions, and payment summaries in one place."),
+                                "View your total earnings, and payment summaries in one place."),
                             menuItem(onTap: () {
                               push(
                                   context,
@@ -111,6 +112,12 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                   : Expanded(
                       child: ListView(
                         children: [
+                          menuItem(onTap: () {
+                            push(context, ParentRefundingScreen());
+                          },
+                              'Refunding Dashboard',
+                              "assets/images/earningDashBoard.png",
+                              "View your refundings, and payment summaries in one place."),
                           menuItem(onTap: () {
                             push(
                                 context,

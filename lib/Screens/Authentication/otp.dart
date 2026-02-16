@@ -115,6 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("${widget.phone} here is the phone num");
     return Scaffold(
       body: Column(
         children: [
@@ -177,7 +178,7 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget _buildEmailOtpSection() {
     return _buildOtpSection(
       iconPath: "assets/images/otpEmail.png",
-      title: "Please check your email",
+      title: "Please check your Email",
       subtitle: "We've sent a code to ${widget.email}",
       controller: _emailOtpController,
       onResend: () {
@@ -193,7 +194,10 @@ class _OtpScreenState extends State<OtpScreen> {
     return _buildOtpSection(
       iconPath: "assets/images/otpPhone.png",
       title: "Please check your SMS",
-      subtitle: "We've sent a code to ${widget.phone}",
+      subtitle:
+      widget.fromEditProfile == true?
+       "We've sent a code to ${widget.phone}":
+       "We've sent a code to +${widget.phone}",
       controller: _phoneOtpController,
       onResend: () {
         _requestOtp(context, false);
@@ -378,8 +382,6 @@ class _OtpScreenState extends State<OtpScreen> {
           context: context,
           msg: verifyData["message"],
         );
-
-        // Only call updateProfile if coming from EditProfile
         if (widget.fromEditProfile) {
           final updateParams = <String, dynamic>{
             if (_isEmailRequired && widget.email != null) "email": widget.email,

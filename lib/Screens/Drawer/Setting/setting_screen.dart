@@ -15,7 +15,7 @@ import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
 import 'package:ustaad/Screens/Authentication/Forgot%20Pass/forgot_pass.dart';
 import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Setting/change_email_phone.dart';
+import 'package:ustaad/Screens/Drawer/Setting/change_email_phone.dart';
 import 'package:ustaad/config/keys/global.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -68,6 +68,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _setControllers(TutorEditProfileProvider provider) {
+    print("here is the user at this time .....>!");
     if (fNameController.text.isEmpty) {
       fNameController.text = provider.fName;
     }
@@ -88,6 +89,10 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<TutorEditProfileProvider>(context);
+    bool canDelete = profile.hasData &&
+        !profile.isLoading &&
+        !profile.picLoading &&
+        profile.image.isNotEmpty;
     return Stack(
       children: [
         Scaffold(
@@ -170,12 +175,20 @@ class _SettingScreenState extends State<SettingScreen> {
                         width: 10,
                       ),
                       InkWell(
-                        onTap: () {
-                          profile.deletePicture(context);
-                        },
+                        onTap: canDelete
+                            ? () async {
+                                bool deleted =
+                                    await profile.deletePicture(context);
+                                if (deleted && mounted) {
+                                  setState(() {
+                                    selectedImage = null;
+                                  });
+                                }
+                              }
+                            : null,
                         child: Icon(
                           Icons.delete,
-                          color: Colors.red,
+                          color: canDelete ? Colors.red : AppTheme.hintColor,
                           size: 30,
                         ),
                       )
@@ -215,60 +228,62 @@ class _SettingScreenState extends State<SettingScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText.appText(
-                        "Password",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        textColor: AppTheme.lableText,
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        height: 40,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xffD4D8E2)),
-                          color: const Color(0xffFFFFFF),
-                          borderRadius: BorderRadius.circular(8),
+                  if (globalGoogleId == '')
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText.appText(
+                          "Password",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          textColor: AppTheme.lableText,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              AppText.appText("********** ",
-                                  fontSize: 20, textColor: AppTheme.hintColor),
-                              InkWell(
-                                onTap: () => push(
-                                    context,
-                                    ForgotPassScreen(
-                                      isEditing: true,
-                                    )),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 40,
-                                      width: 2,
-                                      color: AppTheme.borderCOlor,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    AppText.appText(
-                                      "Change",
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 40,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xffD4D8E2)),
+                            color: const Color(0xffFFFFFF),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                AppText.appText("********** ",
+                                    fontSize: 20,
+                                    textColor: AppTheme.hintColor),
+                                InkWell(
+                                  onTap: () => push(
+                                      context,
+                                      ForgotPassScreen(
+                                        isEditing: true,
+                                      )),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 40,
+                                        width: 2,
+                                        color: AppTheme.borderCOlor,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      AppText.appText(
+                                        "Change",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  )
+                      ],
+                    )
                 ],
               ),
             ),

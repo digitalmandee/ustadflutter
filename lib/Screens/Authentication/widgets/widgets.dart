@@ -8,9 +8,9 @@ Widget passwordRequirements() {
     children: [
       AppText.appText("Must contain at least:",
           fontSize: 12, fontWeight: FontWeight.w400),
-      requirement("8 characters"),
-      requirement("one Capital letter"),
-      requirement("one number or symbol"),
+      requirement("8 Characters"),
+      requirement("One Capital letter"),
+      requirement("One Number or Symbol"),
     ],
   );
 }
@@ -26,8 +26,7 @@ Widget requirement(String text) {
   );
 }
 
-Widget stepIndicator(String label, int step, context, width,
-    {required controller}) {
+Widget stepIndicator(String label, int step, context, {required controller}) {
   int currentIndex = controller.index;
 
   bool isCompleted = step < currentIndex;
@@ -49,7 +48,7 @@ Widget stepIndicator(String label, int step, context, width,
       children: [
         Container(
           height: 3,
-          width: width,
+          // width: width,
           color: getColor(),
         ),
         const SizedBox(height: 10),

@@ -27,7 +27,7 @@ class ContractProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        allContracts = response.data["data"]["contracts"] ;
+        allContracts = response.data["data"]["contracts"];
       } else {
         AppToast.error(
           context: context,
@@ -126,11 +126,7 @@ class ContractProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        AppToast.success(
-          context: context,
-          msg: "Rating submitted successfully",
-        );
-        getContracts(context, isParentSide);
+        // getContracts(context, isParentSide);
         return true;
       } else {
         AppToast.error(
@@ -168,11 +164,9 @@ class ContractProvider extends ChangeNotifier {
     }).toList();
   }
 
-
   void clear() {
-  allContracts = [];
-  isLoading = false;
-  notifyListeners();
-}
-
+    allContracts = [];
+    isLoading = false;
+    notifyListeners();
+  }
 }

@@ -13,7 +13,7 @@ import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 import 'package:ustaad/Custom%20widgets/session_cards.dart';
 import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parent%20Sessions/parent_sub_session.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
@@ -166,11 +166,19 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
     if (isLoading) return Expanded(child: GifLoader());
 
     if (upcomingParentSessions.isEmpty) {
-      return Expanded(
-        child: Center(
-          child: AppText.appText("No Upcoming Session at this Time"),
-        ),
-      );
+      if (showUpcoming) {
+        return Expanded(
+          child: Center(
+            child: AppText.appText("No Upcoming Session at this Time"),
+          ),
+        );
+      } else {
+        return Expanded(
+          child: Center(
+            child: AppText.appText("No Completed Session at this Time"),
+          ),
+        );
+      }
     }
 
     return Expanded(

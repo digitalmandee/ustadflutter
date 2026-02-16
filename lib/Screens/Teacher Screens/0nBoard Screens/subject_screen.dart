@@ -29,7 +29,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
 
   /// GRADES
   final List<String> allGrades = [
-      "Pre-KG",
+    "Pre-KG",
     "KG-1",
     "KG-2",
     "Grade 1",
@@ -59,6 +59,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     "Others"
   ];
   List<String> selectedCurriculums = [];
+  List<String> otherCurriculums = [];
   TextEditingController otherCurriculumController = TextEditingController();
 
   @override
@@ -102,8 +103,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       selectedSubjects.isNotEmpty &&
       selectedGrades.isNotEmpty &&
       selectedCurriculums.isNotEmpty &&
-      !(selectedCurriculums.contains("Others") &&
-          otherCurriculumController.text.trim().isEmpty);
+      !(selectedCurriculums.contains("Others") && otherCurriculums.isEmpty);
 
   @override
   Widget build(BuildContext context) {
@@ -185,24 +185,103 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                             title: 'Select Curriculums',
                             items: allCurriculums,
                             selectedItems: selectedCurriculums,
+                            isCurriculum: true,
                             itemLabel: (s) => s,
                             onSelect: (s) =>
                                 _toggleSelection(s, selectedCurriculums),
                           ),
 
-                          /// OTHER CURRICULUM FIELD
                           if (selectedCurriculums.contains("Others"))
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
-                              child: CustomAppTextField(
-                                width: double.infinity,
-                                texthint: "Enter Other Curriculum",
-                                controller: otherCurriculumController,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomAppTextField(
+                                          width: double.infinity,
+                                          texthint: "Enter Other Curriculum",
+                                          controller: otherCurriculumController,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      InkWell(
+                                        onTap: () {
+                                          if (otherCurriculumController.text
+                                              .trim()
+                                              .isNotEmpty) {
+                                            setState(() {
+                                              otherCurriculums.add(
+                                                  otherCurriculumController.text
+                                                      .trim());
+                                              otherCurriculumController.clear();
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.primaryCOlor,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: const Icon(Icons.add,
+                                              color: Colors.white),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 10),
+
+                                  /// Show Added Others as Chips
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 6,
+                                    children: otherCurriculums.map((e) {
+                                      return Chip(
+                                        label: AppText.appText(
+                                          e,
+                                          textColor: AppTheme.lableText,
+                                        ),
+                                        backgroundColor: AppTheme.white,
+                                        onDeleted: () {
+                                          setState(() {
+                                            otherCurriculums.remove(e);
+                                          });
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
                               ),
                             ),
 
-                          const SizedBox(
-                              height: 80), // space for proceed button
+                          /// 🔥 SELECTED CHIPS — AFTER FIELD
+                          if (selectedCurriculums.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 6,
+                                children: selectedCurriculums.map((e) {
+                                  return Chip(
+                                    label: AppText.appText(
+                                      e == "Others" &&
+                                              otherCurriculumController
+                                                  .text.isNotEmpty
+                                          ? otherCurriculumController.text
+                                          : e,
+                                      textColor: AppTheme.lableText,
+                                    ),
+                                    backgroundColor: AppTheme.white,
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          const SizedBox(height: 80),
                         ],
                       ),
                     ),
@@ -225,15 +304,10 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                             selectedSubjects.map((s) => s.name).toList();
                         widget.onboardData.selectedGrades = selectedGrades;
                         List<String> finalCurriculums = selectedCurriculums
-                            .map((e) => e.toString().trim())
+                            .where((e) => e != "Others")
                             .toList();
 
-                        if (finalCurriculums.contains("Others") &&
-                            otherCurriculumController.text.trim().isNotEmpty) {
-                          int index = finalCurriculums.indexOf("Others");
-                          finalCurriculums[index] =
-                              otherCurriculumController.text.trim();
-                        }
+                        finalCurriculums.addAll(otherCurriculums);
 
                         widget.onboardData.selectedCurriculums =
                             finalCurriculums;
@@ -248,7 +322,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                         widget.onTap?.call();
                       }
                     : null,
-                height: 52,
                 backgroundColor: isFormValid
                     ? AppTheme.primaryCOlor
                     : const Color(0xffD9D9D9),
@@ -272,6 +345,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
   final String Function(T) itemLabel;
   final Function(T) onSelect;
   final FontWeight? fontWeight;
+  final bool? isCurriculum;
 
   const MultiSelectDropdown({
     super.key,
@@ -281,6 +355,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
     required this.itemLabel,
     required this.onSelect,
     this.fontWeight,
+    this.isCurriculum = false,
   });
 
   @override
@@ -346,7 +421,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
               ),
             ),
             dropdownStyleData: DropdownStyleData(
-              maxHeight: 40 * 5, // 3 items visible
+              maxHeight: 40 * 5,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: AppTheme.white),
@@ -356,7 +431,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
         ),
 
         /// SELECTED CHIPS
-        if (selectedItems.isNotEmpty)
+        if (selectedItems.isNotEmpty && isCurriculum == false)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Wrap(

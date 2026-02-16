@@ -106,7 +106,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         const Image(
             image: AssetImage("assets/images/otpEmail.png"), height: 48),
         const SizedBox(height: 20),
-        AppText.appText("Please check your email",
+        AppText.appText("Please check your Email",
             fontSize: 16,
             fontWeight: FontWeight.w600,
             textColor: Colors.black87),

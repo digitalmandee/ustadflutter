@@ -23,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen>
     tabController = TabController(length: 3, vsync: this);
     signupData = SignupData();
     tabController.addListener(() {
-      setState(() {}); // Force rebuild on tab change
+      setState(() {}); 
     });
   }
 

@@ -11,7 +11,7 @@ import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
 import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
 import 'package:ustaad/Screens/Chats/bubble_widget.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 import 'package:ustaad/Custom%20widgets/session_cards.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';

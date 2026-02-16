@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ustaad/Models/Parent%20Side/spending_model.dart';
 import 'package:ustaad/config/dio/dio.dart';
@@ -38,10 +39,13 @@ class ParentDashboardProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      if (kDebugMode) {
+        print("Something went wrong: $e");
+      }
+      // AppToast.error(
+      //   context: context,
+      //   msg: "Something went wrong: $e",
+      // );
     } finally {
       isLoading = false;
       notifyListeners();

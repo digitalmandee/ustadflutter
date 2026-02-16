@@ -56,7 +56,7 @@ class ExperienceProvider with ChangeNotifier {
             designation: experience.designation);
         _experiences.add(newExp);
 
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
 
@@ -90,7 +90,7 @@ class ExperienceProvider with ChangeNotifier {
         if (index != -1) {
           _experiences[index] = experience;
         }
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
 
@@ -111,7 +111,7 @@ class ExperienceProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         _experiences.removeWhere((e) => e.id == id);
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
         return true;

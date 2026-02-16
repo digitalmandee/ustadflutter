@@ -9,7 +9,7 @@ import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
 import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/config/dio/app_logger.dart';
 import 'package:ustaad/config/dio/dio.dart';
 import 'package:ustaad/config/keys/urls.dart';
@@ -163,7 +163,7 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
         setState(() {
           isLoading = false;
         });
-        AppToast.success(context: context, msg: "${responseData["message"]}");
+        // AppToast.success(context: context, msg: "${responseData["message"]}");
         provider.runningSessions.clear();
         Navigator.pop(context, true);
       } else {

@@ -10,7 +10,7 @@ import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Models/Tutor%20Side/subject_cost_model.dart';
 import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Cost%20Setting/add_sub_bottomsheett.dart';
+import 'package:ustaad/Screens/Drawer/Cost%20Setting/add_sub_bottomsheett.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 
 class CostSetting extends StatefulWidget {

@@ -1,6 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 Route _zoomRoute(Widget screen) {
   return PageRouteBuilder(
@@ -16,6 +16,16 @@ Route _zoomRoute(Widget screen) {
       );
     },
   );
+}
+
+void safePop(BuildContext context) {
+  if (!Navigator.canPop(context)) return;
+
+  Future.delayed(Duration.zero, () {
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+  });
 }
 
 push(context, screen) {
@@ -46,184 +56,82 @@ class ScreenSize {
 
 ///////////////////////  Toaster /////////////////////////////////
 
-enum ToastType { success, error }
-
 class AppToast {
-  static OverlayEntry? _overlayEntry;
-  static Timer? _timer;
-  static bool _isRemoving = false;
+  /// 🔹 Success Toast
+  static void success({
+    required BuildContext context,
+    required String msg,
+  }) {
+    _show(
+      context: context,
+      msg: msg,
+      indicatorColor: AppTheme.appColor,
+      icon: Icons.check_circle,
+      iconColor: AppTheme.appColor,
+    );
+  }
 
-  static void show(
-    BuildContext context, {
-    required String message,
-    required ToastType type,
-    Duration duration = const Duration(seconds: 2),
+  /// 🔹 Error Toast
+  static void error({
+    required BuildContext context,
+    required String msg,
+  }) {
+    _show(
+      context: context,
+      msg: msg,
+      indicatorColor: Colors.red,
+      icon: Icons.error,
+      iconColor: Colors.red,
+    );
+  }
+
+  /// 🔹 Internal Common Method
+  static void _show({
+    required BuildContext context,
+    required String msg,
+    required Color indicatorColor,
+    required IconData icon,
+    required Color iconColor,
   }) {
     if (!context.mounted) return;
 
-    _removeToast();
+    // Prevent stacking multiple toasts
+    // Flushbar.dismissAll(context);
 
-    _overlayEntry = OverlayEntry(
-      builder: (_) => Positioned(
-        top: 60,
-        left: 16,
-        right: 16,
-        child: _ToastContainer(
-          message: message,
-          type: type,
-          onDismissed: _removeToast,
+    Flushbar(
+      flushbarStyle: FlushbarStyle.FLOATING,
+      flushbarPosition: FlushbarPosition.TOP,
+      margin: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(14),
+      leftBarIndicatorColor: indicatorColor,
+      backgroundColor: Colors.white,
+      isDismissible: true,
+      dismissDirection: FlushbarDismissDirection.VERTICAL,
+      duration: const Duration(seconds: 2),
+      animationDuration: const Duration(milliseconds: 300),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.15),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
         ),
-      ),
-    );
-
-    Overlay.of(context)?.insert(_overlayEntry!);
-    _timer = Timer(duration, _removeToast);
-  }
-
-  static void _removeToast() {
-    if (_isRemoving) return;
-    _isRemoving = true;
-
-    _timer?.cancel();
-    _timer = null;
-
-    if (_overlayEntry?.mounted ?? false) {
-      _overlayEntry?.remove();
-    }
-
-    _overlayEntry = null;
-    _isRemoving = false;
-  }
-
-  static void success({required BuildContext context, required String msg}) {
-    show(context, message: msg, type: ToastType.success);
-  }
-
-  static void error({required BuildContext context, required String msg}) {
-    show(context, message: msg, type: ToastType.error);
-  }
-}
-
-class _ToastContainer extends StatefulWidget {
-  final String message;
-  final ToastType type;
-  final VoidCallback onDismissed;
-
-  const _ToastContainer({
-    required this.message,
-    required this.type,
-    required this.onDismissed,
-  });
-
-  @override
-  State<_ToastContainer> createState() => _ToastContainerState();
-}
-
-class _ToastContainerState extends State<_ToastContainer> {
-  bool _dismissed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_dismissed) return const SizedBox.shrink();
-
-    return Dismissible(
-      key: UniqueKey(),
-      direction: DismissDirection.up,
-      onDismissed: (_) {
-        setState(() => _dismissed = true);
-        widget.onDismissed();
-      },
-      child: _ToastView(
-        message: widget.message,
-        type: widget.type,
-      ),
-    );
-  }
-}
-
-class _ToastView extends StatefulWidget {
-  final String message;
-  final ToastType type;
-
-  const _ToastView({required this.message, required this.type});
-
-  @override
-  State<_ToastView> createState() => _ToastViewState();
-}
-
-class _ToastViewState extends State<_ToastView>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fade;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _fade = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isSuccess = widget.type == ToastType.success;
-
-    return FadeTransition(
-      opacity: _fade,
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border(
-                top: BorderSide(
-                    color: isSuccess ? AppTheme.appColor : Colors.red,
-                    width: 2)),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5)),
-            ],
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(14),
-                child: Row(
-                  children: [
-                    Icon(
-                      isSuccess ? Icons.check_circle : Icons.error,
-                      color: isSuccess ? AppTheme.appColor : Colors.red,
-                      size: 30,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        widget.message,
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                ),
+      ],
+      messageText: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              msg,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-    );
+    ).show(context);
   }
 }

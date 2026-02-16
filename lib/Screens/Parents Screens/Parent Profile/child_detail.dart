@@ -34,6 +34,14 @@ class _ChildDetailsState extends State<ChildDetails> {
     super.initState();
   }
 
+  void clearFields() {
+    _ageController.clear();
+    _schoolController.clear();
+    _genderController.clear();
+    _gradeController.clear();
+    _curriculumController.clear();
+  }
+
   void populateFields(Child child) {
     _ageController.text = child.age;
     _schoolController.text = capitalizeEachWord(child.school);
@@ -51,8 +59,11 @@ class _ChildDetailsState extends State<ChildDetails> {
     }
 
     final child = provider.selectedChild;
+
     if (child != null) {
       populateFields(child);
+    } else {
+      clearFields(); // 👈 ADD THIS
     }
 
     return SingleChildScrollView(
@@ -177,7 +188,7 @@ class _ChildDetailsState extends State<ChildDetails> {
               lable: "School", controller: _schoolController, readOnly: true),
           const SizedBox(height: 20),
           customLableField(
-              lable: "Class", controller: _gradeController, readOnly: true),
+              lable: "Grade", controller: _gradeController, readOnly: true),
           const SizedBox(height: 20),
           customLableField(
               lable: "Curriculum",
@@ -187,7 +198,7 @@ class _ChildDetailsState extends State<ChildDetails> {
           customLableField(
               lable: "Gender", controller: _genderController, readOnly: true),
           const SizedBox(height: 20),
-          widget.isTutorSide == false
+          widget.isTutorSide == false && provider.children.isNotEmpty
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -246,8 +257,8 @@ class _ChildDetailsState extends State<ChildDetails> {
                             );
 
                             if (confirm == true) {
-                              await provider
-                                  .deleteChild(provider.selectedChild!.id);
+                              await provider.deleteChild(
+                                  provider.selectedChild!.id, context);
                             }
                           },
                           height: 36,

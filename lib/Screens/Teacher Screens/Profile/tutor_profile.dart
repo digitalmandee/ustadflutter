@@ -193,10 +193,10 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                               children: [
                                 Flexible(
                                   fit: FlexFit.loose,
-                                  child: AppText.appText("Abdul Wahab Tariq",
-                                      // widget.isParentSide == true
-                                      //     ? capitalizeEachWord("${widget.name}")
-                                      //     : capitalizeEachWord(name!),
+                                  child: AppText.appText(
+                                      widget.isParentSide == true
+                                          ? capitalizeEachWord("${widget.name}")
+                                          : capitalizeEachWord(name!),
                                       fontSize: 30,
                                       maxlines: 1,
                                       overflow: TextOverflow.ellipsis,

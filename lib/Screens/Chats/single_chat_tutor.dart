@@ -16,7 +16,7 @@ import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/base_image.dart';
 import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
 import 'package:ustaad/Screens/Chats/parent_card.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
 import 'package:ustaad/config/keys/global.dart';

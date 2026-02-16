@@ -46,9 +46,18 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+  void refreshNotifications(BuildContext context) {
+    fetchNotifications(context);
+  }
+
+  void addNotification(Map<String, dynamic> notification) {
+    notifications.insert(0, notification); // Add new notification at the top
+    notifyListeners();
+  }
+
   ///////////// ....... Delete Multiple Notifications ........ ////////////
   Future<void> deleteNotifications(
-    BuildContext context,
+    context,
     List<String> ids,
   ) async {
     _isLoading = true;
@@ -64,6 +73,7 @@ class NotificationProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         await fetchNotifications(context);
+        AppToast.success(context: context, msg: "${response.data["message"]}");
       }
     } catch (e) {
       debugPrint("Error deleting notifications: $e");

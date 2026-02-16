@@ -125,16 +125,16 @@ class ParentProfileProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addChild({
-    required String firstName,
-    required String lastName,
-    required String grade,
-    required String age,
-    required String schoolName,
-    required String gender,
-    required String curriculum,
-    XFile? imageFile,
-  }) async {
+  Future<void> addChild(
+      {required String firstName,
+      required String lastName,
+      required String grade,
+      required String age,
+      required String schoolName,
+      required String gender,
+      required String curriculum,
+      XFile? imageFile,
+      context}) async {
     _isLoading = true;
     notifyListeners();
 
@@ -154,11 +154,15 @@ class ParentProfileProvider with ChangeNotifier {
 
       final response = await _dio.post(path: AppUrls.addChild, data: body);
 
-      final newChild = Child.fromJson(response.data['data']);
-      _children.add(newChild);
-      _selectedChild = newChild;
-
-      notifyListeners();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final newChild = Child.fromJson(response.data['data']);
+        _children.add(newChild);
+        _selectedChild = newChild;
+        notifyListeners();
+      } else {
+        AppToast.error(
+            context: context, msg: "${response.data["errors"][0]["message"]}");
+      }
     } catch (e) {
       debugPrint("Error adding child: $e");
       rethrow;
@@ -178,6 +182,7 @@ class ParentProfileProvider with ChangeNotifier {
     required String gender,
     required String curriculum,
     XFile? imageFile,
+    String? base64Image,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -192,10 +197,15 @@ class ParentProfileProvider with ChangeNotifier {
         "schoolName": schoolName,
         "curriculum": curriculum,
         "gender": gender,
-        "image": imageFile != null
-            ? "data:image/jpeg;base64,${base64Encode(File(imageFile.path).readAsBytesSync())}"
-            : "",
       };
+      if (imageFile != null) {
+        body["image"] =
+            "data:image/jpeg;base64,${base64Encode(File(imageFile.path).readAsBytesSync())}";
+      }
+      // ✅ OLD IMAGE (BASE64)
+      else if (base64Image != null && base64Image.isNotEmpty) {
+        body["image"] = base64Image;
+      }
 
       final response = await _dio.put(
         path: AppUrls.editChild,
@@ -220,21 +230,29 @@ class ParentProfileProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteChild(String id) async {
+  Future<void> deleteChild(String id, context) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      await _dio.delete(path: "${AppUrls.delChild}/$id");
+      final response = await _dio.delete(path: "${AppUrls.delChild}/$id");
 
-      _children.removeWhere((c) => c.id == id);
-      if (_children.isNotEmpty) {
-        _selectedChild = _children.first;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _children.removeWhere((c) => c.id == id);
+        if (_children.isNotEmpty) {
+          _selectedChild = _children.first;
+        } else {
+          _selectedChild = null;
+        }
+        AppToast.success(
+          context: context,
+          msg: "Child Deleted successfully",
+        );
+        notifyListeners();
       } else {
-        _selectedChild = null;
+        AppToast.error(
+            context: context, msg: "${response.data["errors"][0]["message"]}");
       }
-
-      notifyListeners();
     } catch (e) {
       debugPrint("Error deleting child: $e");
       rethrow;
@@ -299,6 +317,10 @@ class ParentProfileProvider with ChangeNotifier {
 
         await prefs.setString(PrefKey.notiCount, unReadMessages);
         globalNotiCount = unReadMessages;
+      } else if (response.statusCode == 401) {
+        AppToast.error(
+            context: context, msg: "${response.data["errors"][0]["message"]}");
+        handleTokenExpiration();
       } else {
         AppToast.error(
           context: context,

@@ -308,6 +308,50 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
   }
 
   Future<void> _saveEducation(context, EducationProvider provider) async {
+    if (_institute.text.trim().isEmpty) {
+      AppToast.error(context: context, msg: "Please enter Institute Name");
+      return;
+    }
+
+    if (_degree.text.trim().isEmpty) {
+      AppToast.error(context: context, msg: "Please enter Degree");
+      return;
+    }
+
+    if (_startDateRaw == null) {
+      AppToast.error(context: context, msg: "Please select Start Date");
+      return;
+    }
+
+    if (!isContinue && _endDateRaw == null) {
+      AppToast.error(
+        context: context,
+        msg: "Please select End Date or mark as Currently Studying",
+      );
+      return;
+    }
+
+    if (!isContinue &&
+        _endDateRaw != null &&
+        _endDateRaw!.isBefore(_startDateRaw!)) {
+      AppToast.error(
+        context: context,
+        msg: "End Date cannot be before Start Date",
+      );
+      return;
+    }
+    if (_description.text.isEmpty) {
+      AppToast.error(context: context, msg: "Please enter Description");
+      return;
+    }
+    if (_description.text.trim().length < 10) {
+      AppToast.error(
+        context: context,
+        msg: "Description must be at least 10 characters",
+      );
+      return;
+    }
+
     final edu = Education(
       id: widget.education?.id ?? '',
       institute: _institute.text.trim(),
@@ -316,10 +360,49 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
       description: _description.text.trim(),
       degree: _degree.text.trim(),
     );
-    bool success = widget.education == null
-        ? await provider.addEducation(edu, context)
-        : await provider.updateEducation(edu, context);
-    if (success) Navigator.pop(context);
+    bool success;
+
+    if (widget.education == null) {
+      success = await provider.addEducation(edu, context);
+    } else {
+      if (!_hasEducationChanges()) {
+        AppToast.error(
+          context: context,
+          msg: "No changes detected",
+        );
+        return;
+      }
+
+      success = await provider.updateEducation(edu, context);
+    }
+    if (success) {
+      Navigator.pop(context);
+      // await Future.delayed(const Duration(milliseconds: 200));
+      // if (mounted) {
+      AppToast.success(
+        context: context,
+        msg: widget.education == null
+            ? "Education Added successfully"
+            : "Education Updated successfully",
+      );
+      // }
+    }
+  }
+
+  bool _hasEducationChanges() {
+    if (widget.education == null) return true;
+
+    final original = widget.education!;
+
+    final currentStart = _startDateRaw?.toIso8601String() ?? '';
+    final currentEnd =
+        isContinue ? 'Present' : _endDateRaw?.toIso8601String() ?? '';
+
+    return original.institute != _institute.text.trim() ||
+        original.degree != _degree.text.trim() ||
+        original.description != _description.text.trim() ||
+        original.startDate != currentStart ||
+        original.endDate != currentEnd;
   }
 
   Future<void> _deleteEducation(context, EducationProvider provider) async {
@@ -341,7 +424,16 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
     if (confirmed == true) {
       bool success =
           await provider.deleteEducation(widget.education!.id, context);
-      if (success) Navigator.pop(context);
+      if (success) {
+        Navigator.pop(context);
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (mounted) {
+          AppToast.success(
+            context: context,
+            msg: "Education Deleted successfully",
+          );
+        }
+      }
     }
   }
 }

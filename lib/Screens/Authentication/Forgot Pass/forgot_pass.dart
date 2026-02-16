@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ustaad/Custom%20widgets/app_button.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
@@ -34,14 +33,14 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
   void initState() {
     super.initState();
     dio = AppDio(context);
-    clearPref();
+    // clearPref();
     logger.init();
   }
 
-  clearPref() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.clear();
-  }
+  // clearPref() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   pref.clear();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +109,9 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                   Row(
                     children: [
                       AppText.appText(
-                        isEmail == true? 
-                        "Use your phone number instead  ":"Use your email instead  ",
+                          isEmail == true
+                              ? "Use your phone number instead  "
+                              : "Use your email instead  ",
                           fontSize: 12,
                           textColor: Colors.black,
                           fontWeight: FontWeight.w400),
@@ -137,7 +137,6 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                         ? GifLoader()
                         : AppButton.appButton("Continue", context: context,
                             onTap: () {
-                            print("nfjn3f3f  $isEmail");
                             if (isEmail == true) {
                               print("nfjn3f3f  $isEmail");
 
@@ -182,9 +181,11 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
     setState(() {
       isLoading = true;
     });
+    print("ldml3rlr $text");
+    print("ldml3rlr $isPhone");
     Map<String, dynamic> params = isPhone
         ? {
-            "phone": text,
+            "phone": text.replaceAll("+", ""),
           }
         : {
             "email": text,
@@ -203,8 +204,10 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
         pushReplacement(
             context,
             ConfirmPassScreen(
+              isEmail: isPhone == true ? false : true,
               email: responseData["data"]["email"],
               userId: responseData["data"]["userId"],
+              phone: responseData["data"]["phone"],
             ));
       } else {
         setState(() {

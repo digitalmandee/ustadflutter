@@ -67,6 +67,10 @@ class TutorDashBoardProvider extends ChangeNotifier {
         await prefs.setString(PrefKey.notiCount, unReadMessages);
 
         globalNotiCount = unReadMessages;
+      } else if (response.statusCode == 401) {
+        AppToast.error(
+            context: context, msg: "${response.data["errors"][0]["message"]}");
+        handleTokenExpiration();
       } else {
         AppToast.error(
           context: context,
@@ -93,7 +97,7 @@ class TutorDashBoardProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateBankDetails(
+  Future<bool> updateBankDetails(
       context, String newBankName, String newAccountNumber) async {
     isLoading = true;
     notifyListeners();
@@ -105,34 +109,30 @@ class TutorDashBoardProvider extends ChangeNotifier {
       };
 
       final response = await dio.put(
-        path:
-            "${AppUrls.baseUrl}tutor/bank-details", // ✅ tumhare baseUrl + endpoint
+        path: "${AppUrls.baseUrl}tutor/bank-details",
         data: body,
       );
 
       if (response.statusCode == 200) {
-        // ✅ Update locally after successful API
         bankName = newBankName;
         accountNumber = newAccountNumber;
 
-        AppToast.success(
-          context: context,
-          msg: "Bank details updated successfully",
-        );
-
         notifyListeners();
+        return true;
       } else {
         AppToast.error(
           context: context,
           msg: response.data["errors"]?[0]?["message"] ??
               "Failed to update bank details",
         );
+        return false;
       }
     } catch (e) {
       AppToast.error(
         context: context,
         msg: "Something went wrong: $e",
       );
+      return false;
     } finally {
       isLoading = false;
       notifyListeners();

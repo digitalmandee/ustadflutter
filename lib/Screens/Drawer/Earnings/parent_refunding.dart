@@ -17,14 +17,14 @@ import 'package:ustaad/config/dio/app_logger.dart';
 import 'package:ustaad/config/dio/dio.dart';
 import 'package:ustaad/config/keys/urls.dart';
 
-class TutorEarningScreen extends StatefulWidget {
-  const TutorEarningScreen({super.key});
+class ParentRefundingScreen extends StatefulWidget {
+  const ParentRefundingScreen({super.key});
 
   @override
-  State<TutorEarningScreen> createState() => _TutorEarningScreenState();
+  State<ParentRefundingScreen> createState() => _ParentRefundingScreenState();
 }
 
-class _TutorEarningScreenState extends State<TutorEarningScreen> {
+class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
   bool showUpcoming = true;
   AppLogger logger = AppLogger();
 
@@ -32,14 +32,14 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
   void initState() {
     super.initState();
     logger.init();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<TutorDashBoardProvider>(context, listen: false);
-      provider.getPaymentRequests(context);
-      final provider1 =
-          Provider.of<TutorDashBoardProvider>(context, listen: false);
-      provider1.getTutorProfile(context);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final provider =
+    //       Provider.of<TutorDashBoardProvider>(context, listen: false);
+    //   provider.getPaymentRequests(context);
+    //   final provider1 =
+    //       Provider.of<TutorDashBoardProvider>(context, listen: false);
+    //   provider1.getTutorProfile(context);
+    // });
   }
 
   @override
@@ -62,7 +62,6 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
               alignment: Alignment.center,
               child: Container(
                 height: 40,
-                width: 285,
                 decoration: BoxDecoration(
                     color: const Color(0xffECEEF3),
                     borderRadius: BorderRadius.circular(10)),
@@ -70,9 +69,9 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 2.0, vertical: 2.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildTab("Current Balance", true),
+                      _buildTab("Refunds", true),
                       _buildTab("Transferred", false),
                     ],
                   ),
@@ -103,17 +102,19 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
       },
       child: Container(
         height: 35,
-        width: 140,
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.appColor : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Center(
-          child: AppText.appText(
-            title,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            textColor: isSelected ? AppTheme.white : AppTheme.black,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Center(
+            child: AppText.appText(
+              title,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              textColor: isSelected ? AppTheme.white : AppTheme.black,
+            ),
           ),
         ),
       ),
@@ -127,7 +128,7 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 30),
-          AppText.appText("Your Balance",
+          AppText.appText("Your Refunding Ballance",
               fontSize: 16, fontWeight: FontWeight.w400),
           const SizedBox(height: 8),
           AppText.appText("Rs. ${provider.profileBalance}",
@@ -139,17 +140,17 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
               textColor: const Color(0xff8A8A8A)),
           const SizedBox(height: 30),
           AppButton.appButton("Withdraw", context: context, onTap: () {
-            showModalBottomSheet(
-              backgroundColor: AppTheme.white,
-              context: context,
-              isScrollControlled: true,
-              isDismissible: false,
-              enableDrag: false,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) => const BankSheet(),
-            );
+            // showModalBottomSheet(
+            //   backgroundColor: AppTheme.white,
+            //   context: context,
+            //   isScrollControlled: true,
+            //   isDismissible: false,
+            //   enableDrag: false,
+            //   shape: const RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            //   ),
+            //   builder: (context) => const BankSheet(),
+            // );
           },
               backgroundColor: AppTheme.primaryCOlor,
               border: false,
@@ -254,8 +255,7 @@ class _BankSheetState extends State<BankSheet> {
     logger.init();
   }
 
-  // ✅ Withdraw API method
-  Future<void> withdrawAmount(context) async {
+  Future<void> withdrawAmount() async {
     if (amountController.text.isEmpty) {
       AppToast.error(context: context, msg: "Please enter an amount");
       return;
@@ -273,7 +273,6 @@ class _BankSheetState extends State<BankSheet> {
       final data = response.data;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        AppToast.success(context: context, msg: "${data["message"]}");
         final provider =
             Provider.of<TutorDashBoardProvider>(context, listen: false);
         await provider.getTutorProfile(context);
@@ -282,8 +281,14 @@ class _BankSheetState extends State<BankSheet> {
         provider1.getPaymentRequests(context);
         setState(() => isLoading = false);
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(const Duration(milliseconds: 400), () {
           if (context.mounted) Navigator.pop(context);
+          if (mounted) {
+            AppToast.success(
+              context: context,
+              msg: "Withdraw request Submitted successfully",
+            );
+          }
         });
       } else {
         AppToast.error(
@@ -340,11 +345,11 @@ class _BankSheetState extends State<BankSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 customLableField(
-                  height: 52.0,
-                  lable: "Amount*",
-                  hintText: "Rs. 1000",
-                  controller: amountController,
-                ),
+                    height: 52.0,
+                    lable: "Amount*",
+                    hintText: "Rs. 1000",
+                    controller: amountController,
+                    textType: TextInputType.number),
                 const SizedBox(height: 12),
                 AppText.appText("Your Bank Account",
                     fontSize: 16,
@@ -414,7 +419,7 @@ class _BankSheetState extends State<BankSheet> {
                       isLoading ? "Processing..." : "Withdraw",
                       context: context,
                       width: ScreenSize(context).width * 0.42,
-                      onTap: isLoading ? null : () => withdrawAmount(context),
+                      onTap: isLoading ? null : () => withdrawAmount(),
                       backgroundColor: AppTheme.primaryCOlor,
                       border: false,
                       fontSize: 16,
@@ -471,15 +476,27 @@ class _AddBankBottomSheetState extends State<AddBankBottomSheet> {
       return;
     }
 
+    if (!RegExp(r'^[0-9]+$').hasMatch(accountNumber)) {
+      AppToast.error(
+          context: context, msg: "Account number must contain only digits");
+      return;
+    }
+
     setState(() => isLoading = true);
     final provider =
         Provider.of<TutorDashBoardProvider>(context, listen: false);
 
-    await provider.updateBankDetails(
+    bool success = await provider.updateBankDetails(
         context, selectedBank!.name, cleanedAccountNumber);
 
     setState(() => isLoading = false);
-    if (context.mounted) Navigator.pop(context);
+
+    if (success && context.mounted) {
+      Navigator.pop(context);
+      if (mounted) {
+        AppToast.success(context: context, msg: "Bank Updated Succesfully");
+      }
+    }
   }
 
   @override
@@ -565,7 +582,7 @@ class _AddBankBottomSheetState extends State<AddBankBottomSheet> {
             const SizedBox(height: 8),
             CustomAppTextField(
               controller: accountController,
-              texthint: "Account or Iban Number",
+              texthint: "Account or IBAN Number",
               txtType: TextInputType.number,
             ),
             const SizedBox(height: 30),

@@ -7,6 +7,7 @@ import 'package:ustaad/Custom%20widgets/app_field.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/capitalize.dart';
 import 'package:ustaad/Helpers/loader.dart';
+import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Contracts/contract_provider.dart';
 import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
 import 'package:ustaad/Providers/Tutor Side/tutor_dashboard_provider.dart';
@@ -63,8 +64,7 @@ class _ContractScreenState extends State<ContractScreen> {
             child: contractProv.isLoading
                 ? GifLoader()
                 : currentList.isEmpty
-                    ? Expanded(
-                        child: Center(
+                    ? Center(
                         child: AppText.appText(
                           showRunning
                               ? "No Running Contracts Yet"
@@ -73,7 +73,7 @@ class _ContractScreenState extends State<ContractScreen> {
                                   : "No Cancelled Contracts Yet",
                           fontSize: 16,
                         ),
-                      ))
+                      )
                     : ListView.builder(
                         padding: EdgeInsets.all(20),
                         itemCount: currentList.length,
@@ -589,9 +589,10 @@ class _ContractScreenState extends State<ContractScreen> {
                     children: [
                       _buildInfoRow(
                           widget.isParentSide ? "Tutor Name:" : "Parent Name:",
-                          name),
+                          capitalizeEachWord(name)),
                       SizedBox(height: 8),
-                      _buildInfoRow("Child Name:", childName),
+                      _buildInfoRow(
+                          "Child Name:", capitalizeEachWord(childName)),
                     ],
                   ),
                 ),
@@ -931,9 +932,29 @@ class _ContractScreenState extends State<ContractScreen> {
                             reviewController.text.trim(),
                           );
 
-                          Navigator.pop(context); // close loader
+                          // Navigator.pop(context); // close loader
 
-                          if (ok) Navigator.pop(ctx);
+                          // if (ok) Navigator.pop(ctx);
+
+                          Navigator.pop(context);
+
+                          if (!ok) return;
+
+                          Navigator.pop(ctx);
+
+                          await Future.delayed(
+                              const Duration(milliseconds: 200));
+
+                          if (mounted) {
+                            AppToast.success(
+                              context: context,
+                              msg: "Rating submitted successfully",
+                            );
+
+                            Provider.of<ContractProvider>(context,
+                                    listen: false)
+                                .getContracts(context, widget.isParentSide);
+                          }
                         },
                         "Submit",
                       ),

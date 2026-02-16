@@ -12,7 +12,7 @@ import 'package:ustaad/config/keys/global.dart';
 import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
 import 'package:ustaad/Screens/Chats/single_chat_tutor.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -144,7 +144,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               itemCount: provider.filteredChats.length,
                               itemBuilder: (context, index) {
                                 final chat = provider.filteredChats[index];
-
+                                print(
+                                    "${chat.lastMsg} here is the last message");
                                 return Column(
                                   children: [
                                     Container(
@@ -167,24 +168,29 @@ class _ChatScreenState extends State<ChatScreen> {
                                           ).then((_) =>
                                               provider.fetchChats(context));
                                         },
-                                        child: ChatTile(
-                                          name: chat.name,
-                                          message: chat.lastMsg ?? '',
-                                          msgType: chat.msgType,
-                                          time: chat.lastMsgTime == null
-                                              ? ""
-                                              : formatTimestamp(
-                                                  chat.lastMsgTime!),
-                                          duration: chat.duration,
-                                          image: chat.image!,
-                                          isOnline: true,
-                                          unreadCount: chat.unreadCount ?? 0,
-                                        ),
+                                        child: chat.lastMsg == null
+                                            ? SizedBox.shrink()
+                                            : ChatTile(
+                                                name: chat.name,
+                                                message: chat.lastMsg ?? '',
+                                                msgType: chat.msgType,
+                                                time: chat.lastMsgTime == null
+                                                    ? ""
+                                                    : formatTimestamp(
+                                                        chat.lastMsgTime!),
+                                                duration: chat.duration,
+                                                image: chat.image!,
+                                                isOnline: true,
+                                                unreadCount:
+                                                    chat.unreadCount ?? 0,
+                                              ),
                                       ),
                                     ),
-                                    Divider(
-                                      color: AppTheme.dividerColor,
-                                    )
+                                    chat.lastMsg == null
+                                        ? SizedBox.shrink()
+                                        : Divider(
+                                            color: AppTheme.dividerColor,
+                                          )
                                   ],
                                 );
                               },

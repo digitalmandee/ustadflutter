@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ustaad/Custom%20widgets/app_button.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';
@@ -28,6 +29,7 @@ class GoogleSignupDetail extends StatefulWidget {
 class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   String selectedRole = "Tutor";
   String selectedCountry = "Pakistan";
   String selectedGender = "Male";
@@ -60,8 +62,8 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
                 children: [
                   AppText.appText("Sign Up As:",
                       fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      textColor: AppTheme.lighttxtColor),
+                      fontWeight: FontWeight.w500,
+                      textColor: AppTheme.lableText),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,6 +99,8 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
                       onCountrySelected: (country) =>
                           selectedCountry = country),
                   const SizedBox(height: 20),
+                  _phoneInput(),
+                  const SizedBox(height: 20),
                   AppButton.appButton("Sign Up",
                       onTap: _validateAdditionalDetails, context: context),
                 ],
@@ -105,6 +109,42 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
           ))
         ],
       ),
+    );
+  }
+
+  Widget _phoneInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText.appText("Phone Number",
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            textColor: AppTheme.lableText),
+        const SizedBox(height: 10),
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xffD4D8E2)),
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+          ),
+          child: PhoneFormField(
+            initialValue: PhoneNumber.parse('+92'),
+            countrySelectorNavigator:
+                const CountrySelectorNavigator.draggableBottomSheet(),
+            autovalidateMode: AutovalidateMode.disabled,
+            onChanged: (phoneNumber) {
+              phoneController.text =
+                  "${phoneNumber.countryCode}${phoneNumber.nsn}";
+            },
+            decoration: const InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -143,10 +183,15 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
   }
 
   void _validateAdditionalDetails() {
+    final phone = phoneController.text.trim();
+
     if (addressController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter Address");
     } else if (cityController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter City");
+    } else if (phone.isEmpty || phone.length != 12) {
+      AppToast.error(
+          context: context, msg: "Please enter a valid phone number.");
     } else {
       _googleSignUp(context);
     }
@@ -213,6 +258,7 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
           "address": addressController.text,
           "city": cityController.text,
           "country": selectedCountry,
+          "phone": phoneController.text.trim(),
           "gender": selectedGender.toLowerCase(),
         },
       );
@@ -246,6 +292,7 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
     await prefs.setString(PrefKey.userLastName, data["lastName"]);
     await prefs.setString(PrefKey.userPic, data["image"] ?? '');
     await prefs.setString(PrefKey.onBoard, data["isOnBoard"] ?? '');
+    await prefs.setString(PrefKey.isGoogleId, data["googleId"] ?? '');
 
     globalUserId = data["id"];
     globalUserFirstName = data["firstName"];
@@ -254,6 +301,7 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
     globalToken = data["token"];
     globalUserPic = data["image"] ?? '';
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
+    globalGoogleId = data["googleId"] ?? "";
 
     if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
       push(

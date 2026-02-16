@@ -204,7 +204,7 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
       if (response.statusCode == 200 && responseData["data"] != null) {
         setState(() {
           isLoading = false;
-          AppToast.success(context: context, msg: "${responseData["message"]}");
+          // AppToast.success(context: context, msg: "${responseData["message"]}");
           Navigator.pop(context, true);
         });
 

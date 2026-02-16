@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
 import 'package:ustaad/Custom widgets/app_field.dart';
 import 'package:ustaad/Custom widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
@@ -16,7 +15,7 @@ import 'package:ustaad/Models/Tutor Side/subjects_model.dart';
 import 'package:ustaad/Providers/Parent Side/dashboard_provider.dart';
 import 'package:ustaad/Providers/Parent Side/get_tutors_provider.dart';
 import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Screens/Parents Screens/Categories Tutor/category_tutor.dart';
 import 'package:ustaad/Screens/Parents Screens/Categories Tutor/subject_categories.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/search_screeen.dart';
@@ -171,7 +170,7 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppText.appText("Featured Categories",
+              AppText.appText("Subject Categories",
                   fontSize: 16, fontWeight: FontWeight.w600),
               InkWell(
                 onTap: () {

@@ -234,7 +234,19 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                                 await provider.addAboutData(aboutText, context);
                           }
 
-                          if (success) Navigator.pop(context);
+                          if (success) {
+                            Navigator.pop(context);
+                            await Future.delayed(
+                                const Duration(milliseconds: 200));
+                            if (mounted) {
+                              AppToast.success(
+                                context: context,
+                                msg: widget.isEdit
+                                    ? "About Updated successfully"
+                                    : "About Added successfully",
+                              );
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryCOlor,

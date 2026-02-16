@@ -10,7 +10,6 @@ import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/submission_screen.dart';
 import 'package:ustaad/config/dio/app_logger.dart';
 import 'package:ustaad/config/dio/dio.dart';
 import 'package:ustaad/config/keys/urls.dart';
@@ -18,9 +17,13 @@ import 'package:ustaad/config/keys/urls.dart';
 class TutorDocVerificationScreen extends StatefulWidget {
   final TutorOnboardData onboardData;
   final VoidCallback onBackTap;
+  final VoidCallback onTap;
 
   const TutorDocVerificationScreen(
-      {super.key, required this.onboardData, required this.onBackTap});
+      {super.key,
+      required this.onboardData,
+      required this.onBackTap,
+      required this.onTap});
 
   @override
   State<TutorDocVerificationScreen> createState() =>
@@ -95,7 +98,7 @@ class _TutorDocVerificationScreenState
           ),
           TextSpan(text: ' For Your '),
           TextSpan(
-            text: 'Verifications',
+            text: 'Verification',
             style: TextStyle(
               color: AppTheme.appColor,
               fontWeight: FontWeight.w600,
@@ -261,7 +264,7 @@ class _TutorDocVerificationScreenState
       FormData formData = FormData.fromMap({
         "subjects": jsonEncode(data.selectedSubjects),
         "bankName": data.selectedBank,
-        "grade": jsonEncode(data.selectedGrades), // <- encode list as JSON
+        "grade": jsonEncode(data.selectedGrades),
         "curriculum": jsonEncode(data.selectedCurriculums),
         "accountNumber": data.accountNumber?.replaceAll(RegExp(r'\D'), ''),
         if (data.resumeFile != null)
@@ -290,10 +293,12 @@ class _TutorDocVerificationScreenState
 
         setState(() => isLoading = false);
 
-        pushUntil(
-          context,
-          const SubmissionCompleteScreen(tutor: true),
-        );
+        widget.onTap();
+
+        // pushUntil(
+        //   context,
+        //   const SubmissionCompleteScreen(tutor: true),
+        // );
       } else {
         setState(() => isLoading = false);
         AppToast.error(

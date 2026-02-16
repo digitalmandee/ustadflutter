@@ -71,20 +71,48 @@ class ChatBubble extends StatelessWidget {
     if (message.type == "TEXT") {
       return _buildTextMessage(context, alignment);
     } else if (message.type == "IMAGE") {
-      return _buildImageMessage(context, alignment, message.text);
+      if (message.text == 'This message was deleted') {
+        return _buildTextMessage(
+          context,
+          alignment,
+        );
+      } else {
+        return _buildImageMessage(context, alignment, message.text);
+      }
     } else if (message.type == "FILE") {
-      return FileBubble(
-        url: message.text,
-        isMe: message.isMe,
-        name: message.fileText!,
-        time: message.time,
-        showStatusIcon: message.isMe,
-        isPending: message.isPending,
-      );
+      if (message.text == 'This message was deleted') {
+        return _buildTextMessage(
+          context,
+          alignment,
+        );
+      } else {
+        return FileBubble(
+          url: message.text,
+          isMe: message.isMe,
+          name: message.fileText!,
+          time: message.time,
+          showStatusIcon: message.isMe,
+          isPending: message.isPending,
+        );
+      }
     } else if (message.type == "AUDIO") {
-      return _buildAudioMessage(context, alignment, message.text);
+      if (message.text == 'This message was deleted') {
+        return _buildTextMessage(
+          context,
+          alignment,
+        );
+      } else {
+        return _buildAudioMessage(context, alignment, message.text);
+      }
     } else {
-      return _buildOfferMessage(context, alignment);
+      if (message.text == 'This message was deleted') {
+        return _buildTextMessage(
+          context,
+          alignment,
+        );
+      } else {
+        return _buildOfferMessage(context, alignment);
+      }
     }
   }
 
@@ -238,11 +266,14 @@ class ChatBubble extends StatelessWidget {
                         alignment: Alignment.center,
                         children: [
                           Container(color: Colors.grey.shade200),
+
+                          //  GifLoader(),
+
                           CircularProgressIndicator(
                             value: progress,
                             strokeWidth: 3,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.blue),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.primaryCOlor),
                           ),
                           Text(
                             "${(progress * 100).toStringAsFixed(0)}%",
@@ -430,7 +461,9 @@ class ChatBubble extends StatelessWidget {
             ? AppTheme.appColor
             : "${message.offer!["status"]}" == "PENDING"
                 ? AppTheme.borderCOlor
-                : Colors.red,
+                : "${message.offer!["status"]}" == "COMPLETED"
+                    ? AppTheme.primaryCOlor
+                    : Colors.red,
         border: false,
       );
     }
@@ -473,7 +506,9 @@ class ChatBubble extends StatelessWidget {
       context: context,
       backgroundColor: "${message.offer!["status"]}" == "ACCEPTED"
           ? AppTheme.appColor
-          : Colors.red,
+          : "${message.offer!["status"]}" == "COMPLETED"
+              ? AppTheme.primaryCOlor
+              : Colors.red,
       border: false,
     );
   }
@@ -506,14 +541,16 @@ class ChatBubble extends StatelessWidget {
           Flexible(
             child: AppText.appText(
               type == "OFFER" ? formatOfferMessage(text) : text,
-              textColor: text == 'This message was deleted'
+              textColor: text == 'This message was deleted' ||
+                      text == 'This message was deleted.'
                   ? isMe
                       ? const Color.fromARGB(255, 230, 228, 228)
                       : AppTheme.grey
                   : textColor,
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              fontStyle: text == 'This message was deleted'
+              fontStyle: text == 'This message was deleted' ||
+                      text == 'This message was deleted.'
                   ? FontStyle.italic
                   : FontStyle.normal,
               overflow: TextOverflow.visible,

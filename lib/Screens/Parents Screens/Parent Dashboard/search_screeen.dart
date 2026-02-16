@@ -5,7 +5,7 @@ import 'package:ustaad/Custom widgets/app_field.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Providers/Parent Side/get_tutors_provider.dart';
 import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/filter_bottom_sheet.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/tutor_card.dart';
 

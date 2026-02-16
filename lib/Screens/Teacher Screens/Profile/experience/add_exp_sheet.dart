@@ -306,6 +306,60 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                           isEdit ? "Update" : "Add",
                           width: 83,
                           onTap: () async {
+                            if (_company.text.trim().isEmpty) {
+                              AppToast.error(
+                                  context: context,
+                                  msg: "Please enter Company Name");
+                              return;
+                            }
+
+                            if (_designation.text.trim().isEmpty) {
+                              AppToast.error(
+                                  context: context,
+                                  msg: "Please enter Designation");
+                              return;
+                            }
+
+                            if (_startDateRaw == null) {
+                              AppToast.error(
+                                  context: context,
+                                  msg: "Please select Start Date");
+                              return;
+                            }
+
+                            if (!isContinue && _endDateRaw == null) {
+                              AppToast.error(
+                                context: context,
+                                msg:
+                                    "Please select End Date or mark as Currently Studying",
+                              );
+                              return;
+                            }
+
+                            if (!isContinue &&
+                                _endDateRaw != null &&
+                                _endDateRaw!.isBefore(_startDateRaw!)) {
+                              AppToast.error(
+                                context: context,
+                                msg: "End Date cannot be before Start Date",
+                              );
+                              return;
+                            }
+                            if (_description.text.isEmpty) {
+                              AppToast.error(
+                                  context: context,
+                                  msg: "Please enter Description");
+                              return;
+                            }
+                            if (_description.text.trim().length < 10) {
+                              AppToast.error(
+                                context: context,
+                                msg:
+                                    "Description must be at least 10 characters",
+                              );
+                              return;
+                            }
+
                             final provider = Provider.of<ExperienceProvider>(
                                 context,
                                 listen: false);
@@ -322,6 +376,14 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
 
                             bool success;
                             if (isEdit) {
+                              if (!_hasChanges()) {
+                                AppToast.error(
+                                  context: context,
+                                  msg: "No changes detected",
+                                );
+                                return;
+                              }
+
                               success =
                                   await provider.updateExperience(exp, context);
                             } else {
@@ -329,7 +391,19 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                   await provider.addExperience(exp, context);
                             }
 
-                            if (success) Navigator.pop(context);
+                            if (success) {
+                              Navigator.pop(context);
+                              await Future.delayed(
+                                  const Duration(milliseconds: 200));
+                              if (mounted) {
+                                AppToast.success(
+                                  context: context,
+                                  msg: isEdit
+                                      ? "Experience Updated successfully"
+                                      : "Experience Added successfully",
+                                );
+                              }
+                            }
                           },
                         ),
                       ],
@@ -342,6 +416,22 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
         ),
       ),
     );
+  }
+
+  bool _hasChanges() {
+    if (widget.experience == null) return true;
+
+    final original = widget.experience!;
+
+    final currentStart = _startDateRaw?.toIso8601String() ?? '';
+    final currentEnd =
+        isContinue ? "Present" : _endDateRaw?.toIso8601String() ?? '';
+
+    return original.company != _company.text.trim() ||
+        original.designation != _designation.text.trim() ||
+        original.description != _description.text.trim() ||
+        original.startDate != currentStart ||
+        original.endDate != currentEnd;
   }
 
   Future<void> _deleteExperience(context, ExperienceProvider provider) async {
@@ -363,7 +453,17 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
     if (confirmed == true) {
       bool success =
           await provider.deleteExperience(widget.experience!.id, context);
-      if (success) Navigator.pop(context);
+
+      if (success) {
+        Navigator.pop(context);
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (mounted) {
+          AppToast.success(
+            context: context,
+            msg: "Experience Deleted successfully",
+          );
+        }
+      }
     }
   }
 }

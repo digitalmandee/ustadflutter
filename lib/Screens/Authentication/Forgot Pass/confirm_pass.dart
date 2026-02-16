@@ -17,8 +17,11 @@ import 'package:ustaad/config/keys/urls.dart';
 
 class ConfirmPassScreen extends StatefulWidget {
   final String? email;
+  final String? phone;
   final String? userId;
-  const ConfirmPassScreen({super.key, this.email, this.userId});
+  final bool isEmail;
+  const ConfirmPassScreen(
+      {super.key, this.email, this.userId, required this.isEmail, this.phone});
 
   @override
   State<ConfirmPassScreen> createState() => _ConfirmPassScreenState();
@@ -166,11 +169,24 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
                     if (emailOtpController.text.isEmpty ||
                         emailOtpController.text.length < 4) {
                       AppToast.error(
-                          context: context,
-                          msg: "Please enter valid Email OTP");
-                    } else {
-                      changePass(context);
+                        context: context,
+                        msg: "Please enter valid OTP",
+                      );
+                      return;
                     }
+
+                    final passwordError =
+                        validatePassword(_passController.text);
+
+                    if (passwordError != null) {
+                      AppToast.error(
+                        context: context,
+                        msg: passwordError,
+                      );
+                      return;
+                    }
+
+                    changePass(context);
                   },
                   width: ScreenSize(context).width * 0.4,
                   borderColor: Colors.transparent,
@@ -187,6 +203,25 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
     );
   }
 
+  String? validatePassword(String password) {
+    if (password.isEmpty) {
+      return "Password is required";
+    }
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      return "Password must contain at least one number";
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?\":{}|<>]').hasMatch(password)) {
+      return "Password must contain at least one special character";
+    }
+    return null; 
+  }
+
   Widget emailOtpFunction() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -197,7 +232,7 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
         ),
         SizedBox(height: 20),
         AppText.appText(
-          "Please check your email",
+          widget.isEmail ? "Please check your Email" : "Please check your SMS",
           fontSize: 16,
           fontWeight: FontWeight.w600,
           textColor: Colors.black87,
@@ -205,7 +240,9 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
         ),
         SizedBox(height: 5),
         AppText.appText(
-          "We've sent a code to ${widget.email}",
+          widget.isEmail
+              ? "We've sent a code to ${widget.email}"
+              : "We've sent a code to +${widget.phone}",
           fontSize: 16,
           textColor: AppTheme.lighttxtColor,
           textAlign: TextAlign.center,

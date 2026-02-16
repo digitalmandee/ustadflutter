@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 class ChildProfileModel {
   final TextEditingController firstName = TextEditingController();
   final TextEditingController lastname = TextEditingController();
-  final TextEditingController grade = TextEditingController();
   final TextEditingController age = TextEditingController();
   final TextEditingController schoolName = TextEditingController();
   String? selectedCurriculum;
+  String? selectedGrade;
   final TextEditingController otherCurriculum = TextEditingController();
 
   String? selectedGender;
@@ -16,10 +16,10 @@ class ChildProfileModel {
   void clear() {
     firstName.clear();
     lastname.clear();
-    grade.clear();
     age.clear();
     schoolName.clear();
     selectedCurriculum = null;
+    selectedGrade = null;
     otherCurriculum.clear();
     selectedGender = null;
     selectedImage = null;

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:ustaad/Custom%20widgets/app_field.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/location_provider.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
@@ -97,7 +96,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Image.asset(
-                            "assets/images/search.png",
+                            "assets/images/addLocation.png",
                             color: Color(0xffA6ADBF),
                           ),
                         ),
@@ -124,7 +123,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 1.0, horizontal: 5),
                                   child: Card(
-                                    color: AppTheme.white,
+                                    color: AppTheme.primaryCOlor,
                                     child: Container(
                                       decoration: BoxDecoration(
                                           borderRadius:
@@ -133,6 +132,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                         padding: const EdgeInsets.all(6.0),
                                         child: Image.asset(
                                           "assets/images/addSharp.png",
+                                          color: AppTheme.white,
                                         ),
                                       ),
                                     ),
@@ -187,11 +187,9 @@ class _LocationScreenState extends State<LocationScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 AppText.appText(
-                                                  capitalizeEachWord(
-                                                    toBeginningOfSentenceCase(
-                                                            loc.address) ??
-                                                        '',
-                                                  ),
+                                                  toBeginningOfSentenceCase(
+                                                          loc.address)
+                                                      .toUpperCase(),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w800,
                                                 ),

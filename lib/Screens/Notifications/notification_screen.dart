@@ -3,7 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:ustaad/Custom widgets/app_bar.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/loader.dart';
+import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/notification/notification_provider.dart';
+import 'package:ustaad/Screens/Chats/single_chat_tutor.dart';
+import 'package:ustaad/Screens/Drawer/Contracts/contracts.dart';
+import 'package:ustaad/Screens/Drawer/Earnings/tutor_earning_dashboard.dart';
+import 'package:ustaad/config/keys/global.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -19,6 +24,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
+    // final provider = Provider.of<NotificationProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<NotificationProvider>(context, listen: false)
           .fetchNotifications(context);
@@ -64,6 +70,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             itemCount: provider.notifications.length,
             itemBuilder: (context, index) {
               final notification = provider.notifications[index];
+              final notiType = provider.notifications[index]["type"];
               final String id = notification["id"];
 
               final bool isSelected = selectedIds.contains(id);
@@ -76,6 +83,36 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   });
                 },
                 onTap: () {
+                  if (!selectionMode) {
+                    if (notiType == "PAYMENT_STATUS_UPDATE") {
+                      push(context, TutorEarningScreen());
+                    } else if (notiType == "NEW_MESSAGE" ||
+                        notiType == "OFFER_RECEIVED" ||
+                        notiType == "OFFER_REJECTED" ||
+                        notiType == "OFFER_ACCEPTED") {
+                      push(
+                          context,
+                          SingleChatScreen(
+                              conversationId:
+                                  '${notification["metadata"]["conversationId"]}',
+                              userId: globalUserId!,
+                              recieverName:
+                                  '${notification["metadata"]["senderName"]}',
+                              recieverId:
+                                  '${notification["metadata"]["recieverId"]}',
+                              image: '${notification["metadata"]["image"]}'));
+                    } else if (notiType == "CONTRACT_DISPUTED" ||
+                        notiType == "CONTRACT_COMPLETED" ||
+                        notiType == "CONTRACT_CANCELLED") {
+                      push(
+                          context,
+                          ContractScreen(
+                            isParentSide:
+                                globalUserRole == "PARENT" ? true : false,
+                          ));
+                    }
+                  }
+
                   if (selectionMode) {
                     setState(() {
                       if (isSelected) {

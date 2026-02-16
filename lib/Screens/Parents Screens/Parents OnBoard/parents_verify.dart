@@ -7,14 +7,19 @@ import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
+import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/submission_screen.dart';
 import 'package:ustaad/config/dio/dio.dart';
 import 'package:ustaad/config/keys/urls.dart';
 
 class ParentsVerificationScreen extends StatefulWidget {
   final VoidCallback onBackTap;
-
-  const ParentsVerificationScreen({super.key, required this.onBackTap});
+  final ParentOnboardData parentOnboardData;
+  const ParentsVerificationScreen({
+    super.key,
+    required this.onBackTap,
+    required this.parentOnboardData,
+  });
 
   @override
   State<ParentsVerificationScreen> createState() =>
@@ -131,7 +136,7 @@ class _ParentsVerificationScreenState extends State<ParentsVerificationScreen> {
           ),
           TextSpan(text: ' For Your '),
           TextSpan(
-            text: 'Verifications',
+            text: 'Verification',
             style: TextStyle(
               color: AppTheme.appColor,
               fontWeight: FontWeight.w600,
@@ -232,6 +237,9 @@ class _ParentsVerificationScreenState extends State<ParentsVerificationScreen> {
             await MultipartFile.fromFile(idFront.path!, filename: idFront.name),
         "idBack":
             await MultipartFile.fromFile(idBack.path!, filename: idBack.name),
+        "accountNumber": widget.parentOnboardData.accountNumber
+            ?.replaceAll(RegExp(r'\D'), ''),
+        "bankName": widget.parentOnboardData.selectedBank,
       });
 
       final response =

@@ -69,8 +69,6 @@ class _BottomNavViewState extends State<BottomNavView> {
         body: Stack(
           children: [
             _screens[_currentIndex],
-
-            // 👇 Floating Bottom Bar
             Positioned(
               left: 0,
               right: 0,

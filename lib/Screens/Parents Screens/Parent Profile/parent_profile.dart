@@ -223,36 +223,47 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        AppText.appText(
-                                            widget.isTutorSide == false
-                                                ? capitalizeEachWord(name!)
-                                                : capitalizeEachWord(
-                                                    "${provider.fName} ${provider.lName}"),
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500,
-                                            textColor: AppTheme.black),
-                                        if (provider.isVerified == true)
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 4),
-                                            child: Icon(
-                                              Icons.verified,
-                                              color: AppTheme.appColor,
-                                            ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Flexible(
+                                            fit: FlexFit.loose,
+                                            child: AppText.appText(
+                                                widget.isTutorSide == false
+                                                    ? capitalizeEachWord(name!)
+                                                    : capitalizeEachWord(
+                                                        "${provider.fName} ${provider.lName}"),
+                                                fontSize: 30,
+                                                maxlines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                fontWeight: FontWeight.w500,
+                                                textColor: AppTheme.black),
                                           ),
-                                      ],
-                                    ),
-                                    AppText.appText(
-                                        "${provider.children.length} children profiles",
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        textColor: AppTheme.grey),
-                                  ],
+                                          if (provider.isVerified == true)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5),
+                                              child: Icon(
+                                                Icons.verified,
+                                                color: AppTheme.appColor,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                      AppText.appText(
+                                          "${provider.children.length} children profiles",
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          textColor: AppTheme.grey),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(

@@ -11,7 +11,7 @@ import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Helpers/timeformat.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
+import 'package:ustaad/Screens/Drawer/drawer.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 import 'package:ustaad/Custom%20widgets/session_cards.dart';
 import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';
@@ -140,11 +140,19 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
     if (isLoading) return Expanded(child: GifLoader());
 
     if (upcomingSessions.isEmpty) {
-      return Expanded(
-        child: Center(
-          child: AppText.appText("No Upcoming Session at this Time"),
-        ),
-      );
+      if (showUpcoming) {
+        return Expanded(
+          child: Center(
+            child: AppText.appText("No Upcoming Session at this Time"),
+          ),
+        );
+      } else {
+        return Expanded(
+          child: Center(
+            child: AppText.appText("No Completed Session at this Time"),
+          ),
+        );
+      }
     }
 
     return Expanded(
@@ -226,36 +234,7 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
         ).then((_) {
           getSessions(context);
         });
-
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => SessionUpdateScreen(
-        //       runningId: runningSessions[0]["id"],
-        //       isRunning: isonTap,
-        //       name: "${session["parentName"]}",
-        //       parentId: "${session["parentId"]}",
-        //       tutorId: "${session["tutorId"]}",
-        //       sessionId: "${session["id"]}",
-        //     ),
-        //   ),
-        // ).then((_) {
-        //   getSessions(context);
-        // });
       } else if (runningSessions.isEmpty) {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => SessionCheckOut(
-        //             ruuningId:
-        //                 runningSessions.isEmpty ? "" : runningSessions[0]["id"],
-        //             parentId: "${session["parentId"]}",
-        //             tutorId: "${session["tutorId"]}",
-        //             sessionId: "${session["id"]}",
-        //           )),
-        // ).then((_) {
-        //   getSessions(context);
-        // });
         Navigator.push(
           context,
           MaterialPageRoute(

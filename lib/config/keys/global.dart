@@ -2,7 +2,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
 import 'package:ustaad/Providers/Contracts/contract_provider.dart';
 import 'package:ustaad/Providers/Parent%20Side/dashboard_provider.dart';
@@ -33,6 +32,7 @@ double? globalParentLatitutde;
 String? globalNotiCount;
 double? globalParentLongitude;
 String? globalUserOnBoardStatus;
+String? globalGoogleId;
 
 Future<void> getPrefData() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -43,6 +43,7 @@ Future<void> getPrefData() async {
   globalUserRole = prefs.getString(PrefKey.userRole) ?? '';
   globalUserPic = prefs.getString(PrefKey.userPic) ?? '';
   globalToken = prefs.getString(PrefKey.authorization) ?? '';
+  globalGoogleId = prefs.getString(PrefKey.isGoogleId) ?? '';
   globalUserOnBoardStatus = prefs.getString(PrefKey.onBoard) ?? '';
   globalNotiCount = prefs.getString(PrefKey.notiCount) ?? '0';
 }
@@ -57,6 +58,8 @@ void handleTokenExpiration() async {
   globalNotiCount = null;
   globalToken = null;
   globalUserPic = null;
+  globalGoogleId = null;
+
   globalParentLatitutde = null;
   globalParentLongitude = null;
   globalUserOnBoardStatus = null;
@@ -86,22 +89,14 @@ void handleLogOut(context, {bool isLogout = false}) async {
   Provider.of<NotificationProvider>(context, listen: false).clear();
 
   print("🗑 Global session cleared");
-
   await FirebaseMessaging.instance.deleteToken();
-  print("📱 FCM token deleted");
-
   SocketService().dispose();
   print("🧹 Socket disposed on logout");
 
-  if (isLogout == true) {
-    AppToast.success(
-      context: context,
-      msg: "Logged out successfully",
-    );
-  }
-
   Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (_) => LogInScreen()),
+    MaterialPageRoute(
+      builder: (_) => LogInScreen(showLogoutMessage: true),
+    ),
     (route) => false,
   );
 }
@@ -112,6 +107,7 @@ Future<void> clearAppSession() async {
   globalUserLastName = null;
   globalUserRole = null;
   globalToken = null;
+  globalGoogleId = null;
   globalUserPic = null;
   globalNotiCount = null;
   globalParentLatitutde = null;

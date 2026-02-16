@@ -9,24 +9,25 @@ import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Models/Tutor%20Side/bank_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
+import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
 
-class BankSelectionScreen extends StatefulWidget {
+class ParentBankSelectionScreen extends StatefulWidget {
   final VoidCallback onTap;
-  final TutorOnboardData onboardData;
+  final ParentOnboardData parentOnboardData;
   final VoidCallback onBackTap;
 
-  const BankSelectionScreen(
+  const ParentBankSelectionScreen(
       {super.key,
       required this.onTap,
-      required this.onboardData,
-      required this.onBackTap});
+      required this.onBackTap,
+      required this.parentOnboardData});
 
   @override
-  State<BankSelectionScreen> createState() => _BankSelectionScreenState();
+  State<ParentBankSelectionScreen> createState() =>
+      _ParentBankSelectionScreenState();
 }
 
-class _BankSelectionScreenState extends State<BankSelectionScreen> {
+class _ParentBankSelectionScreenState extends State<ParentBankSelectionScreen> {
   List<BankModel> banks = [];
   BankModel? selectedBank;
   final TextEditingController accountController = TextEditingController();
@@ -92,7 +93,7 @@ class _BankSelectionScreenState extends State<BankSelectionScreen> {
                             fontSize: 42, fontWeight: FontWeight.w400),
                       ),
                       TextSpan(
-                          text: "Earnings",
+                          text: "Spendings",
                           style: TextStyle(
                               color: AppTheme.appColor,
                               fontSize: 42,
@@ -179,7 +180,8 @@ class _BankSelectionScreenState extends State<BankSelectionScreen> {
                 ),
                 AppButton.appButton("Proceed", context: context, onTap: () {
                   if (selectedBank == null || selectedBank!.name.isEmpty) {
-                    AppToast.error(context: context,msg: "Please select a bank");
+                    AppToast.error(
+                        context: context, msg: "Please select a Bank");
                     return;
                   }
 
@@ -187,12 +189,13 @@ class _BankSelectionScreenState extends State<BankSelectionScreen> {
                       accountController.text.replaceAll(' ', '').trim();
 
                   if (cleanedAccount.isEmpty) {
-                    AppToast.error(context: context,msg: "Please enter account number");
+                    AppToast.error(
+                        context: context, msg: "Please enter Account Number");
                     return;
                   }
 
-                  widget.onboardData.selectedBank = selectedBank!.name;
-                  widget.onboardData.accountNumber = cleanedAccount;
+                  widget.parentOnboardData.selectedBank = selectedBank!.name;
+                  widget.parentOnboardData.accountNumber = cleanedAccount;
 
                   widget.onTap();
                 },

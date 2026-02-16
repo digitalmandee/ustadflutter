@@ -40,8 +40,8 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
           children: [
             AppText.appText("Sign Up As:",
                 fontSize: 16,
-                fontWeight: FontWeight.w400,
-                textColor: AppTheme.lighttxtColor),
+                fontWeight: FontWeight.w500,
+                textColor: AppTheme.lableText),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -7,7 +7,7 @@ import 'package:ustaad/Helpers/capitalize.dart';
 import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Setting/setting_screen.dart';
+import 'package:ustaad/Screens/Drawer/Setting/setting_screen.dart';
 import 'package:ustaad/Screens/Notifications/notification_screen.dart';
 import 'package:ustaad/config/keys/global.dart';
 

@@ -44,11 +44,9 @@ class _SplashScreenState extends State<SplashScreen>
   void _navigateToHome(context) {
     Future.delayed(const Duration(seconds: 3), () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
       String? token = prefs.getString(PrefKey.authorization);
       String? role = prefs.getString(PrefKey.userRole);
       String? isOnBoard = prefs.getString(PrefKey.onBoard);
-      print("nflm3f3mf $isOnBoard");
       if (token != null && token.isNotEmpty) {
         if (role == "PARENT" && isOnBoard != "required") {
           pushReplacement(

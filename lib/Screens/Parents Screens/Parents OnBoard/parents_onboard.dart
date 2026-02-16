@@ -3,6 +3,8 @@ import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Screens/Authentication/widgets/widgets.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/child_profile.dart';
+import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
+import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/parent_bank_selection.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/parents_verify.dart';
 
 class ParentsOnboardScreen extends StatefulWidget {
@@ -16,11 +18,14 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   int currentStep = 0;
+  late ParentOnboardData parentOnboardData;
+
   @override
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    parentOnboardData = ParentOnboardData();
   }
 
   @override
@@ -34,11 +39,17 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
-                  stepIndicator(
-                      "Profile", 0, context, ScreenSize(context).width * 0.42,
+                  stepIndicator("Profile", 0, context,
                       controller: _tabController),
-                  stepIndicator("Verifications", 1, context,
-                      ScreenSize(context).width * 0.42,
+                  SizedBox(
+                    width: 5,
+                  ),
+                  stepIndicator("Banks", 1, context,
+                      controller: _tabController),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  stepIndicator("Verifications", 2, context,
                       controller: _tabController),
                 ],
               ),
@@ -56,17 +67,34 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
                         });
                       }
                     },
-                    onBackTap: () {
-                      if (_tabController.index < 1) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
+                    // onBackTap: () {
+                    //   if (_tabController.index < 1) {
+                    //     setState(() {
+                    //       _tabController.animateTo(_tabController.index - 1);
+                    //     });
+                    //   }
+                    // },
                   ),
+                  ParentBankSelectionScreen(
+                      onTap: () {
+                        if (_tabController.index < 2) {
+                          setState(() {
+                            _tabController.animateTo(_tabController.index + 1);
+                          });
+                        }
+                      },
+                      onBackTap: () {
+                        if (_tabController.index < 2) {
+                          setState(() {
+                            _tabController.animateTo(_tabController.index - 1);
+                          });
+                        }
+                      },
+                      parentOnboardData: parentOnboardData),
                   ParentsVerificationScreen(
+                    parentOnboardData: parentOnboardData,
                     onBackTap: () {
-                      if (_tabController.index < 2) {
+                      if (_tabController.index < 3) {
                         setState(() {
                           _tabController.animateTo(_tabController.index - 1);
                         });

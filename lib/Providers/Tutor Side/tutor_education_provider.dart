@@ -101,10 +101,10 @@ class EducationProvider with ChangeNotifier {
         // ✅ Add updated object to the list
         _education.add(newEdu);
 
-        AppToast.success(
-          context: context,
-          msg: "${response.data["message"]}",
-        );
+        // AppToast.success(
+        //   context: context,
+        //   msg: "${response.data["message"]}",
+        // );
 
         addEduLoader = false;
         notifyListeners();
@@ -146,8 +146,13 @@ class EducationProvider with ChangeNotifier {
           _education[index] = education;
         }
         notifyListeners();
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         return true;
+      } else {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Update error: $e");
@@ -162,8 +167,13 @@ class EducationProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         _education.removeWhere((e) => e.id == id);
         notifyListeners();
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         return true;
+      } else {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Delete error: $e");

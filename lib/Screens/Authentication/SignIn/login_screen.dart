@@ -25,7 +25,8 @@ import 'package:ustaad/config/keys/pref_keys.dart';
 import 'package:ustaad/config/keys/urls.dart';
 
 class LogInScreen extends StatefulWidget {
-  const LogInScreen({super.key});
+  final bool showLogoutMessage;
+  const LogInScreen({super.key, this.showLogoutMessage = false});
 
   @override
   State<LogInScreen> createState() => _LogInScreenState();
@@ -46,6 +47,14 @@ class _LogInScreenState extends State<LogInScreen> {
   void initState() {
     super.initState();
     dio = AppDio(context);
+    if (widget.showLogoutMessage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppToast.success(
+          context: context,
+          msg: "Logged out successfully",
+        );
+      });
+    }
     getDeviceToken();
     isTokenRefresh();
     _googleSignInService = GoogleSignInService.instance;
@@ -282,10 +291,10 @@ class _LogInScreenState extends State<LogInScreen> {
 
   Future<void> _googleSignIn(context, Map<String, dynamic> userData) async {
     try {
-      final role = await _selectUserRole(context);
+      // final role = await _selectUserRole(context);
       final name = splitName(userData["displayName"] ?? "");
 
-      if (role == null) return;
+      // if (role == null) return;
 
       final response = await dio.post(
         path: AppUrls.googleSignIn,
@@ -296,7 +305,7 @@ class _LogInScreenState extends State<LogInScreen> {
           "lastName": name["lastName"],
           "image": userData["photoUrl"] ?? "",
           "accessToken": userData["idToken"] ?? "",
-          "role": role.toUpperCase(),
+          // "role": role.toUpperCase(),
         },
       );
 
@@ -318,152 +327,6 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  Future<String?> _selectUserRole(BuildContext context) {
-    String? selectedRole;
-
-    return showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              titlePadding: const EdgeInsets.only(top: 20),
-              title: Center(
-                child: Text(
-                  "Select Your Role",
-                  style: TextStyle(
-                    color: AppTheme.appColor,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              content: SizedBox(
-                width: 320,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildRoleCard(
-                          context,
-                          label: "Parent",
-                          selected: selectedRole == "Parent",
-                          onSelect: () =>
-                              setState(() => selectedRole = "Parent"),
-                        ),
-                        _buildRoleCard(
-                          context,
-                          label: "Tutor",
-                          selected: selectedRole == "Tutor",
-                          onSelect: () =>
-                              setState(() => selectedRole = "Tutor"),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.pop(context, null),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey.shade300,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.black87),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: selectedRole != null
-                                ? () => Navigator.pop(context, selectedRole)
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.appColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              "Continue",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /// ✅ Reusable role card widget
-  Widget _buildRoleCard(
-    BuildContext context, {
-    required String label,
-    required bool selected,
-    required VoidCallback onSelect,
-  }) {
-    return GestureDetector(
-      onTap: onSelect,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 100,
-        width: ScreenSize(context).width * 0.3,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? AppTheme.appColor : AppTheme.borderCOlor,
-            width: 2,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Radio<String>(
-              value: label,
-              groupValue: selected ? label : null,
-              activeColor: AppTheme.appColor,
-              onChanged: (_) => onSelect(),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: selected ? AppTheme.appColor : AppTheme.lighttxtColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _handleLoginSuccess(
       context, Map<String, dynamic> responseData) async {
     final data = responseData["data"];
@@ -476,6 +339,7 @@ class _LogInScreenState extends State<LogInScreen> {
     await prefs.setString(PrefKey.userLastName, data["lastName"]);
     await prefs.setString(PrefKey.userPic, data["image"] ?? '');
     await prefs.setString(PrefKey.onBoard, data["isOnBoard"] ?? '');
+    await prefs.setString(PrefKey.isGoogleId, data["googleId"] ?? '');
 
     globalUserId = data["id"];
     globalUserFirstName = data["firstName"];
@@ -484,6 +348,7 @@ class _LogInScreenState extends State<LogInScreen> {
     globalToken = data["token"];
     globalUserPic = data["image"] ?? '';
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
+    globalGoogleId = data["googleId"] ?? "";
 
     if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
       push(
@@ -521,7 +386,7 @@ class _LogInScreenState extends State<LogInScreen> {
     else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {
       push(context, TutorOnboardScreen());
     } else if (data["isOnBoard"] == "required" && data["role"] == "PARENT") {
-      pushReplacement(context, ParentsOnboardScreen());
+      push(context, ParentsOnboardScreen());
     } else if (data["role"] == "TUTOR") {
       pushReplacement(context, BottomNavView(tutor: true));
     } else if (data["role"] == "PARENT") {

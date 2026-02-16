@@ -26,7 +26,7 @@ class AddChildBottomSheet extends StatefulWidget {
 class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController grade = TextEditingController();
+  // final TextEditingController grade = TextEditingController();
   final TextEditingController age = TextEditingController();
   final TextEditingController schoolName = TextEditingController();
   final TextEditingController otherCurriculum = TextEditingController();
@@ -41,7 +41,25 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
     "Local",
     "Others"
   ];
+  final List<String> allGrades = [
+    "Pre-KG",
+    "KG-1",
+    "KG-2",
+    "Grade 1",
+    "Grade 2",
+    "Grade 3",
+    "Grade 4",
+    "Grade 5",
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+    "Matriculation",
+    "Intermediate",
+    "O Level",
+    "A Level"
+  ];
   String? selectedGender;
+  String? selectedGrade;
   String? selectedCurriculum;
   XFile? selectedImage;
   bool isSubmitting = false;
@@ -52,7 +70,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
     if (widget.child != null) {
       firstNameController.text = widget.child!.firstName;
       lastNameController.text = widget.child!.lastname;
-      grade.text = widget.child!.grade;
+      selectedGrade = widget.child!.grade;
       age.text = widget.child!.age;
       schoolName.text = widget.child!.school;
       if (allCurriculums.contains(widget.child!.curriculum)) {
@@ -69,7 +87,6 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    print("nfkn4fk4f $profilePic");
     final provider = Provider.of<ParentProfileProvider>(context, listen: false);
     return Padding(
       padding: EdgeInsets.only(
@@ -136,7 +153,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                             id: widget.child!.id,
                                             firstName: firstNameController.text,
                                             lastName: lastNameController.text,
-                                            grade: grade.text,
+                                            grade: selectedGrade!,
                                             curriculum: selectedCurriculum ==
                                                     "Others"
                                                 ? otherCurriculum.text.trim()
@@ -146,8 +163,17 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                             gender:
                                                 selectedGender!.toLowerCase(),
                                             imageFile: selectedImage,
+                                            base64Image: profilePic,
                                           );
                                           Navigator.pop(context);
+                                          await Future.delayed(const Duration(
+                                              milliseconds: 200));
+                                          if (mounted) {
+                                            AppToast.success(
+                                              context: context,
+                                              msg: "Child Updated successfully",
+                                            );
+                                          }
                                         } catch (e) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
@@ -161,20 +187,31 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                       } else {
                                         try {
                                           await provider.addChild(
-                                            firstName: firstNameController.text,
-                                            lastName: lastNameController.text,
-                                            curriculum: selectedCurriculum ==
-                                                    "Others"
-                                                ? otherCurriculum.text.trim()
-                                                : selectedCurriculum!,
-                                            grade: grade.text,
-                                            age: age.text,
-                                            schoolName: schoolName.text,
-                                            gender:
-                                                selectedGender!.toLowerCase(),
-                                            imageFile: selectedImage,
-                                          );
-                                          pop(context);
+                                              firstName:
+                                                  firstNameController.text,
+                                              lastName: lastNameController.text,
+                                              curriculum: selectedCurriculum ==
+                                                      "Others"
+                                                  ? otherCurriculum.text.trim()
+                                                  : selectedCurriculum!,
+                                              grade: selectedGrade!,
+                                              age: age.text,
+                                              schoolName: schoolName.text,
+                                              gender:
+                                                  selectedGender!.toLowerCase(),
+                                              imageFile: selectedImage,
+                                              context: context);
+                                          Navigator.pop(context);
+
+                                          await Future.delayed(const Duration(
+                                              milliseconds: 200));
+
+                                          if (mounted) {
+                                            AppToast.success(
+                                              context: context,
+                                              msg: "Child Added successfully",
+                                            );
+                                          }
                                         } catch (e) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
@@ -218,7 +255,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
 
   bool validateChildForm(BuildContext context) {
     if (!isImageValid()) {
-      AppToast.error(context: context, msg: "Please select a valid image");
+      AppToast.error(context: context, msg: "Please select an image");
       return false;
     }
 
@@ -242,13 +279,17 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
       return false;
     }
 
-    if (grade.text.trim().isEmpty) {
+    if (selectedGrade == null) {
       AppToast.error(context: context, msg: "Grade is required");
       return false;
     }
 
     if (age.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Age is required");
+      return false;
+    }
+    if (!RegExp(r'^[0-9]+$').hasMatch(age.text.trim())) {
+      AppToast.error(context: context, msg: "Age must contain only digits");
       return false;
     }
 
@@ -275,12 +316,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
   }
 
   Widget _buildProfileImage() {
-    // EDIT MODE + SERVER IMAGE (base64)
-    if (widget.child != null && profilePic != null && profilePic!.isNotEmpty) {
-      return Base64ImageWidget(
-        base64String: profilePic!,
-      );
-    }
+    print("object $selectedImage");
 
     // NEW IMAGE PICKED
     if (selectedImage != null) {
@@ -291,10 +327,16 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
         fit: BoxFit.cover,
       );
     }
+    // EDIT MODE + SERVER IMAGE (base64)
+    if (widget.child != null && profilePic != null && profilePic!.isNotEmpty) {
+      return Base64ImageWidget(
+        base64String: profilePic!,
+      );
+    }
 
     // DEFAULT IMAGE
     return Image.asset(
-      "assets/images/user.png",
+      "assets/images/parentProfile.jpeg",
       width: 90,
       height: 90,
       fit: BoxFit.cover,
@@ -318,13 +360,6 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                     border: Border.all(color: AppTheme.appColor, width: 1)),
                 child: ClipOval(child: _buildProfileImage()),
               ),
-              // CircleAvatar(
-              //   radius: 45,
-              //   backgroundColor: Colors.grey.shade200,
-              //   child: ClipOval(
-              //     child: _buildProfileImage(),
-              //   ),
-              // ),
               Column(
                 children: [
                   AppButton.appButton("Upload New",
@@ -425,24 +460,91 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _genderTile(
-                "Male",
+              Expanded(
+                child: _genderTile(
+                  "Male",
+                ),
               ),
-              _genderTile("Female"),
+              SizedBox(
+                width: 5,
+              ),
+              Expanded(child: _genderTile("Female")),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              customLableField(
-                  lable: "Grade",
-                  width: ScreenSize(context).width * 0.4,
-                  controller: grade),
-              customLableField(
-                  lable: "Age",
-                  width: ScreenSize(context).width * 0.4,
-                  controller: age),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText.appText(
+                      "Grade",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      textColor: AppTheme.lableText,
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: Text(
+                              'Select Grade',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppTheme.hintColor,
+                              ),
+                            ),
+                            items: allGrades
+                                .map((e) => DropdownMenuItem<String>(
+                                      value: e,
+                                      child: Text(
+                                        e,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            value: selectedGrade,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedGrade = value;
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.borderCOlor),
+                              ),
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 150,
+                              offset: const Offset(0, -5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ))),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              // customLableField(
+              //     lable: "Grade",
+              //     width: ScreenSize(context).width * 0.4,
+              //     controller: grade),
+              Expanded(
+                child: customLableField(
+                    lable: "Age",
+                    controller: age,
+                    textType: TextInputType.numberWithOptions()),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -459,8 +561,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
       onTap: () => setState(() => selectedGender = gender),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        height: 44,
-        width: MediaQuery.of(context).size.width * 0.4,
+        height: 40,
         decoration: BoxDecoration(
           border: Border.all(
             color: selectedGender == gender
