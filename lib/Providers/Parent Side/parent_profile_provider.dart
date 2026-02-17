@@ -36,14 +36,17 @@ class ParentProfileProvider with ChangeNotifier {
   String parentImage = '';
   String tasks = "0";
   bool isVerified = false;
+  String profileBalance = "0";
+  String bankName = "";
+  String accountNumber = "";
   String fName = '';
   String lName = '';
   String averageRating = '';
-
   String totalReviews = '';
   String unReadMessages = "";
   bool isTutorSide = false;
   List ratingData = [];
+  List<dynamic> parentTranferredHistory = [];
 
   Future<void> fetchChildren(context) async {
     if (children.isEmpty) {
@@ -110,6 +113,76 @@ class ParentProfileProvider with ChangeNotifier {
       debugPrint("Error fetching child notes: $e");
     } finally {
       _notesLoader = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getPaymentRequests(context) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _dio.get(path: AppUrls.getParentPaymentRequests);
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+        parentTranferredHistory = data;
+      } else {
+        AppToast.error(
+          context: context,
+          msg:
+              response.data["errors"]?[0]?["message"] ?? "Something went wrong",
+        );
+      }
+    } catch (e) {
+      AppToast.error(
+        context: context,
+        msg: "Something went wrong: $e",
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateBankDetails(
+      context, String newBankName, String newAccountNumber) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final body = {
+        "bankName": newBankName,
+        "accountNumber": newAccountNumber,
+      };
+
+      final response = await _dio.patch(
+        path: AppUrls.parentUpdateBank,
+        data: body,
+      );
+
+      if (response.statusCode == 200) {
+        bankName = newBankName;
+        accountNumber = newAccountNumber;
+
+        notifyListeners();
+        return true;
+      } else {
+        AppToast.error(
+          context: context,
+          msg: response.data["errors"]?[0]?["message"] ??
+              "Failed to update bank details",
+        );
+        return false;
+      }
+    } catch (e) {
+      AppToast.error(
+        context: context,
+        msg: "Something went wrong: $e",
+      );
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
@@ -313,6 +386,9 @@ class ParentProfileProvider with ChangeNotifier {
         profileData = data;
         tasks = data["totalSessions"]?.toString() ?? "0";
         unReadMessages = data["unreadMessageCount"]?.toString() ?? "0";
+        profileBalance = (data["user"]["Parent"]["balance"] ?? '0').toString();
+        bankName = data["user"]["Parent"]["bankName"] ?? "";
+        accountNumber = data["user"]["Parent"]["accountNumber"] ?? "";
         final prefs = await SharedPreferences.getInstance();
 
         await prefs.setString(PrefKey.notiCount, unReadMessages);

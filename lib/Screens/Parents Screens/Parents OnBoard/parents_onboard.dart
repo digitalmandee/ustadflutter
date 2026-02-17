@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Screens/Authentication/widgets/widgets.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/child_profile.dart';
 import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';

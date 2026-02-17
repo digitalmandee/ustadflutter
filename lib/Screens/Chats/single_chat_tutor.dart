@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:record/record.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 import 'package:ustaad/Custom%20widgets/app_field.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';

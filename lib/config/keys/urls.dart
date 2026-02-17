@@ -91,8 +91,11 @@ class AppUrls {
 
   ////////////////////  PAYMENTS ///////////////////////
   static const String withdrawAmount = "tutor/payment-request";
+  static const String parentWithdrawAmount = "parent/payment-request";
+  static const String parentUpdateBank = "parent/bank-details";
   static const String getPaymentRequests = "tutor/payment-request";
   static const String getParentCards = "parent/payfast/instruments";
+  static const String getParentPaymentRequests = "parent/payment-request";
 
   ////////////////////  CONTRACTS ///////////////////////
   static const String getTutorContracts = "tutor/contracts";

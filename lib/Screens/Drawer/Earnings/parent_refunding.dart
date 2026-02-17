@@ -10,7 +10,7 @@ import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Models/Tutor%20Side/bank_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
 import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
 import 'package:ustaad/Custom%20widgets/app_bar.dart';
 import 'package:ustaad/config/dio/app_logger.dart';
@@ -32,19 +32,19 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
   void initState() {
     super.initState();
     logger.init();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   final provider =
-    //       Provider.of<TutorDashBoardProvider>(context, listen: false);
-    //   provider.getPaymentRequests(context);
-    //   final provider1 =
-    //       Provider.of<TutorDashBoardProvider>(context, listen: false);
-    //   provider1.getTutorProfile(context);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider =
+          Provider.of<ParentProfileProvider>(context, listen: false);
+      provider.getPaymentRequests(context);
+      final provider1 =
+          Provider.of<ParentProfileProvider>(context, listen: false);
+      provider1.getParentProfile(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<TutorDashBoardProvider>();
+    final provider = context.watch<ParentProfileProvider>();
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -84,7 +84,8 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
                     child: Padding(
                     padding: const EdgeInsets.only(top: 20.0),
                     child: _buildTransferredList(
-                        context: context, history: provider.tranferredHistory),
+                        context: context,
+                        history: provider.parentTranferredHistory),
                   )),
           ],
         ),
@@ -122,7 +123,7 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
   }
 
   Widget _buildBalanceSection(
-      BuildContext context, TutorDashBoardProvider provider) {
+      BuildContext context, ParentProfileProvider provider) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,17 +141,26 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
               textColor: const Color(0xff8A8A8A)),
           const SizedBox(height: 30),
           AppButton.appButton("Withdraw", context: context, onTap: () {
-            // showModalBottomSheet(
-            //   backgroundColor: AppTheme.white,
-            //   context: context,
-            //   isScrollControlled: true,
-            //   isDismissible: false,
-            //   enableDrag: false,
-            //   shape: const RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            //   ),
-            //   builder: (context) => const BankSheet(),
-            // );
+            final balance = double.tryParse(provider.profileBalance) ?? 0;
+
+            if (balance > 0) {
+              showModalBottomSheet(
+                backgroundColor: AppTheme.white,
+                context: context,
+                isScrollControlled: true,
+                isDismissible: false,
+                enableDrag: false,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) => const BankSheet(),
+              );
+            } else {
+              AppToast.error(
+                context: context,
+                msg: "Your balance is 0. You cannot withdraw.",
+              );
+            }
           },
               backgroundColor: AppTheme.primaryCOlor,
               border: false,
@@ -165,11 +175,11 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: provider.tranferredHistory.length >= 3
+            itemCount: provider.parentTranferredHistory.length >= 3
                 ? 3
-                : provider.tranferredHistory.length,
+                : provider.parentTranferredHistory.length,
             itemBuilder: (context, index) {
-              final data = provider.tranferredHistory[index];
+              final data = provider.parentTranferredHistory[index];
               return _transferItem(context, data);
             },
           ),
@@ -269,15 +279,15 @@ class _BankSheetState extends State<BankSheet> {
 
     try {
       final response =
-          await dio.post(path: AppUrls.withdrawAmount, data: params);
+          await dio.post(path: AppUrls.parentWithdrawAmount, data: params);
       final data = response.data;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final provider =
-            Provider.of<TutorDashBoardProvider>(context, listen: false);
-        await provider.getTutorProfile(context);
+            Provider.of<ParentProfileProvider>(context, listen: false);
+        await provider.getParentProfile(context);
         final provider1 =
-            Provider.of<TutorDashBoardProvider>(context, listen: false);
+            Provider.of<ParentProfileProvider>(context, listen: false);
         provider1.getPaymentRequests(context);
         setState(() => isLoading = false);
 
@@ -303,7 +313,7 @@ class _BankSheetState extends State<BankSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<TutorDashBoardProvider>();
+    final provider = context.watch<ParentProfileProvider>();
     return SingleChildScrollView(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
@@ -483,8 +493,7 @@ class _AddBankBottomSheetState extends State<AddBankBottomSheet> {
     }
 
     setState(() => isLoading = true);
-    final provider =
-        Provider.of<TutorDashBoardProvider>(context, listen: false);
+    final provider = Provider.of<ParentProfileProvider>(context, listen: false);
 
     bool success = await provider.updateBankDetails(
         context, selectedBank!.name, cleanedAccountNumber);
