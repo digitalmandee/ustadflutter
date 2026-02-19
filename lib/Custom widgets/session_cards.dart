@@ -250,21 +250,19 @@ class SessionCard extends StatelessWidget {
     }
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         AppText.appText(
           "Start Time:",
           textColor: _textColor,
           fontWeight: FontWeight.w800,
-          fontSize: 13,
-        ),
-        SizedBox(
-          width: 2,
+          fontSize: 12,
         ),
         AppText.appText(
           "$startTime",
           textColor: _textColor,
           fontWeight: FontWeight.w500,
-          fontSize: 13,
+          fontSize: 12,
         ),
       ],
     );
