@@ -317,8 +317,8 @@ class ChatTile extends StatelessWidget {
                       padding: const EdgeInsets.all(5.0),
                       child: AppText.appText(
                         unreadCount.toString(),
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
                         textColor: AppTheme.white,
                       ),
                     ),

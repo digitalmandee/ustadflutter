@@ -158,10 +158,6 @@ class AboutProvider with ChangeNotifier {
     try {
       final response = await dio.post(path: AppUrls.addAbout, data: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
-        AppToast.success(
-          context: context,
-          msg: response.data["message"] ?? "About added successfully",
-        );
         await fetchAboutData(context);
         return true;
       } else {

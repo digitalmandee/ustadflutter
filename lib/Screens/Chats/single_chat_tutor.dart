@@ -513,7 +513,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                                   final msgIndex = messages
                                       .indexWhere((m) => m.id == messageId);
                                   if (msgIndex == -1 ||
-                                      messages[msgIndex].offer == null) return;
+                                      messages[msgIndex].offer == null) {
+                                    return;
+                                  }
                                   final offerId =
                                       messages[msgIndex].offer!["id"];
                                   Navigator.push(

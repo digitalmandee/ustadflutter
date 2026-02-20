@@ -172,7 +172,7 @@ class _AddCostSubjectSheetState extends State<AddCostSubjectSheet> {
                     scale: 0.60,
                     child: Switch(
                       activeTrackColor: AppTheme.primaryCOlor,
-                      activeColor: Colors.white,
+                      activeThumbColor: Colors.white,
                       inactiveTrackColor: const Color(0xffE0E3EB),
                       inactiveThumbColor: const Color(0xffC8CDDA),
                       value: button,

@@ -62,6 +62,7 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
               alignment: Alignment.center,
               child: Container(
                 height: 40,
+                width: 250,
                 decoration: BoxDecoration(
                     color: const Color(0xffECEEF3),
                     borderRadius: BorderRadius.circular(10)),
@@ -103,19 +104,17 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
       },
       child: Container(
         height: 35,
+        width: 119,
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.appColor : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Center(
-            child: AppText.appText(
-              title,
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              textColor: isSelected ? AppTheme.white : AppTheme.black,
-            ),
+        child: Center(
+          child: AppText.appText(
+            title,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            textColor: isSelected ? AppTheme.white : AppTheme.black,
           ),
         ),
       ),
@@ -129,7 +128,7 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 30),
-          AppText.appText("Your Refunding Ballance",
+          AppText.appText("Your Refunding Balance",
               fontSize: 16, fontWeight: FontWeight.w400),
           const SizedBox(height: 8),
           AppText.appText("Rs. ${provider.profileBalance}",
@@ -337,7 +336,7 @@ class _BankSheetState extends State<BankSheet> {
                     fontSize: 18, fontWeight: FontWeight.w600),
                 const SizedBox(height: 10),
                 AppText.appText(
-                  "Don't panic. You can also customise this permission by going to Settings.",
+                  "You can request to withdraw your available refund balance to your Bank Account.",
                   fontSize: 14,
                   textAlign: TextAlign.center,
                   fontWeight: FontWeight.w400,

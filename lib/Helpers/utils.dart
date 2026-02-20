@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:ustaad/splash_screen.dart';
 
 Route _zoomRoute(Widget screen) {
   return PageRouteBuilder(
@@ -17,6 +19,19 @@ Route _zoomRoute(Widget screen) {
     },
   );
 }
+
+void handleNotificationClick(RemoteMessage message, context) {
+  if (message.data['type'] == 'chat') {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SplashScreen(
+        ),
+      ),
+    );
+  }
+}
+
 
 void safePop(BuildContext context) {
   if (!Navigator.canPop(context)) return;

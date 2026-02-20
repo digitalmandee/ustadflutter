@@ -204,8 +204,14 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
       if (response.statusCode == 200 && responseData["data"] != null) {
         setState(() {
           isLoading = false;
-          // AppToast.success(context: context, msg: "${responseData["message"]}");
-          Navigator.pop(context, true);
+
+          Future.delayed(const Duration(milliseconds: 400), () {
+            if (context.mounted) Navigator.pop(context);
+            if (mounted) {
+              AppToast.success(
+                  context: context, msg: "Checked In Successfully!");
+            }
+          });
         });
 
         return;

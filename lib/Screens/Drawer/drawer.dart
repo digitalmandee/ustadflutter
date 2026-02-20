@@ -65,7 +65,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                             },
                                 'Earnings Dashboard',
                                 "assets/images/earningDashBoard.png",
-                                "View your total earnings, and payment summaries in one place."),
+                                "View your total earnings, and payment summaries at one place."),
                             menuItem(onTap: () {
                               push(
                                   context,
@@ -117,7 +117,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           },
                               'Refunding Dashboard',
                               "assets/images/earningDashBoard.png",
-                              "View your refundings, and payment summaries in one place."),
+                              "View your refundings, and payment summaries at one place."),
                           menuItem(onTap: () {
                             push(
                                 context,

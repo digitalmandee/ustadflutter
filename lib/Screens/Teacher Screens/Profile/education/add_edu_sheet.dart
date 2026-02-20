@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:ustaad/Custom%20widgets/app_button.dart';
 import 'package:ustaad/Custom%20widgets/app_text.dart';
 import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
 import 'package:ustaad/Helpers/utils.dart';
 import 'package:ustaad/Providers/Tutor%20Side/tutor_education_provider.dart';
 import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
@@ -158,14 +157,14 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                           onTap: () => _deleteEducation(context, provider),
                         ),
                       if (widget.education != null) const SizedBox(width: 10),
-                      provider.addEduLoader
-                          ? GifLoader()
-                          : AppButton.appButton(
-                              context: context,
-                              widget.education == null ? "Add" : "Update",
-                              width: 83,
-                              onTap: () => _saveEducation(context, provider),
-                            ),
+                      AppButton.appButton(
+                          context: context,
+                          widget.education == null ? "Add" : "Update",
+                          width: 83, onTap: () {
+                        if (provider.addEduLoader == false) {
+                          _saveEducation(context, provider);
+                        }
+                      }),
                     ],
                   ),
                 ],
@@ -245,21 +244,20 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                         onPrimary: Colors.white, // header text
                         onSurface: Colors.black, // calendar text
                       ),
-                      dialogBackgroundColor: Colors.white,
                       datePickerTheme: DatePickerThemeData(
                         backgroundColor: Colors.white,
 
                         /// Selected date
                         dayBackgroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.selected)) {
+                            WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
                             return AppTheme.primaryCOlor;
                           }
                           return null;
                         }),
                         dayForegroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.selected)) {
+                            WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
                             return Colors.white;
                           }
                           return Colors.black;
@@ -282,6 +280,8 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                           foregroundColor: Colors.grey,
                         ),
                       ),
+                      dialogTheme:
+                          DialogThemeData(backgroundColor: Colors.white),
                     ),
                     child: child!,
                   );
@@ -409,15 +409,18 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
     final confirmed = await showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        backgroundColor: Color.fromARGB(255, 204, 227, 234),
         title: const Text("Delete Education"),
         content: const Text("Are you sure you want to delete this?"),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel")),
+              child:
+                  AppText.appText("Cancel", textColor: AppTheme.primaryCOlor)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text("Delete")),
+              child:
+                  AppText.appText("Delete", textColor: AppTheme.primaryCOlor)),
         ],
       ),
     );

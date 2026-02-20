@@ -434,8 +434,7 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
               primary: AppTheme.primaryCOlor, // selected date
               onPrimary: Colors.white, // text color on selected date
               onSurface: Colors.black, // default text color
-            ),
-            dialogBackgroundColor: Colors.white, // background color
+            ), dialogTheme: DialogThemeData(backgroundColor: Colors.white), // background color
           ),
           child: child!,
         );
@@ -466,26 +465,26 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
             ),
             timePickerTheme: TimePickerThemeData(
               dialBackgroundColor: Colors.white, // background of the dial
-              hourMinuteTextColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return Colors.white; // selected hour/minute text
                 }
                 return Colors.black; // unselected hour/minute
               }),
-              hourMinuteColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              hourMinuteColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return AppTheme.primaryCOlor; // selected container
                 }
                 return Colors.grey.shade200; // unselected container
               }),
-              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return Colors.white; // AM/PM selected text
                 }
                 return Colors.black; // AM/PM unselected text
               }),
-              dayPeriodColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              dayPeriodColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return AppTheme.primaryCOlor; // AM/PM selected container
                 }
                 return Colors.grey.shade200; // AM/PM unselected container

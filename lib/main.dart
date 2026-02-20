@@ -32,7 +32,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  print("Handling a background message: ${message.messageId}");
+  if (kDebugMode) {
+    print("📩 Background Message Received");
+    print("Message ID: ${message.messageId}");
+    print("Title: ${message.notification?.title}");
+    print("Body: ${message.notification?.body}");
+    print("Data: ${message.data}");
+  }
 }
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -101,6 +107,18 @@ class _MyAppState extends State<MyApp> {
     _initFCM();
   }
 
+  void _handleNotificationClick(RemoteMessage message) {
+    print("Notification Data: ${message.data}");
+
+    if (message.data['type'] == 'chat') {
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => SplashScreen(),
+        ),
+      );
+    }
+  }
+
   void _requestPermission() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     NotificationSettings settings = await messaging.requestPermission();
@@ -140,9 +158,17 @@ class _MyAppState extends State<MyApp> {
         );
       }
     });
-
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // print('🚀 Notification clicked: ${message.data}');
+      print("📲 Notification Tapped (Background)");
+      _handleNotificationClick(message);
+    });
+
+    // 🟢 WHEN APP CLOSED & OPENED VIA NOTIFICATION
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        print("📲 Notification Tapped (Terminated)");
+        _handleNotificationClick(message);
+      }
     });
   }
 
