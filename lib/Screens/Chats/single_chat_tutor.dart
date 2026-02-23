@@ -130,7 +130,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     } catch (e) {
       debugPrint("❌ Error fetching conversation data: $e");
     } finally {
-      setState(() => isConversationLoading = false);
+      isConversationLoading = false;
+      // setState(() => isConversationLoading = false);
     }
   }
 
