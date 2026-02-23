@@ -47,19 +47,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDE06MhNfwmleJ8VgfY9i27QIHBwoitTRY',
-    appId: '1:349544989753:android:52d0bbc63734ee7ac2b9e8',
-    messagingSenderId: '349544989753',
-    projectId: 'ustaad-5011f',
-    storageBucket: 'ustaad-5011f.firebasestorage.app',
+    apiKey: 'AIzaSyBKoWaaLF0_5oelnY16EwS0mvDIQ1pm4s4',
+    appId: '1:707536311548:android:5cd026fa4827d9bdcdb379',
+    messagingSenderId: '707536311548',
+    projectId: 'ustaad-77b25',
+    storageBucket: 'ustaad-77b25.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCovfKy8EHDpU1zNV7qUSqGxxdoPIX1FH0',
-    appId: '1:349544989753:ios:65946f861337b0bec2b9e8',
-    messagingSenderId: '349544989753',
-    projectId: 'ustaad-5011f',
-    storageBucket: 'ustaad-5011f.firebasestorage.app',
+    apiKey: 'AIzaSyCO0GJiqh169UiuL4ybpf5h0w9NBNI5ol8',
+    appId: '1:707536311548:ios:1a69389bf9b56fe4cdb379',
+    messagingSenderId: '707536311548',
+    projectId: 'ustaad-77b25',
+    storageBucket: 'ustaad-77b25.firebasestorage.app',
     iosBundleId: 'com.example.ustaad',
   );
 

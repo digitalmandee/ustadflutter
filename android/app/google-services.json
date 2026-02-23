@@ -1,51 +1,26 @@
 {
   "project_info": {
-    "project_number": "349544989753",
-    "project_id": "ustaad-5011f",
-    "storage_bucket": "ustaad-5011f.firebasestorage.app"
+    "project_number": "707536311548",
+    "project_id": "ustaad-77b25",
+    "storage_bucket": "ustaad-77b25.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:349544989753:android:52d0bbc63734ee7ac2b9e8",
+        "mobilesdk_app_id": "1:707536311548:android:5cd026fa4827d9bdcdb379",
         "android_client_info": {
           "package_name": "com.example.ustaad"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "349544989753-6p4co50g43r17b3q82i12pnppfiaesol.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.ustaad",
-            "certificate_hash": "ca9c412f98acc777a8ea15e0bc1f6f139c2a37a8"
-          }
-        },
-        {
-          "client_id": "349544989753-bpcme9hi67ipua3iudgt5fmm5j692epa.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDE06MhNfwmleJ8VgfY9i27QIHBwoitTRY"
+          "current_key": "AIzaSyBKoWaaLF0_5oelnY16EwS0mvDIQ1pm4s4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "349544989753-bpcme9hi67ipua3iudgt5fmm5j692epa.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "349544989753-uuuc5khlq4n0148a0j25601lv916sg7h.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.ustaad"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
