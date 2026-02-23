@@ -13,6 +13,7 @@ class ExperienceProvider with ChangeNotifier {
   List<Experience> get experiences => _experiences;
 
   final AppDio dio;
+  bool addExpLoader = false;
 
   ExperienceProvider(BuildContext context) : dio = AppDio(context);
 
@@ -35,6 +36,8 @@ class ExperienceProvider with ChangeNotifier {
   }
 
   Future<bool> addExperience(Experience experience, context) async {
+    addExpLoader = true;
+    notifyListeners();
     Map<String, dynamic> params = {
       "company": experience.company,
       "startDate": experience.startDate,
@@ -59,14 +62,19 @@ class ExperienceProvider with ChangeNotifier {
         // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
-
+        addExpLoader = false;
+        notifyListeners();
         return true;
       } else {
         AppToast.error(
             context: context, msg: "${response.data["errors"][0]["message"]}");
+        addExpLoader = false;
+        notifyListeners();
       }
     } catch (e) {
       if (kDebugMode) print("Add error: $e");
+      addExpLoader = false;
+      notifyListeners();
     }
     return false;
   }

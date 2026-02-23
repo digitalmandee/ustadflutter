@@ -251,12 +251,31 @@ class _ContractScreenState extends State<ContractScreen> {
                                               AppButton.appButton(
                                                 "Complete",
                                                 context: context,
-                                                onTap: () => completeContract(
-                                                    data["id"], context),
+                                                onTap: () {
+                                                  final completedSessions =
+                                                      data["completedSessions"];
+                                                  final totalSessions =
+                                                      data["totalSessions"];
+                                                  if (completedSessions ==
+                                                      totalSessions) {
+                                                    completeContract(
+                                                        data["id"], context);
+                                                  } else {
+                                                    AppToast.error(
+                                                        context: context,
+                                                        msg:
+                                                            "Sessions are not Completed yet.");
+                                                  }
+                                                },
                                                 height: 35,
                                                 width: 90,
                                                 backgroundColor:
-                                                    AppTheme.appColor,
+                                                    data["completedSessions"] ==
+                                                            data[
+                                                                "totalSessions"]
+                                                        ? AppTheme.appColor
+                                                        : AppTheme
+                                                            .borderCOlor,
                                                 fontSize: 12,
                                               ),
                                             ],

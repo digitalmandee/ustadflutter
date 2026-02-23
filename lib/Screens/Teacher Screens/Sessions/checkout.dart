@@ -163,9 +163,15 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
         setState(() {
           isLoading = false;
         });
-        // AppToast.success(context: context, msg: "${responseData["message"]}");
+
         provider.runningSessions.clear();
-        Navigator.pop(context, true);
+        Future.delayed(const Duration(milliseconds: 400), () {
+          if (context.mounted) Navigator.pop(context);
+          if (mounted) {
+            AppToast.success(
+                context: context, msg: "Checked Out Successfully!");
+          }
+        });
       } else {
         setState(() {
           isLoading = false;

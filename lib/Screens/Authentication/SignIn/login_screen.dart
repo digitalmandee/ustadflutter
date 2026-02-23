@@ -231,7 +231,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      final fcm_tokenGEt = prefs.getString('fcm_token');
+      final fcmTokenget = prefs.getString('fcm_token');
 
       final response = await dio.post(
         path: AppUrls.logIn,
@@ -240,7 +240,7 @@ class _LogInScreenState extends State<LogInScreen> {
           headers: {
             "Content-Type": "application/json",
             "deviceId":
-                fcm_tokenGEt ?? "", // Use FCM token instead of device-id
+                fcmTokenget ?? "", // Use FCM token instead of device-id
           },
         ),
       );

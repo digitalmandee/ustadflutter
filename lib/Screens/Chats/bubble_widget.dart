@@ -523,7 +523,7 @@ class ChatBubble extends StatelessWidget {
   }) {
     final bgColor = isMe ? AppTheme.primaryCOlor : Color(0xffF2F7FB);
     final textColor = isMe ? Colors.white : AppTheme.black;
-    print("here is the message of the ofer ${text}");
+    print("here is the message of the ofer $text");
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       margin: const EdgeInsets.symmetric(vertical: 4),

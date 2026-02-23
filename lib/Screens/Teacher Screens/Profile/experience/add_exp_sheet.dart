@@ -183,7 +183,6 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                 builder: (context, child) {
                                   return Theme(
                                     data: Theme.of(context).copyWith(
-                                      dialogBackgroundColor: Colors.white,
                                       colorScheme: ColorScheme.light(
                                         primary: AppTheme
                                             .primaryCOlor, // selected date bg
@@ -197,6 +196,8 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                               AppTheme.primaryCOlor,
                                         ),
                                       ),
+                                      dialogTheme: DialogThemeData(
+                                          backgroundColor: Colors.white),
                                     ),
                                     child: child!,
                                   );
@@ -235,7 +236,6 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                       builder: (context, child) {
                                         return Theme(
                                           data: Theme.of(context).copyWith(
-                                            dialogBackgroundColor: Colors.white,
                                             colorScheme: ColorScheme.light(
                                               primary: AppTheme.primaryCOlor,
                                               onPrimary: Colors.white,
@@ -248,6 +248,8 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                                     AppTheme.primaryCOlor,
                                               ),
                                             ),
+                                            dialogTheme: DialogThemeData(
+                                                backgroundColor: Colors.white),
                                           ),
                                           child: child!,
                                         );
@@ -373,8 +375,7 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                               description: _description.text.trim(),
                               designation: _designation.text.trim(),
                             );
-
-                            bool success;
+                            bool success = false;
                             if (isEdit) {
                               if (!_hasChanges()) {
                                 AppToast.error(
@@ -387,8 +388,10 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                               success =
                                   await provider.updateExperience(exp, context);
                             } else {
-                              success =
-                                  await provider.addExperience(exp, context);
+                              if (provider.addExpLoader == false) {
+                                success =
+                                    await provider.addExperience(exp, context);
+                              }
                             }
 
                             if (success) {
@@ -438,15 +441,18 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
     final confirmed = await showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        backgroundColor: Color.fromARGB(255, 204, 227, 234),
         title: const Text("Delete Experience"),
         content: const Text("Are you sure you want to delete this?"),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel")),
+              child:
+                  AppText.appText("Cancel", textColor: AppTheme.primaryCOlor)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text("Delete")),
+              child:
+                  AppText.appText("Delete", textColor: AppTheme.primaryCOlor)),
         ],
       ),
     );

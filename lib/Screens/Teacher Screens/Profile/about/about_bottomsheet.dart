@@ -235,17 +235,15 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                           }
 
                           if (success) {
+                            print("here is the sucess $success");
                             Navigator.pop(context);
-                            await Future.delayed(
-                                const Duration(milliseconds: 200));
-                            if (mounted) {
-                              AppToast.success(
-                                context: context,
-                                msg: widget.isEdit
-                                    ? "About Updated successfully"
-                                    : "About Added successfully",
-                              );
-                            }
+
+                            AppToast.success(
+                              context: context,
+                              msg: widget.isEdit
+                                  ? "About Updated successfully"
+                                  : "About Added successfully",
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -547,7 +545,7 @@ class MultiSelectDropdown<T> extends StatelessWidget {
               runSpacing: 6,
               children: selectedItems.map((e) {
                 return Chip(
-                  label: AppText.appText(itemLabel(e),
+                  label: AppText.appText(capitalizeEachWord(itemLabel(e)),
                       textColor: AppTheme.lableText),
                   backgroundColor: AppTheme.white,
                   labelStyle: const TextStyle(color: Colors.black),

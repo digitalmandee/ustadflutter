@@ -326,7 +326,7 @@ class _BankSheetState extends State<BankSheet> {
                     fontSize: 18, fontWeight: FontWeight.w600),
                 const SizedBox(height: 10),
                 AppText.appText(
-                  "Don't panic. You can also customise this permission by going to Settings.",
+                  "You can request to withdraw your available balance to your Bank Account.",
                   fontSize: 14,
                   textAlign: TextAlign.center,
                   fontWeight: FontWeight.w400,

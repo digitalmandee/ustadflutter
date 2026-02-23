@@ -176,13 +176,10 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
   }
 
   void forgotPass(context, {text, isPhone}) async {
-    print("ldml3rlr $text");
-    print("ldml3rlr $isPhone");
     setState(() {
       isLoading = true;
     });
-    print("ldml3rlr $text");
-    print("ldml3rlr $isPhone");
+
     Map<String, dynamic> params = isPhone
         ? {
             "phone": text.replaceAll("+", ""),
