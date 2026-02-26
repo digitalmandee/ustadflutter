@@ -7,16 +7,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Chats/chat_modet.dart';
-import 'package:ustaad/Screens/Chats/image_view_screen.dart';
-import 'package:ustaad/config/keys/global.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Chats/chat_modet.dart';
+import 'package:flutterustad/Screens/Chats/image_view_screen.dart';
+import 'package:flutterustad/config/keys/global.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
@@ -40,8 +40,9 @@ class ChatBubble extends StatelessWidget {
     {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment:
-            message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           if (showAvatar) ...[
             _avatar(),
@@ -54,9 +55,7 @@ class ChatBubble extends StatelessWidget {
               crossAxisAlignment: message.isMe
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
-              children: [
-                _buildMessageByType(context),
-              ],
+              children: [_buildMessageByType(context)],
             ),
           ),
         ],
@@ -65,26 +64,21 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _buildMessageByType(BuildContext context) {
-    final alignment =
-        message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final alignment = message.isMe
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start;
 
     if (message.type == "TEXT") {
       return _buildTextMessage(context, alignment);
     } else if (message.type == "IMAGE") {
       if (message.text == 'This message was deleted') {
-        return _buildTextMessage(
-          context,
-          alignment,
-        );
+        return _buildTextMessage(context, alignment);
       } else {
         return _buildImageMessage(context, alignment, message.text);
       }
     } else if (message.type == "FILE") {
       if (message.text == 'This message was deleted') {
-        return _buildTextMessage(
-          context,
-          alignment,
-        );
+        return _buildTextMessage(context, alignment);
       } else {
         return FileBubble(
           url: message.text,
@@ -97,19 +91,13 @@ class ChatBubble extends StatelessWidget {
       }
     } else if (message.type == "AUDIO") {
       if (message.text == 'This message was deleted') {
-        return _buildTextMessage(
-          context,
-          alignment,
-        );
+        return _buildTextMessage(context, alignment);
       } else {
         return _buildAudioMessage(context, alignment, message.text);
       }
     } else {
       if (message.text == 'This message was deleted') {
-        return _buildTextMessage(
-          context,
-          alignment,
-        );
+        return _buildTextMessage(context, alignment);
       } else {
         return _buildOfferMessage(context, alignment);
       }
@@ -118,31 +106,33 @@ class ChatBubble extends StatelessWidget {
 
   Widget _avatar() {
     return Container(
-        height: 45,
-        width: 45,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-        ),
-        child: image == "" || image.isEmpty
-            ? ClipOval(
-                child: Image.asset(globalUserRole == 'TUTOR'
+      height: 45,
+      width: 45,
+      decoration: BoxDecoration(shape: BoxShape.circle),
+      child: image == "" || image.isEmpty
+          ? ClipOval(
+              child: Image.asset(
+                globalUserRole == 'TUTOR'
                     ? 'assets/images/parentProfile.jpeg'
-                    : "assets/images/tutorProfile.jpeg"))
-            : image.startsWith('http')
-                ? ClipOval(
-                    child: Image.network(
-                      image,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(globalUserRole == 'TUTOR'
-                            ? 'assets/images/parentProfile.jpeg'
-                            : "assets/images/tutorProfile.jpeg");
-                      },
-                    ),
-                  )
-                : ClipOval(
-                    child: Base64ImageWidget(base64String: image),
-                  ));
+                    : "assets/images/tutorProfile.jpeg",
+              ),
+            )
+          : image.startsWith('http')
+          ? ClipOval(
+              child: Image.network(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    globalUserRole == 'TUTOR'
+                        ? 'assets/images/parentProfile.jpeg'
+                        : "assets/images/tutorProfile.jpeg",
+                  );
+                },
+              ),
+            )
+          : ClipOval(child: Base64ImageWidget(base64String: image)),
+    );
   }
 
   // Widget _buildDynamicMessage(
@@ -164,7 +154,10 @@ class ChatBubble extends StatelessWidget {
   // }
 
   Widget _buildAudioMessage(
-      BuildContext context, CrossAxisAlignment alignment, String url) {
+    BuildContext context,
+    CrossAxisAlignment alignment,
+    String url,
+  ) {
     final audioUrl = "http://15.235.204.49:305/$url";
 
     print("here is the timing of the voice recrd : ${message.audioDuration}");
@@ -213,7 +206,10 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _buildImageMessage(
-      BuildContext context, CrossAxisAlignment alignment, String url) {
+    BuildContext context,
+    CrossAxisAlignment alignment,
+    String url,
+  ) {
     final fullUrl = "http://15.235.204.49:305/$url";
     return Column(
       crossAxisAlignment: alignment,
@@ -240,10 +236,11 @@ class ChatBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: _bubbleRadius(message.isMe),
                   border: Border.all(
-                      color: message.isMe
-                          ? AppTheme.primaryCOlor
-                          : Color(0xffF2F7FB),
-                      width: 2),
+                    color: message.isMe
+                        ? AppTheme.primaryCOlor
+                        : Color(0xffF2F7FB),
+                    width: 2,
+                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: message.isMe
@@ -268,12 +265,12 @@ class ChatBubble extends StatelessWidget {
                           Container(color: Colors.grey.shade200),
 
                           //  GifLoader(),
-
                           CircularProgressIndicator(
                             value: progress,
                             strokeWidth: 3,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                AppTheme.primaryCOlor),
+                              AppTheme.primaryCOlor,
+                            ),
                           ),
                           Text(
                             "${(progress * 100).toStringAsFixed(0)}%",
@@ -289,8 +286,11 @@ class ChatBubble extends StatelessWidget {
                     errorWidget: (context, url, error) => Container(
                       color: Colors.grey.shade300,
                       child: const Center(
-                        child: Icon(Icons.broken_image,
-                            color: Colors.red, size: 40),
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.red,
+                          size: 40,
+                        ),
                       ),
                     ),
                   ),
@@ -304,16 +304,15 @@ class ChatBubble extends StatelessWidget {
                 child: Icon(
                   message.isPending ? Icons.access_time : Icons.done_all,
                   size: 16,
-                  color:
-                      message.isPending ? Colors.grey : AppTheme.primaryCOlor,
+                  color: message.isPending
+                      ? Colors.grey
+                      : AppTheme.primaryCOlor,
                 ),
               ),
           ],
         ),
         _timeStamp(),
-        SizedBox(
-          height: 10,
-        )
+        SizedBox(height: 10),
       ],
     );
   }
@@ -336,7 +335,9 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _buildOfferMessage(
-      BuildContext context, CrossAxisAlignment alignment) {
+    BuildContext context,
+    CrossAxisAlignment alignment,
+  ) {
     return Column(
       crossAxisAlignment: alignment,
       children: [
@@ -364,7 +365,9 @@ class ChatBubble extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: _bubbleRadius(message.isMe),
         border: Border.all(
-            color: isMe ? AppTheme.primaryCOlor : Color(0xffF2F7FB), width: 2),
+          color: isMe ? AppTheme.primaryCOlor : Color(0xffF2F7FB),
+          width: 2,
+        ),
       ),
       child: Column(
         children: [
@@ -373,7 +376,9 @@ class ChatBubble extends StatelessWidget {
           _offerText("Description", message.offer!["description"]),
           const SizedBox(height: 10),
           _offerRow(
-              "Student Name", capitalizeEachWord(message.offer!["childName"])),
+            "Student Name",
+            capitalizeEachWord(message.offer!["childName"]),
+          ),
           const SizedBox(height: 10),
           _offerRow(
             "Subjects",
@@ -393,10 +398,7 @@ class ChatBubble extends StatelessWidget {
             "${formatTime(message.offer!["startTime"])} - ${formatTime(message.offer!["endTime"])}",
           ),
           const SizedBox(height: 10),
-          _offerRow(
-            "Days of Week",
-            formatDays(message.offer!["daysOfWeek"]),
-          ),
+          _offerRow("Days of Week", formatDays(message.offer!["daysOfWeek"])),
           const SizedBox(height: 20),
           _offerActions(context),
         ],
@@ -424,22 +426,14 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _offerText(String title, String value) {
-    return AppText.appText(
-      value,
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-    );
+    return AppText.appText(value, fontSize: 14, fontWeight: FontWeight.w400);
   }
 
   Widget _offerRow(String title, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText.appText(
-          "$title: ",
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-        ),
+        AppText.appText("$title: ", fontSize: 14, fontWeight: FontWeight.w800),
         Expanded(
           child: AppText.appText(
             value,
@@ -460,10 +454,10 @@ class ChatBubble extends StatelessWidget {
         backgroundColor: "${message.offer!["status"]}" == "ACCEPTED"
             ? AppTheme.appColor
             : "${message.offer!["status"]}" == "PENDING"
-                ? AppTheme.borderCOlor
-                : "${message.offer!["status"]}" == "COMPLETED"
-                    ? AppTheme.primaryCOlor
-                    : Colors.red,
+            ? AppTheme.borderCOlor
+            : "${message.offer!["status"]}" == "COMPLETED"
+            ? AppTheme.primaryCOlor
+            : Colors.red,
         border: false,
       );
     }
@@ -507,8 +501,8 @@ class ChatBubble extends StatelessWidget {
       backgroundColor: "${message.offer!["status"]}" == "ACCEPTED"
           ? AppTheme.appColor
           : "${message.offer!["status"]}" == "COMPLETED"
-              ? AppTheme.primaryCOlor
-              : Colors.red,
+          ? AppTheme.primaryCOlor
+          : Colors.red,
       border: false,
     );
   }
@@ -541,15 +535,17 @@ class ChatBubble extends StatelessWidget {
           Flexible(
             child: AppText.appText(
               type == "OFFER" ? formatOfferMessage(text) : text,
-              textColor: text == 'This message was deleted' ||
+              textColor:
+                  text == 'This message was deleted' ||
                       text == 'This message was deleted.'
                   ? isMe
-                      ? const Color.fromARGB(255, 230, 228, 228)
-                      : AppTheme.grey
+                        ? const Color.fromARGB(255, 230, 228, 228)
+                        : AppTheme.grey
                   : textColor,
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              fontStyle: text == 'This message was deleted' ||
+              fontStyle:
+                  text == 'This message was deleted' ||
                       text == 'This message was deleted.'
                   ? FontStyle.italic
                   : FontStyle.normal,
@@ -583,24 +579,32 @@ class ChatBubble extends StatelessWidget {
 
     final formattedName = name
         .split(' ')
-        .map((e) => e.isNotEmpty
-            ? e[0].toUpperCase() + e.substring(1).toLowerCase()
-            : e)
+        .map(
+          (e) => e.isNotEmpty
+              ? e[0].toUpperCase() + e.substring(1).toLowerCase()
+              : e,
+        )
         .join(' ');
 
     // ----- Subjects part -----
-    final subjectsRaw =
-        parts.last.replaceAll('[', '').replaceAll(']', '').trim();
+    final subjectsRaw = parts.last
+        .replaceAll('[', '')
+        .replaceAll(']', '')
+        .trim();
 
     final formattedSubjects = subjectsRaw
         .split(',')
-        .map((subject) => subject
-            .trim()
-            .split(' ')
-            .map((word) => word.isNotEmpty
-                ? word[0].toUpperCase() + word.substring(1)
-                : word)
-            .join(' '))
+        .map(
+          (subject) => subject
+              .trim()
+              .split(' ')
+              .map(
+                (word) => word.isNotEmpty
+                    ? word[0].toUpperCase() + word.substring(1)
+                    : word,
+              )
+              .join(' '),
+        )
         .join(', ');
 
     return 'Offer for $formattedName: $formattedSubjects';
@@ -668,9 +672,11 @@ String formatTime(String time) {
 
 String formatDays(List<dynamic> days) {
   return days
-      .map((day) =>
-          day.toString().substring(0, 1).toUpperCase() +
-          day.toString().substring(1))
+      .map(
+        (day) =>
+            day.toString().substring(0, 1).toUpperCase() +
+            day.toString().substring(1),
+      )
       .join(", ");
 }
 
@@ -751,8 +757,9 @@ class _FileBubbleState extends State<FileBubble> {
     final fileName = widget.name;
 
     return Column(
-      crossAxisAlignment:
-          widget.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: widget.isMe
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -779,25 +786,26 @@ class _FileBubbleState extends State<FileBubble> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.insert_drive_file,
-                      color: widget.isMe ? Colors.white : AppTheme.black),
+                  Icon(
+                    Icons.insert_drive_file,
+                    color: widget.isMe ? Colors.white : AppTheme.black,
+                  ),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
                       fileName,
                       style: TextStyle(
-                          color: widget.isMe ? Colors.white : AppTheme.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          overflow: TextOverflow.visible),
+                        color: widget.isMe ? Colors.white : AppTheme.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        overflow: TextOverflow.visible,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -837,8 +845,10 @@ class _FileBubbleState extends State<FileBubble> {
             ],
           ),
         ),
-        Text(widget.time,
-            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(
+          widget.time,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
       ],
     );
   }
@@ -927,16 +937,17 @@ class _AudioBubblePlayerState extends State<AudioBubblePlayer> {
       if (widget.isLocal) {
         await _player.play(DeviceFileSource(widget.url));
       } else {
-        final sanitized =
-            Uri.parse(widget.url.replaceAll('\\', '/').trim()).toString();
+        final sanitized = Uri.parse(
+          widget.url.replaceAll('\\', '/').trim(),
+        ).toString();
         await _player.play(UrlSource(sanitized));
       }
     } catch (e) {
       debugPrint('❌ Audio play error: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not play audio')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Could not play audio')));
       }
       setState(() => isLoading = false);
     }
@@ -968,45 +979,47 @@ class _AudioBubblePlayerState extends State<AudioBubblePlayer> {
     return Row(
       children: [
         if (isLoading)
-          const SizedBox(
-            width: 13,
-            height: 13,
-            child: GifLoader(),
-          )
+          const SizedBox(width: 13, height: 13, child: GifLoader())
         else
           InkWell(
             onTap: _togglePlay,
             child: Container(
-                height: 20,
-                width: 20,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        widget.isMe ? AppTheme.white : AppTheme.primaryCOlor),
-                child: Padding(
-                  padding: isPlaying
-                      ? EdgeInsets.only(
-                          left: 4.33, top: 5.0, right: 5.0, bottom: 4.33)
-                      : EdgeInsets.only(
-                          left: 7.0, top: 4.33, right: 3.33, bottom: 4.33),
-                  child: Image.asset(
-                    isPlaying
-                        ? "assets/images/pause.png"
-                        : "assets/images/play.png",
-                    color:
-                        widget.isMe ? AppTheme.primaryCOlor : Color(0xffF2F7FB),
-                  ),
-                )),
+              height: 20,
+              width: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: widget.isMe ? AppTheme.white : AppTheme.primaryCOlor,
+              ),
+              child: Padding(
+                padding: isPlaying
+                    ? EdgeInsets.only(
+                        left: 4.33,
+                        top: 5.0,
+                        right: 5.0,
+                        bottom: 4.33,
+                      )
+                    : EdgeInsets.only(
+                        left: 7.0,
+                        top: 4.33,
+                        right: 3.33,
+                        bottom: 4.33,
+                      ),
+                child: Image.asset(
+                  isPlaying
+                      ? "assets/images/pause.png"
+                      : "assets/images/play.png",
+                  color: widget.isMe
+                      ? AppTheme.primaryCOlor
+                      : Color(0xffF2F7FB),
+                ),
+              ),
+            ),
           ),
         Expanded(
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              thumbShape: const RoundSliderThumbShape(
-                enabledThumbRadius: 6,
-              ),
-              overlayShape: const RoundSliderOverlayShape(
-                overlayRadius: 15,
-              ),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 15),
             ),
             child: Slider(
               activeColor: textColor,
@@ -1026,8 +1039,8 @@ class _AudioBubblePlayerState extends State<AudioBubblePlayer> {
             color: widget.isSendSide
                 ? Colors.black
                 : widget.isMe
-                    ? Colors.white
-                    : AppTheme.black,
+                ? Colors.white
+                : AppTheme.black,
             fontSize: 12,
           ),
         ),

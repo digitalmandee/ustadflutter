@@ -4,18 +4,18 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/bank_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/bank_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class TutorEarningScreen extends StatefulWidget {
   const TutorEarningScreen({super.key});
@@ -33,11 +33,15 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
     super.initState();
     logger.init();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<TutorDashBoardProvider>(context, listen: false);
+      final provider = Provider.of<TutorDashBoardProvider>(
+        context,
+        listen: false,
+      );
       provider.getPaymentRequests(context);
-      final provider1 =
-          Provider.of<TutorDashBoardProvider>(context, listen: false);
+      final provider1 = Provider.of<TutorDashBoardProvider>(
+        context,
+        listen: false,
+      );
       provider1.getTutorProfile(context);
     });
   }
@@ -64,11 +68,14 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
                 height: 40,
                 width: 285,
                 decoration: BoxDecoration(
-                    color: const Color(0xffECEEF3),
-                    borderRadius: BorderRadius.circular(10)),
+                  color: const Color(0xffECEEF3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 2.0, vertical: 2.0),
+                    horizontal: 2.0,
+                    vertical: 2.0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -83,10 +90,13 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
                 ? Expanded(child: _buildBalanceSection(context, provider))
                 : Expanded(
                     child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: _buildTransferredList(
-                        context: context, history: provider.tranferredHistory),
-                  )),
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: _buildTransferredList(
+                        context: context,
+                        history: provider.tranferredHistory,
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -121,45 +131,61 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
   }
 
   Widget _buildBalanceSection(
-      BuildContext context, TutorDashBoardProvider provider) {
+    BuildContext context,
+    TutorDashBoardProvider provider,
+  ) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 30),
-          AppText.appText("Your Balance",
-              fontSize: 16, fontWeight: FontWeight.w400),
+          AppText.appText(
+            "Your Balance",
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
           const SizedBox(height: 8),
-          AppText.appText("Rs. ${provider.profileBalance}",
-              fontSize: 44, fontWeight: FontWeight.w600),
+          AppText.appText(
+            "Rs. ${provider.profileBalance}",
+            fontSize: 44,
+            fontWeight: FontWeight.w600,
+          ),
           const SizedBox(height: 8),
-          AppText.appText("You can Withdraw",
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              textColor: const Color(0xff8A8A8A)),
+          AppText.appText(
+            "You can Withdraw",
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            textColor: const Color(0xff8A8A8A),
+          ),
           const SizedBox(height: 30),
-          AppButton.appButton("Withdraw", context: context, onTap: () {
-            showModalBottomSheet(
-              backgroundColor: AppTheme.white,
-              context: context,
-              isScrollControlled: true,
-              isDismissible: false,
-              enableDrag: false,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) => const BankSheet(),
-            );
-          },
-              backgroundColor: AppTheme.primaryCOlor,
-              border: false,
-              fontSize: 16,
-              fontWeight: FontWeight.w500),
+          AppButton.appButton(
+            "Withdraw",
+            context: context,
+            onTap: () {
+              showModalBottomSheet(
+                backgroundColor: AppTheme.white,
+                context: context,
+                isScrollControlled: true,
+                isDismissible: false,
+                enableDrag: false,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) => const BankSheet(),
+              );
+            },
+            backgroundColor: AppTheme.primaryCOlor,
+            border: false,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
           const SizedBox(height: 20),
-          AppText.appText("Recent Transactions",
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              textColor: const Color(0xff8A8A8A)),
+          AppText.appText(
+            "Recent Transactions",
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            textColor: const Color(0xff8A8A8A),
+          ),
           const SizedBox(height: 20),
           ListView.builder(
             shrinkWrap: true,
@@ -200,9 +226,7 @@ Widget _transferItem(BuildContext context, dynamic data) {
         border: Border(
           left: BorderSide(color: AppTheme.primaryCOlor, width: 4),
         ),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
@@ -214,10 +238,7 @@ Widget _transferItem(BuildContext context, dynamic data) {
               children: [
                 AppText.appText("Request for Withdraw"),
                 const SizedBox(height: 5),
-                AppText.appText(
-                  data["status"],
-                  fontWeight: FontWeight.w600,
-                ),
+                AppText.appText(data["status"], fontWeight: FontWeight.w600),
               ],
             ),
             AppText.appText(
@@ -262,21 +283,25 @@ class _BankSheetState extends State<BankSheet> {
 
     setState(() => isLoading = true);
 
-    Map<String, dynamic> params = {
-      "amount": amountController.text,
-    };
+    Map<String, dynamic> params = {"amount": amountController.text};
 
     try {
-      final response =
-          await dio.post(path: AppUrls.withdrawAmount, data: params);
+      final response = await dio.post(
+        path: AppUrls.withdrawAmount,
+        data: params,
+      );
       final data = response.data;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final provider =
-            Provider.of<TutorDashBoardProvider>(context, listen: false);
+        final provider = Provider.of<TutorDashBoardProvider>(
+          context,
+          listen: false,
+        );
         await provider.getTutorProfile(context);
-        final provider1 =
-            Provider.of<TutorDashBoardProvider>(context, listen: false);
+        final provider1 = Provider.of<TutorDashBoardProvider>(
+          context,
+          listen: false,
+        );
         provider1.getPaymentRequests(context);
         setState(() => isLoading = false);
 
@@ -291,7 +316,9 @@ class _BankSheetState extends State<BankSheet> {
         });
       } else {
         AppToast.error(
-            context: context, msg: "${data["errors"][0]["message"]}");
+          context: context,
+          msg: "${data["errors"][0]["message"]}",
+        );
         setState(() => isLoading = false);
       }
     } catch (e) {
@@ -322,8 +349,11 @@ class _BankSheetState extends State<BankSheet> {
                     icon: const Icon(Icons.close),
                   ),
                 ),
-                AppText.appText("Withdraw Your Amount",
-                    fontSize: 18, fontWeight: FontWeight.w600),
+                AppText.appText(
+                  "Withdraw Your Amount",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
                 const SizedBox(height: 10),
                 AppText.appText(
                   "You can request to withdraw your available balance to your Bank Account.",
@@ -344,29 +374,37 @@ class _BankSheetState extends State<BankSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 customLableField(
-                    height: 52.0,
-                    lable: "Amount*",
-                    hintText: "Rs. 1000",
-                    controller: amountController,
-                    textType: TextInputType.number),
+                  height: 52.0,
+                  lable: "Amount*",
+                  hintText: "Rs. 1000",
+                  controller: amountController,
+                  textType: TextInputType.number,
+                ),
                 const SizedBox(height: 12),
-                AppText.appText("Your Bank Account",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    textColor: AppTheme.lableText),
+                AppText.appText(
+                  "Your Bank Account",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  textColor: AppTheme.lableText,
+                ),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xffE7E7E7)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.account_balance,
-                          size: 30, color: AppTheme.primaryCOlor),
+                      Icon(
+                        Icons.account_balance,
+                        size: 30,
+                        color: AppTheme.primaryCOlor,
+                      ),
                       const SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,16 +414,14 @@ class _BankSheetState extends State<BankSheet> {
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
-                          SizedBox(
-                            height: 5,
-                          ),
+                          SizedBox(height: 5),
                           AppText.appText(
                             provider.accountNumber,
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -403,8 +439,10 @@ class _BankSheetState extends State<BankSheet> {
                           isScrollControlled: true,
                           backgroundColor: AppTheme.white,
                           shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20))),
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
                           builder: (context) => const AddBankBottomSheet(),
                         );
                       },
@@ -477,16 +515,23 @@ class _AddBankBottomSheetState extends State<AddBankBottomSheet> {
 
     if (!RegExp(r'^[0-9]+$').hasMatch(accountNumber)) {
       AppToast.error(
-          context: context, msg: "Account number must contain only digits");
+        context: context,
+        msg: "Account number must contain only digits",
+      );
       return;
     }
 
     setState(() => isLoading = true);
-    final provider =
-        Provider.of<TutorDashBoardProvider>(context, listen: false);
+    final provider = Provider.of<TutorDashBoardProvider>(
+      context,
+      listen: false,
+    );
 
     bool success = await provider.updateBankDetails(
-        context, selectedBank!.name, cleanedAccountNumber);
+      context,
+      selectedBank!.name,
+      cleanedAccountNumber,
+    );
 
     setState(() => isLoading = false);
 
@@ -503,24 +548,32 @@ class _AddBankBottomSheetState extends State<AddBankBottomSheet> {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-            left: 20,
-            right: 20,
-            top: 20),
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          left: 20,
+          right: 20,
+          top: 20,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
               alignment: Alignment.topRight,
               child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close)),
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close),
+              ),
             ),
-            AppText.appText("Add New Bank",
-                fontSize: 18, fontWeight: FontWeight.w600),
+            AppText.appText(
+              "Add New Bank",
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
             const SizedBox(height: 20),
-            AppText.appText("Select Your Bank",
-                fontSize: 16, fontWeight: FontWeight.w500),
+            AppText.appText(
+              "Select Your Bank",
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
             const SizedBox(height: 8),
             DropdownButtonHideUnderline(
               child: DropdownButton2<BankModel>(
@@ -576,8 +629,11 @@ class _AddBankBottomSheetState extends State<AddBankBottomSheet> {
               ),
             ),
             const SizedBox(height: 20),
-            AppText.appText("Account Number",
-                fontSize: 16, fontWeight: FontWeight.w500),
+            AppText.appText(
+              "Account Number",
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
             const SizedBox(height: 8),
             CustomAppTextField(
               controller: accountController,

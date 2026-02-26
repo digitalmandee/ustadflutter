@@ -2,15 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/checkout.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class SessionUpdateScreen extends StatefulWidget {
   final String name;
@@ -19,14 +19,15 @@ class SessionUpdateScreen extends StatefulWidget {
   final String sessionId;
   final String runningId;
   final bool isRunning;
-  const SessionUpdateScreen(
-      {super.key,
-      required this.name,
-      required this.tutorId,
-      required this.parentId,
-      required this.sessionId,
-      required this.isRunning,
-      required this.runningId});
+  const SessionUpdateScreen({
+    super.key,
+    required this.name,
+    required this.tutorId,
+    required this.parentId,
+    required this.sessionId,
+    required this.isRunning,
+    required this.runningId,
+  });
 
   @override
   State<SessionUpdateScreen> createState() => _SessionUpdateScreenState();
@@ -49,10 +50,7 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(
-        title: "Session Update",
-        backArrow: true,
-      ),
+      appBar: CustomAppBar1(title: "Session Update", backArrow: true),
       body: Stack(
         children: [
           Positioned.fill(
@@ -116,26 +114,28 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
                       Padding(
                         padding: EdgeInsets.only(top: 40),
                         child: customButton(
-                            text: widget.isRunning == true
-                                ? "Check Out"
-                                : "Check In Now",
-                            color: AppTheme.appColor,
-                            img: "assets/images/clock.png",
-                            imgColor: AppTheme.white,
-                            onTap: () {
-                              if (widget.isRunning == true) {
-                                pushReplacement(
-                                    context,
-                                    SessionCheckOut(
-                                      ruuningId: widget.runningId,
-                                      parentId: widget.parentId,
-                                      tutorId: widget.tutorId,
-                                      sessionId: widget.sessionId,
-                                    ));
-                              } else {
-                                createSession(context, "CREATED");
-                              }
-                            }),
+                          text: widget.isRunning == true
+                              ? "Check Out"
+                              : "Check In Now",
+                          color: AppTheme.appColor,
+                          img: "assets/images/clock.png",
+                          imgColor: AppTheme.white,
+                          onTap: () {
+                            if (widget.isRunning == true) {
+                              pushReplacement(
+                                context,
+                                SessionCheckOut(
+                                  ruuningId: widget.runningId,
+                                  parentId: widget.parentId,
+                                  tutorId: widget.tutorId,
+                                  sessionId: widget.sessionId,
+                                ),
+                              );
+                            } else {
+                              createSession(context, "CREATED");
+                            }
+                          },
+                        ),
                       ),
                       // customButton(
                       //     text: "Doing Holiday",
@@ -154,7 +154,7 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ],
@@ -162,12 +162,13 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
     );
   }
 
-  Widget customButton(
-      {required String text,
-      required Color color,
-      required String img,
-      required Function() onTap,
-      Color? imgColor}) {
+  Widget customButton({
+    required String text,
+    required Color color,
+    required String img,
+    required Function() onTap,
+    Color? imgColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: AppButton.appButton(
@@ -197,8 +198,10 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
         "sessionId": widget.sessionId,
         "status": status,
       };
-      Response response =
-          await dio.post(path: AppUrls.createSubSession, data: params);
+      Response response = await dio.post(
+        path: AppUrls.createSubSession,
+        data: params,
+      );
       final responseData = response.data;
 
       if (response.statusCode == 200 && responseData["data"] != null) {
@@ -209,7 +212,9 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
             if (context.mounted) Navigator.pop(context);
             if (mounted) {
               AppToast.success(
-                  context: context, msg: "Checked In Successfully!");
+                context: context,
+                msg: "Checked In Successfully!",
+              );
             }
           });
         });
@@ -230,10 +235,7 @@ class _SessionUpdateScreenState extends State<SessionUpdateScreen> {
       }
     } catch (e) {
       if (kDebugMode) debugPrint("Something went wrong: $e");
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
       setState(() => isLoading = false);
     }

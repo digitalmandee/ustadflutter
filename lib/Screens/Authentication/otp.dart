@@ -3,16 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Screens/Authentication/SignIn/login_screen.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 enum OtpMode { both, email, phone }
 
@@ -194,10 +194,9 @@ class _OtpScreenState extends State<OtpScreen> {
     return _buildOtpSection(
       iconPath: "assets/images/otpPhone.png",
       title: "Please check your SMS",
-      subtitle:
-      widget.fromEditProfile == true?
-       "We've sent a code to ${widget.phone}":
-       "We've sent a code to +${widget.phone}",
+      subtitle: widget.fromEditProfile == true
+          ? "We've sent a code to ${widget.phone}"
+          : "We've sent a code to +${widget.phone}",
       controller: _phoneOtpController,
       onResend: () {
         _requestOtp(context, false);
@@ -330,22 +329,13 @@ class _OtpScreenState extends State<OtpScreen> {
       final data = response.data;
 
       if (response.statusCode == 200) {
-        AppToast.success(
-          context: context,
-          msg: data["message"],
-        );
+        AppToast.success(context: context, msg: data["message"]);
       } else {
-        AppToast.error(
-          context: context,
-          msg: data["message"],
-        );
+        AppToast.error(context: context, msg: data["message"]);
       }
     } catch (e) {
       if (kDebugMode) print("OTP request failed: $e");
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
       setState(() => isLoading = false);
     }
@@ -353,14 +343,12 @@ class _OtpScreenState extends State<OtpScreen> {
 
   /// OTP verification
   Future<void> _verifyOtp(context) async {
-    final otp =
-        _isEmailRequired ? _emailOtpController.text : _phoneOtpController.text;
+    final otp = _isEmailRequired
+        ? _emailOtpController.text
+        : _phoneOtpController.text;
 
     if (otp.isEmpty || otp.length < 4) {
-      return AppToast.error(
-        context: context,
-        msg: "Please enter a valid OTP",
-      );
+      return AppToast.error(context: context, msg: "Please enter a valid OTP");
     }
 
     setState(() => isLoading = true);
@@ -373,34 +361,34 @@ class _OtpScreenState extends State<OtpScreen> {
     };
 
     try {
-      final verifyResponse =
-          await _dio.post(path: AppUrls.verifyOtp, data: verifyParams);
+      final verifyResponse = await _dio.post(
+        path: AppUrls.verifyOtp,
+        data: verifyParams,
+      );
       final verifyData = verifyResponse.data;
 
       if (verifyResponse.statusCode == 200) {
-        AppToast.success(
-          context: context,
-          msg: verifyData["message"],
-        );
+        AppToast.success(context: context, msg: verifyData["message"]);
         if (widget.fromEditProfile) {
           final updateParams = <String, dynamic>{
             if (_isEmailRequired && widget.email != null) "email": widget.email,
-            if (_isSmsRequired && widget.phone != null) "phone": widget.phone!.replaceAll("+", ""),
+            if (_isSmsRequired && widget.phone != null)
+              "phone": widget.phone!.replaceAll("+", ""),
           };
           final updateResponse = await _dio.post(
-              path: globalUserRole == "TUTOR"
-                  ? AppUrls.editTutorProfile
-                  : AppUrls.editParentProfile,
-              data: updateParams);
+            path: globalUserRole == "TUTOR"
+                ? AppUrls.editTutorProfile
+                : AppUrls.editParentProfile,
+            data: updateParams,
+          );
           final updateData = updateResponse.data;
 
           if (updateResponse.statusCode == 200) {
-            AppToast.success(
-              context: context,
-              msg: updateData["message"],
+            AppToast.success(context: context, msg: updateData["message"]);
+            final provider = Provider.of<TutorEditProfileProvider>(
+              context,
+              listen: false,
             );
-            final provider =
-                Provider.of<TutorEditProfileProvider>(context, listen: false);
             provider.updateEmailAndPhone(
               newEmail: _isEmailRequired ? widget.email : null,
               newPhone: _isSmsRequired ? widget.phone : null,
@@ -409,7 +397,8 @@ class _OtpScreenState extends State<OtpScreen> {
           } else {
             AppToast.error(
               context: context,
-              msg: updateData["errors"]?[0]?["message"] ??
+              msg:
+                  updateData["errors"]?[0]?["message"] ??
                   "Update profile failed",
             );
           }
@@ -425,10 +414,7 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
       setState(() => isLoading = false);
     }

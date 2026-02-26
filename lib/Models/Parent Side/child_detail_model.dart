@@ -1,4 +1,4 @@
-import 'package:ustaad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
 
 class Child {
   final String id;

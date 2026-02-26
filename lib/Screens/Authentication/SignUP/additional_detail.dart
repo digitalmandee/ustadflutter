@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/sign_up_screen.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Authentication/widgets/country_picker.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/sign_up_screen.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/country_picker.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class AdditionalDetailsForm extends StatefulWidget {
   final TabController tabController;
@@ -46,23 +46,30 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
         child: Column(
           children: [
             customLableField(
-                lable: "CNIC",
-                controller: widget.signupData.cnicController,
-                textType: TextInputType.numberWithOptions()),
+              lable: "CNIC",
+              controller: widget.signupData.cnicController,
+              textType: TextInputType.numberWithOptions(),
+            ),
             const SizedBox(height: 20),
             customLableField(
-                lable: "Address",
-                controller: widget.signupData.addressController),
+              lable: "Address",
+              controller: widget.signupData.addressController,
+            ),
             const SizedBox(height: 20),
             customLableField(
-                lable: "City", controller: widget.signupData.cityController),
+              lable: "City",
+              controller: widget.signupData.cityController,
+            ),
             const SizedBox(height: 20),
             customLableField(
-                lable: "State", controller: widget.signupData.stateController),
+              lable: "State",
+              controller: widget.signupData.stateController,
+            ),
             const SizedBox(height: 20),
             CountryPickerField(
-                onCountrySelected: (country) =>
-                    widget.signupData.selectedCountry = country),
+              onCountrySelected: (country) =>
+                  widget.signupData.selectedCountry = country,
+            ),
             const SizedBox(height: 20),
             isLoading
                 ? const GifLoader()
@@ -82,8 +89,9 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
     if (widget.signupData.cnicController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter CNIC");
     } else if (widget.signupData.cnicController.text.trim().length != 13 ||
-        !RegExp(r'^\d{13}$')
-            .hasMatch(widget.signupData.cnicController.text.trim())) {
+        !RegExp(
+          r'^\d{13}$',
+        ).hasMatch(widget.signupData.cnicController.text.trim())) {
       AppToast.error(context: context, msg: "CNIC must be exactly 13 digits.");
     } else if (widget.signupData.addressController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter Address");
@@ -135,33 +143,37 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     }
   }
 
-  void _handleSignupSuccess(
-    context,
-    dynamic data,
-  ) async {
+  void _handleSignupSuccess(context, dynamic data) async {
     AppToast.success(context: context, msg: "${data["message"]}");
     widget.signupData.finalData = data["data"];
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(
-        PrefKey.authorization, widget.signupData.finalData["token"] ?? '');
+      PrefKey.authorization,
+      widget.signupData.finalData["token"] ?? '',
+    );
     prefs.setString(PrefKey.id, widget.signupData.finalData["id"]);
     prefs.setString(PrefKey.userRole, widget.signupData.finalData["role"]);
     prefs.setString(
-        PrefKey.userFirstName, widget.signupData.finalData["firstName"]);
+      PrefKey.userFirstName,
+      widget.signupData.finalData["firstName"],
+    );
     prefs.setString(
-        PrefKey.userLastName, widget.signupData.finalData["lastName"]);
+      PrefKey.userLastName,
+      widget.signupData.finalData["lastName"],
+    );
     prefs.setString(
-        PrefKey.userPic, widget.signupData.finalData["profilePic"] ?? '');
+      PrefKey.userPic,
+      widget.signupData.finalData["profilePic"] ?? '',
+    );
     prefs.setString(
-        PrefKey.onBoard, widget.signupData.finalData["isOnBoard"] ?? '');
+      PrefKey.onBoard,
+      widget.signupData.finalData["isOnBoard"] ?? '',
+    );
 
     widget.signupData.userRole = widget.signupData.finalData["role"];
     setState(() => isLoading = false);

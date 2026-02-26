@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom widgets/app_bar.dart';
-import 'package:ustaad/Custom widgets/app_field.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Providers/Parent Side/get_tutors_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Drawer/drawer.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/filter_bottom_sheet.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/tutor_card.dart';
+import 'package:flutterustad/Custom widgets/app_bar.dart';
+import 'package:flutterustad/Custom widgets/app_field.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Providers/Parent Side/get_tutors_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Dashboard/filter_bottom_sheet.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Dashboard/tutor_card.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -27,8 +27,10 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     Future.microtask(() async {
       if (!mounted) return;
-      await Provider.of<GetTutorsProvider>(context, listen: false)
-          .fetchTutors();
+      await Provider.of<GetTutorsProvider>(
+        context,
+        listen: false,
+      ).fetchTutors();
     });
   }
 
@@ -45,8 +47,10 @@ class _SearchScreenState extends State<SearchScreen> {
           selectedFilters: selectedFilters,
           onApply: (filters) {
             setState(() => selectedFilters = filters);
-            Provider.of<GetTutorsProvider>(context, listen: false)
-                .applyFilters(filters);
+            Provider.of<GetTutorsProvider>(
+              context,
+              listen: false,
+            ).applyFilters(filters);
           },
         );
       },
@@ -72,8 +76,10 @@ class _SearchScreenState extends State<SearchScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child:
-                Image.asset("assets/images/Background.png", fit: BoxFit.fill),
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,8 +93,11 @@ class _SearchScreenState extends State<SearchScreen> {
               Expanded(
                 child: provider.tutors.isEmpty
                     ? const Center(
-                        child: Text("No tutor found",
-                            style: TextStyle(fontSize: 16)))
+                        child: Text(
+                          "No tutor found",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
                     : _buildTutorList(provider),
               ),
             ],
@@ -147,8 +156,10 @@ class _SearchScreenState extends State<SearchScreen> {
               deleteIcon: const Icon(Icons.close, size: 16),
               onDeleted: () {
                 setState(() => selectedFilters.remove(filter));
-                Provider.of<GetTutorsProvider>(context, listen: false)
-                    .applyFilters(selectedFilters);
+                Provider.of<GetTutorsProvider>(
+                  context,
+                  listen: false,
+                ).applyFilters(selectedFilters);
               },
             ),
           );

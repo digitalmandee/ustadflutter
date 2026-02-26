@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -6,32 +7,30 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
-import 'package:ustaad/Providers/Contracts/contract_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/dashboard_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/get_tutors_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/location_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_about_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_education_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_exp_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
-import 'package:ustaad/Providers/notification/notification_provider.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/firebase_options.dart';
-import 'package:ustaad/splash_screen.dart';
+import 'package:flutterustad/Providers/Chat/all_chat_provider.dart';
+import 'package:flutterustad/Providers/Contracts/contract_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/dashboard_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/get_tutors_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/location_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/subject_cost_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
+import 'package:flutterustad/Providers/notification/notification_provider.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/firebase_options.dart';
+import 'package:flutterustad/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
     print("📩 Background Message Received");
     print("Message ID: ${message.messageId}");
@@ -64,11 +63,17 @@ Future<void> setupFlutterNotifications() async {
     macOS: initializationSettingsDarwin,
   );
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
+  await flutterLocalNotificationsPlugin.initialize(
+    settings: initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      // Handle notification tap here if needed
+      print("Notification tapped with payload: ${response.payload}");
+    },
+  );
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin
+      >()
       ?.createNotificationChannel(channel);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -80,16 +85,18 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    log("Firebase initialized successfully.");
     await initializeDateFormatting();
     await setupFlutterNotifications();
   } catch (e) {
-    print("Error during initialization: $e");
+    log("Error during initialization: $e");
   }
 
   if (!kIsWeb && Platform.isAndroid) {
     WebViewPlatform.instance = AndroidWebViewPlatform();
   }
   await getPrefData();
+
   runApp(const MyApp());
 }
 
@@ -112,9 +119,7 @@ class _MyAppState extends State<MyApp> {
 
     if (message.data['type'] == 'chat') {
       navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (context) => SplashScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => SplashScreen()),
       );
     }
   }
@@ -142,10 +147,10 @@ class _MyAppState extends State<MyApp> {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
+          notificationDetails: NotificationDetails(
             android: AndroidNotificationDetails(
               channel.id,
               channel.name,
@@ -189,7 +194,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ParentDashboardProvider(context)),
         ChangeNotifierProvider(create: (_) => ContractProvider(context)),
         ChangeNotifierProvider(
-            create: (_) => TutorEditProfileProvider(context)),
+          create: (_) => TutorEditProfileProvider(context),
+        ),
         ChangeNotifierProvider(create: (_) => NotificationProvider(context)),
       ],
       child: MaterialApp(

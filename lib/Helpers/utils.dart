@@ -1,8 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:ustaad/splash_screen.dart';
+import 'package:flutterustad/splash_screen.dart';
 
 Route _zoomRoute(Widget screen) {
   return PageRouteBuilder(
@@ -10,10 +10,7 @@ Route _zoomRoute(Widget screen) {
     pageBuilder: (context, animation, secondaryAnimation) => screen,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return ScaleTransition(
-        scale: CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeInOut,
-        ),
+        scale: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
         child: child,
       );
     },
@@ -22,16 +19,9 @@ Route _zoomRoute(Widget screen) {
 
 void handleNotificationClick(RemoteMessage message, context) {
   if (message.data['type'] == 'chat') {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SplashScreen(
-        ),
-      ),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => SplashScreen()));
   }
 }
-
 
 void safePop(BuildContext context) {
   if (!Navigator.canPop(context)) return;
@@ -73,10 +63,7 @@ class ScreenSize {
 
 class AppToast {
   /// 🔹 Success Toast
-  static void success({
-    required BuildContext context,
-    required String msg,
-  }) {
+  static void success({required BuildContext context, required String msg}) {
     _show(
       context: context,
       msg: msg,
@@ -87,10 +74,7 @@ class AppToast {
   }
 
   /// 🔹 Error Toast
-  static void error({
-    required BuildContext context,
-    required String msg,
-  }) {
+  static void error({required BuildContext context, required String msg}) {
     _show(
       context: context,
       msg: msg,

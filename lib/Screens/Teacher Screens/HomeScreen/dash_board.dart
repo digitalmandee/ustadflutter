@@ -1,23 +1,23 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Custom%20widgets/chart.dart';
-import 'package:ustaad/Helpers/calculate_duration.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/timeformat.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
-import 'package:ustaad/Screens/Chats/bubble_widget.dart';
-import 'package:ustaad/Screens/Drawer/drawer.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/session_cards.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/session_update_screen.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Custom%20widgets/chart.dart';
+import 'package:flutterustad/Helpers/calculate_duration.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/timeformat.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
+import 'package:flutterustad/Screens/Chats/bubble_widget.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/session_cards.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/checkout.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/session_update_screen.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
 
 class TutorDashBoardScreen extends StatefulWidget {
   const TutorDashBoardScreen({super.key});
@@ -41,7 +41,7 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
     'September',
     'October',
     'November',
-    'December'
+    'December',
   ];
   AppLogger logger = AppLogger();
 
@@ -50,8 +50,10 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
     super.initState();
     logger.init();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<TutorDashBoardProvider>(context, listen: false);
+      final provider = Provider.of<TutorDashBoardProvider>(
+        context,
+        listen: false,
+      );
       provider.getTutorEarnings(context);
       provider.getSessions(context);
       provider.getTutorProfile(context);
@@ -70,8 +72,10 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child:
-                Image.asset("assets/images/Background.png", fit: BoxFit.fill),
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
+            ),
           ),
           Column(
             children: [
@@ -81,8 +85,11 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.only(bottom: 100, left: 20, right: 20),
+                  padding: const EdgeInsets.only(
+                    bottom: 100,
+                    left: 20,
+                    right: 20,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -90,7 +97,7 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                       _buildBalanceSection(provider),
                       const SizedBox(height: 30),
                       _buildUpcomingSessions(provider),
-                      const SizedBox(height: 30),
+                      // const SizedBox(height: 30),
                       _buildMonthlyProductivity(provider),
                       EarningsBarChart(isParent: false),
                     ],
@@ -115,10 +122,12 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          AppText.appText("Your Balance",
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              textColor: AppTheme.black),
+          AppText.appText(
+            "Your Balance",
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
+            textColor: AppTheme.black,
+          ),
           const SizedBox(height: 3),
           AppText.appText(
             "Rs. ${provider.displayedBalance}",
@@ -162,17 +171,21 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color:
-                                isSelected ? AppTheme.appColor : Colors.black,
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.w500,
+                            color: isSelected
+                                ? AppTheme.appColor
+                                : Colors.black,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
                           ),
                         ),
                       );
                     }).toList(),
                     iconStyleData: IconStyleData(
-                      icon: Icon(Icons.keyboard_arrow_down,
-                          color: AppTheme.appColor),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppTheme.appColor,
+                      ),
                       iconSize: 18,
                       iconEnabledColor: AppTheme.appColor,
                       iconDisabledColor: Colors.grey,
@@ -180,9 +193,7 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                     buttonStyleData: const ButtonStyleData(
                       height: 32,
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                      ),
+                      decoration: BoxDecoration(color: Colors.transparent),
                     ),
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: 250,
@@ -207,7 +218,7 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -216,8 +227,9 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
   /// ---------------- UPCOMING SESSIONS ----------------
   Widget _buildUpcomingSessions(TutorDashBoardProvider provider) {
     final sessions = provider.upcomingSessions;
-    final limitedSessions =
-        sessions.length > 2 ? sessions.sublist(0, 2) : sessions;
+    final limitedSessions = sessions.length > 2
+        ? sessions.sublist(0, 2)
+        : sessions;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,17 +238,12 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
           title: "Upcoming Sessions",
           actionText: provider.upcomingSessions.isEmpty ? "" : "View All",
           onTap: () {
-            pushReplacement(
-              context,
-              BottomNavView(tutor: true, index: 2),
-            );
+            pushReplacement(context, BottomNavView(tutor: true, index: 2));
           },
         ),
         const SizedBox(height: 16),
         provider.upcomingSessions.isEmpty
-            ? Center(
-                child: AppText.appText("No Upcoming Sessions"),
-              )
+            ? Center(child: AppText.appText("No Upcoming Sessions"))
             : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -256,13 +263,9 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                     );
 
                     return Padding(
-                      padding: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.only(right: 12, bottom: 20),
                       child: InkWell(
-                        onTap: () => _onSessionTap(
-                          session,
-                          isRunning,
-                          context,
-                        ),
+                        onTap: () => _onSessionTap(session, isRunning, context),
                         child: SessionCard(
                           sessionsCompleted: session["sessionsCompleted"],
                           totalSessions: session["totalSessions"],
@@ -279,20 +282,22 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SessionCheckOut(
-                                        ruuningId: provider
-                                            .runningSessions[index]["id"],
-                                        parentId: "${session["parentId"]}",
-                                        tutorId: "${session["tutorId"]}",
-                                        sessionId: "${session["id"]}",
-                                      )),
+                                builder: (context) => SessionCheckOut(
+                                  ruuningId:
+                                      provider.runningSessions[index]["id"],
+                                  parentId: "${session["parentId"]}",
+                                  tutorId: "${session["tutorId"]}",
+                                  sessionId: "${session["id"]}",
+                                ),
+                              ),
                             ).then((_) {
                               provider.getSessions(context);
                             });
                           },
                           time: ReverseTimer(
-                            color:
-                                index == 0 ? AppTheme.white : AppTheme.appColor,
+                            color: index == 0
+                                ? AppTheme.white
+                                : AppTheme.appColor,
                             startTime: session["startTime"],
                             endTime: session["endTime"],
                           ),
@@ -331,8 +336,11 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
 
     return Row(
       children: [
-        AppText.appText("Monthly Productivity",
-            fontSize: 16, fontWeight: FontWeight.w600),
+        AppText.appText(
+          "Monthly Productivity",
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: AppText.appText(
@@ -348,7 +356,7 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
   }
 
   /// ---------------- REUSABLE SECTION HEADER ----------------
-  Widget  _sectionHeader({
+  Widget _sectionHeader({
     required String title,
     String? actionText,
     VoidCallback? onTap,
@@ -360,19 +368,26 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
         if (actionText != null && onTap != null)
           InkWell(
             onTap: onTap,
-            child: AppText.appText(actionText,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                textColor: const Color(0xffA4B0BE)),
+            child: AppText.appText(
+              actionText,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              textColor: const Color(0xffA4B0BE),
+            ),
           ),
       ],
     );
   }
 
   void _onSessionTap(
-      Map<String, dynamic> session, isonTap, BuildContext context) {
-    final provider =
-        Provider.of<TutorDashBoardProvider>(this.context, listen: false);
+    Map<String, dynamic> session,
+    isonTap,
+    BuildContext context,
+  ) {
+    final provider = Provider.of<TutorDashBoardProvider>(
+      this.context,
+      listen: false,
+    );
     print("show and $isonTap hh ${provider.runningSessions}");
 
     if (isonTap == true) {

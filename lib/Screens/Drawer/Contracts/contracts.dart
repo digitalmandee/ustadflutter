@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom widgets/app_bar.dart';
-import 'package:ustaad/Custom widgets/app_button.dart';
-import 'package:ustaad/Custom widgets/app_text.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Contracts/contract_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Providers/Tutor Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/config/keys/global.dart';
+import 'package:flutterustad/Custom widgets/app_bar.dart';
+import 'package:flutterustad/Custom widgets/app_button.dart';
+import 'package:flutterustad/Custom widgets/app_text.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Contracts/contract_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Providers/Tutor Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/config/keys/global.dart';
 
 class ContractScreen extends StatefulWidget {
   final bool isParentSide;
@@ -31,8 +31,10 @@ class _ContractScreenState extends State<ContractScreen> {
     super.initState();
     Future.microtask(() {
       if (mounted) {
-        Provider.of<ContractProvider>(context, listen: false)
-            .getContracts(context, widget.isParentSide);
+        Provider.of<ContractProvider>(
+          context,
+          listen: false,
+        ).getContracts(context, widget.isParentSide);
       }
     });
   }
@@ -46,8 +48,8 @@ class _ContractScreenState extends State<ContractScreen> {
     List currentList = showCompleted
         ? contractProv.getCompleted()
         : showCancelled
-            ? contractProv.getCancelled()
-            : contractProv.getRunning();
+        ? contractProv.getCancelled()
+        : contractProv.getRunning();
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -64,284 +66,288 @@ class _ContractScreenState extends State<ContractScreen> {
             child: contractProv.isLoading
                 ? GifLoader()
                 : currentList.isEmpty
-                    ? Center(
-                        child: AppText.appText(
-                          showRunning
-                              ? "No Running Contracts Yet"
-                              : showCompleted
-                                  ? "No Completed Contracts Yet"
-                                  : "No Cancelled Contracts Yet",
-                          fontSize: 16,
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: EdgeInsets.all(20),
-                        itemCount: currentList.length,
-                        itemBuilder: (context, index) {
-                          final data = currentList[index];
-                          final childName = data["Offer"]["childName"]
-                              .toString()
-                              .capitalize();
+                ? Center(
+                    child: AppText.appText(
+                      showRunning
+                          ? "No Running Contracts Yet"
+                          : showCompleted
+                          ? "No Completed Contracts Yet"
+                          : "No Cancelled Contracts Yet",
+                      fontSize: 16,
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.all(20),
+                    itemCount: currentList.length,
+                    itemBuilder: (context, index) {
+                      final data = currentList[index];
+                      final childName = data["Offer"]["childName"]
+                          .toString()
+                          .capitalize();
 
-                          bool showButtons = data["status"] == "ACTIVE";
+                      bool showButtons = data["status"] == "ACTIVE";
 
-                          return InkWell(
-                            onTap: () {
-                              showContractDetailsPopup(data);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: Card(
-                                elevation: 2,
-                                color: AppTheme.white,
-                                margin: EdgeInsets.all(0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                      return InkWell(
+                        onTap: () {
+                          showContractDetailsPopup(data);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Card(
+                            elevation: 2,
+                            color: AppTheme.white,
+                            margin: EdgeInsets.all(0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  left: BorderSide(
+                                    width: 5,
+                                    color: AppTheme.primaryCOlor,
+                                  ),
                                 ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          left: BorderSide(
-                                        width: 5,
-                                        color: AppTheme.primaryCOlor,
-                                      )),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  padding: EdgeInsets.all(16),
-                                  child: Column(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: AppText.appText(
-                                              widget.isParentSide
-                                                  ? "Contract with ${capitalizeEachWord(data["tutor"]["firstName"])} for ${capitalizeEachWord(childName)}"
-                                                  : "Contract with ${capitalizeEachWord(data["parent"]["firstName"])} for ${capitalizeEachWord(childName)}",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              maxlines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          widget.isParentSide == true
-                                              ? data["tutorReview"] != null
-                                                  ? Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors.amber,
-                                                          size: 25,
-                                                        ),
-                                                        SizedBox(width: 5),
-                                                        AppText.appText(
-                                                            "${data["tutorReview"]["rating"]}",
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight.w500)
-                                                      ],
-                                                    )
-                                                  : SizedBox.shrink()
-                                              : SizedBox.shrink(),
-                                          widget.isParentSide == false
-                                              ? data["parentReview"] != null
-                                                  ? Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors.amber,
-                                                          size: 20,
-                                                        ),
-                                                        SizedBox(width: 5),
-                                                        AppText.appText(
-                                                            "${data["parentReview"]["rating"]}",
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.w500)
-                                                      ],
-                                                    )
-                                                  : SizedBox.shrink()
-                                              : SizedBox.shrink(),
-                                        ],
-                                      ),
-                                      SizedBox(height: 5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          AppText.appText("Budget:"),
-                                          AppText.appText(
-                                            "Rs. ${data["Offer"]["amountMonthly"]}",
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          AppText.appText("Start Date:"),
-                                          AppText.appText(
-                                              data["Offer"]["startDate"]),
-                                        ],
-                                      ),
-                                      SizedBox(height: 5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          AppText.appText("Status:"),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            decoration: BoxDecoration(
-                                                color: data["status"] ==
-                                                        "ACTIVE"
-                                                    ? AppTheme.primaryCOlor
-                                                    : data["status"] ==
-                                                            "CANCELLED"
-                                                        ? Colors.red
-                                                        : data["status"] ==
-                                                                "EXPIRED"
-                                                            ? Colors.red
-                                                            : data["status"] ==
-                                                                    "DISPUTE"
-                                                                ? Colors.orange
-                                                                : data["status"] ==
-                                                                        "COMPLETED"
-                                                                    ? AppTheme
-                                                                        .appColor
-                                                                    : AppTheme
-                                                                        .borderCOlor,
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: AppText.appText(
-                                                data["status"],
-                                                textColor: AppTheme.white,
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                        ],
-                                      ),
-                                      if (showButtons)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              AppButton.appButton(
-                                                "Terminate",
-                                                onTap: () => openTerminatePopup(
-                                                    data["id"], context),
-                                                height: 35,
-                                                width: 90,
-                                                backgroundColor: Colors.red,
-                                                fontSize: 12,
-                                                context: context,
-                                              ),
-                                              SizedBox(width: 10),
-                                              AppButton.appButton(
-                                                "Complete",
-                                                context: context,
-                                                onTap: () {
-                                                  final completedSessions =
-                                                      data["completedSessions"];
-                                                  final totalSessions =
-                                                      data["totalSessions"];
-                                                  if (completedSessions ==
-                                                      totalSessions) {
-                                                    completeContract(
-                                                        data["id"], context);
-                                                  } else {
-                                                    AppToast.error(
-                                                        context: context,
-                                                        msg:
-                                                            "Sessions are not Completed yet.");
-                                                  }
-                                                },
-                                                height: 35,
-                                                width: 90,
-                                                backgroundColor:
-                                                    data["completedSessions"] ==
-                                                            data[
-                                                                "totalSessions"]
-                                                        ? AppTheme.appColor
-                                                        : AppTheme
-                                                            .borderCOlor,
-                                                fontSize: 12,
-                                              ),
-                                            ],
-                                          ),
+                                      Expanded(
+                                        child: AppText.appText(
+                                          widget.isParentSide
+                                              ? "Contract with ${capitalizeEachWord(data["tutor"]["firstName"])} for ${capitalizeEachWord(childName)}"
+                                              : "Contract with ${capitalizeEachWord(data["parent"]["firstName"])} for ${capitalizeEachWord(childName)}",
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          maxlines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      if (widget.isParentSide == false &&
-                                          data["hasTutorReview"] == false &&
-                                          data["status"] ==
-                                              "PENDING_COMPLETION")
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: AppButton.appButton(
-                                              "Give Review",
-                                              context: context, onTap: () {
-                                            showRatingPopup(data["id"]);
-                                          }),
-                                        ),
-                                      if (widget.isParentSide == true &&
-                                          data["hasParentReview"] == false &&
-                                          data["status"] ==
-                                              "PENDING_COMPLETION")
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: AppButton.appButton(
-                                              "Give Review",
-                                              context: context, onTap: () {
-                                            showRatingPopup(data["id"]);
-                                          }),
-                                        ),
-                                      // if (widget.isParentSide == false &&
-                                      //     data["hasParentReview"] == false &&
-                                      //     data["hasTutorReview"] == true &&
-                                      //     data["status"] ==
-                                      //         "PENDING_COMPLETION")
-                                      //   Padding(
-                                      //     padding:
-                                      //         const EdgeInsets.only(top: 10.0),
-                                      //     child: AppButton.appButton(
-                                      //         "Waiting for Parent review",
-                                      //         context: context,
-                                      //         onTap: () {}),
-                                      //   ),
-                                      // if (widget.isParentSide == false &&
-                                      //     data["hasParentReview"] == true &&
-                                      //     data["hasTutorReview"] == false &&
-                                      //     data["status"] ==
-                                      //         "PENDING_COMPLETION")
-                                      //   Padding(
-                                      //     padding:
-                                      //         const EdgeInsets.only(top: 10.0),
-                                      //     child: AppButton.appButton(
-                                      //         "Waiting for Tutor review",
-                                      //         context: context,
-                                      //         onTap: () {}),
-                                      //   ),
+                                      ),
+                                      widget.isParentSide == true
+                                          ? data["tutorReview"] != null
+                                                ? Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                        size: 25,
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      AppText.appText(
+                                                        "${data["tutorReview"]["rating"]}",
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ],
+                                                  )
+                                                : SizedBox.shrink()
+                                          : SizedBox.shrink(),
+                                      widget.isParentSide == false
+                                          ? data["parentReview"] != null
+                                                ? Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                        size: 20,
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      AppText.appText(
+                                                        "${data["parentReview"]["rating"]}",
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ],
+                                                  )
+                                                : SizedBox.shrink()
+                                          : SizedBox.shrink(),
                                     ],
                                   ),
-                                ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      AppText.appText("Budget:"),
+                                      AppText.appText(
+                                        "Rs. ${data["Offer"]["amountMonthly"]}",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      AppText.appText("Start Date:"),
+                                      AppText.appText(
+                                        data["Offer"]["startDate"],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AppText.appText("Status:"),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: data["status"] == "ACTIVE"
+                                              ? AppTheme.primaryCOlor
+                                              : data["status"] == "CANCELLED"
+                                              ? Colors.red
+                                              : data["status"] == "EXPIRED"
+                                              ? Colors.red
+                                              : data["status"] == "DISPUTE"
+                                              ? Colors.orange
+                                              : data["status"] == "COMPLETED"
+                                              ? AppTheme.appColor
+                                              : AppTheme.borderCOlor,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: AppText.appText(
+                                          data["status"],
+                                          textColor: AppTheme.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (showButtons)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          AppButton.appButton(
+                                            "Terminate",
+                                            onTap: () => openTerminatePopup(
+                                              data["id"],
+                                              context,
+                                            ),
+                                            height: 35,
+                                            width: 90,
+                                            backgroundColor: Colors.red,
+                                            fontSize: 12,
+                                            context: context,
+                                          ),
+                                          SizedBox(width: 10),
+                                          AppButton.appButton(
+                                            "Complete",
+                                            context: context,
+                                            onTap: () {
+                                              final completedSessions =
+                                                  data["completedSessions"];
+                                              final totalSessions =
+                                                  data["totalSessions"];
+                                              if (completedSessions ==
+                                                  totalSessions) {
+                                                completeContract(
+                                                  data["id"],
+                                                  context,
+                                                );
+                                              } else {
+                                                AppToast.error(
+                                                  context: context,
+                                                  msg:
+                                                      "Sessions are not Completed yet.",
+                                                );
+                                              }
+                                            },
+                                            height: 35,
+                                            width: 90,
+                                            backgroundColor:
+                                                data["completedSessions"] ==
+                                                    data["totalSessions"]
+                                                ? AppTheme.appColor
+                                                : AppTheme.borderCOlor,
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  if (widget.isParentSide == false &&
+                                      data["hasTutorReview"] == false &&
+                                      data["status"] == "PENDING_COMPLETION")
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10.0),
+                                      child: AppButton.appButton(
+                                        "Give Review",
+                                        context: context,
+                                        onTap: () {
+                                          showRatingPopup(data["id"]);
+                                        },
+                                      ),
+                                    ),
+                                  if (widget.isParentSide == true &&
+                                      data["hasParentReview"] == false &&
+                                      data["status"] == "PENDING_COMPLETION")
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10.0),
+                                      child: AppButton.appButton(
+                                        "Give Review",
+                                        context: context,
+                                        onTap: () {
+                                          showRatingPopup(data["id"]);
+                                        },
+                                      ),
+                                    ),
+                                  // if (widget.isParentSide == false &&
+                                  //     data["hasParentReview"] == false &&
+                                  //     data["hasTutorReview"] == true &&
+                                  //     data["status"] ==
+                                  //         "PENDING_COMPLETION")
+                                  //   Padding(
+                                  //     padding:
+                                  //         const EdgeInsets.only(top: 10.0),
+                                  //     child: AppButton.appButton(
+                                  //         "Waiting for Parent review",
+                                  //         context: context,
+                                  //         onTap: () {}),
+                                  //   ),
+                                  // if (widget.isParentSide == false &&
+                                  //     data["hasParentReview"] == true &&
+                                  //     data["hasTutorReview"] == false &&
+                                  //     data["status"] ==
+                                  //         "PENDING_COMPLETION")
+                                  //   Padding(
+                                  //     padding:
+                                  //         const EdgeInsets.only(top: 10.0),
+                                  //     child: AppButton.appButton(
+                                  //         "Waiting for Tutor review",
+                                  //         context: context,
+                                  //         onTap: () {}),
+                                  //   ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-          )
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
         ],
       ),
     );
@@ -356,49 +362,65 @@ class _ContractScreenState extends State<ContractScreen> {
       margin: EdgeInsets.all(20),
       constraints: BoxConstraints(minWidth: 300, maxWidth: 350),
       decoration: BoxDecoration(
-          color: Color(0xffECEEF3), borderRadius: BorderRadius.circular(10)),
+        color: Color(0xffECEEF3),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
         child: Row(
           children: [
-            _buildToggleButton("Running", isSelected: showRunning, onTap: () {
-              setState(() {
-                showRunning = true;
-                showCompleted = false;
-                showCancelled = false;
-              });
-            }),
-            _buildToggleButton("Completed", isSelected: showCompleted,
-                onTap: () {
-              setState(() {
-                showRunning = false;
-                showCompleted = true;
-                showCancelled = false;
-              });
-            }),
-            _buildToggleButton("Cancelled", isSelected: showCancelled,
-                onTap: () {
-              setState(() {
-                showRunning = false;
-                showCompleted = false;
-                showCancelled = true;
-              });
-            }),
+            _buildToggleButton(
+              "Running",
+              isSelected: showRunning,
+              onTap: () {
+                setState(() {
+                  showRunning = true;
+                  showCompleted = false;
+                  showCancelled = false;
+                });
+              },
+            ),
+            _buildToggleButton(
+              "Completed",
+              isSelected: showCompleted,
+              onTap: () {
+                setState(() {
+                  showRunning = false;
+                  showCompleted = true;
+                  showCancelled = false;
+                });
+              },
+            ),
+            _buildToggleButton(
+              "Cancelled",
+              isSelected: showCancelled,
+              onTap: () {
+                setState(() {
+                  showRunning = false;
+                  showCompleted = false;
+                  showCancelled = true;
+                });
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildToggleButton(String text,
-      {required bool isSelected, required VoidCallback onTap}) {
+  Widget _buildToggleButton(
+    String text, {
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
     return Expanded(
       child: InkWell(
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-              color: isSelected ? AppTheme.appColor : Colors.transparent,
-              borderRadius: BorderRadius.circular(10)),
+            color: isSelected ? AppTheme.appColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Center(
             child: AppText.appText(
               text,
@@ -448,10 +470,7 @@ class _ContractScreenState extends State<ContractScreen> {
                 /// 📝 Subtitle
                 Text(
                   "Please provide a reason for terminating this contract.",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
 
                 const SizedBox(height: 16),
@@ -477,7 +496,9 @@ class _ContractScreenState extends State<ContractScreen> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppTheme.primaryCOlor,
                           side: BorderSide(
-                              color: AppTheme.primaryCOlor, width: 1),
+                            color: AppTheme.primaryCOlor,
+                            width: 1,
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -538,13 +559,17 @@ class _ContractScreenState extends State<ContractScreen> {
   // ------------------------------------------------------------------
   void completeContract(String contractId, context) async {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => GifLoader());
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => GifLoader(),
+    );
 
     final prov = Provider.of<ContractProvider>(context, listen: false);
-    bool ok =
-        await prov.completeContract(context, contractId, widget.isParentSide);
+    bool ok = await prov.completeContract(
+      context,
+      contractId,
+      widget.isParentSide,
+    );
 
     Navigator.pop(context); // close loader
 
@@ -555,14 +580,15 @@ class _ContractScreenState extends State<ContractScreen> {
     showRatingPopup(contractId);
   }
 
-///////////////////////  Detail Cointract /////////////////
+  ///////////////////////  Detail Cointract /////////////////
 
   void showContractDetailsPopup(Map contractData) {
     showDialog(
       context: context,
       builder: (ctx) {
-        final childName =
-            contractData["Offer"]["childName"].toString().capitalize();
+        final childName = contractData["Offer"]["childName"]
+            .toString()
+            .capitalize();
         final name = widget.isParentSide
             ? "${contractData["tutor"]["firstName"]} ${contractData["tutor"]["lastName"]}"
             : "${contractData["parent"]["firstName"]} ${contractData["parent"]["lastName"]}";
@@ -570,18 +596,21 @@ class _ContractScreenState extends State<ContractScreen> {
         final amount = contractData["Offer"]["amountMonthly"];
         final startDate = contractData["Offer"]["startDate"];
         final endDate = contractData["Offer"]["endDate"];
-        final subjects =
-            List<String>.from(contractData["Offer"]["subject"] ?? []);
-        final days =
-            List<String>.from(contractData["Offer"]["daysOfWeek"] ?? []);
+        final subjects = List<String>.from(
+          contractData["Offer"]["subject"] ?? [],
+        );
+        final days = List<String>.from(
+          contractData["Offer"]["daysOfWeek"] ?? [],
+        );
         final description = contractData["Offer"]["description"] ?? "";
         final completedSessions = contractData["completedSessions"] ?? 0;
         final totalSessions = contractData["totalSessions"] ?? 0;
 
         return Dialog(
           backgroundColor: AppTheme.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: SingleChildScrollView(
             padding: EdgeInsets.all(20),
@@ -591,10 +620,12 @@ class _ContractScreenState extends State<ContractScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    AppText.appText("Contract Details",
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        textColor: AppTheme.primaryCOlor),
+                    AppText.appText(
+                      "Contract Details",
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      textColor: AppTheme.primaryCOlor,
+                    ),
                     GestureDetector(
                       onTap: () => Navigator.pop(ctx),
                       child: Icon(Icons.close, size: 25),
@@ -607,11 +638,14 @@ class _ContractScreenState extends State<ContractScreen> {
                   child: Column(
                     children: [
                       _buildInfoRow(
-                          widget.isParentSide ? "Tutor Name:" : "Parent Name:",
-                          capitalizeEachWord(name)),
+                        widget.isParentSide ? "Tutor Name:" : "Parent Name:",
+                        capitalizeEachWord(name),
+                      ),
                       SizedBox(height: 8),
                       _buildInfoRow(
-                          "Child Name:", capitalizeEachWord(childName)),
+                        "Child Name:",
+                        capitalizeEachWord(childName),
+                      ),
                     ],
                   ),
                 ),
@@ -628,8 +662,10 @@ class _ContractScreenState extends State<ContractScreen> {
                         _buildInfoRow("End Date:", endDate),
                       ],
                       SizedBox(height: 8),
-                      _buildInfoRow("Sessions:",
-                          "$completedSessions / $totalSessions completed"),
+                      _buildInfoRow(
+                        "Sessions:",
+                        "$completedSessions / $totalSessions completed",
+                      ),
                     ],
                   ),
                 ),
@@ -641,12 +677,16 @@ class _ContractScreenState extends State<ContractScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (subjects.isNotEmpty)
-                        _buildInfoRow("Subjects:",
-                            capitalizeEachWord(subjects.join(", "))),
+                        _buildInfoRow(
+                          "Subjects:",
+                          capitalizeEachWord(subjects.join(", ")),
+                        ),
                       if (days.isNotEmpty) ...[
                         SizedBox(height: 8),
                         _buildInfoRow(
-                            "Days:", capitalizeEachWord(days.join(", "))),
+                          "Days:",
+                          capitalizeEachWord(days.join(", ")),
+                        ),
                       ],
                     ],
                   ),
@@ -659,8 +699,11 @@ class _ContractScreenState extends State<ContractScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppText.appText("Description:",
-                            fontWeight: FontWeight.w600, fontSize: 16),
+                        AppText.appText(
+                          "Description:",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
                         SizedBox(height: 6),
                         AppText.appText(description, fontSize: 15),
                       ],
@@ -673,20 +716,22 @@ class _ContractScreenState extends State<ContractScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: status == "ACTIVE"
                             ? AppTheme.primaryCOlor
                             : status == "CANCELLED"
-                                ? Colors.red
-                                : status == "EXPIRED"
-                                    ? Colors.red
-                                    : status == "DISPUTE"
-                                        ? Colors.orange
-                                        : status == "COMPLETED"
-                                            ? AppTheme.appColor
-                                            : AppTheme.borderCOlor,
+                            ? Colors.red
+                            : status == "EXPIRED"
+                            ? Colors.red
+                            : status == "DISPUTE"
+                            ? Colors.orange
+                            : status == "COMPLETED"
+                            ? AppTheme.appColor
+                            : AppTheme.borderCOlor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: AppText.appText(status, textColor: Colors.white),
@@ -790,8 +835,9 @@ class _ContractScreenState extends State<ContractScreen> {
           builder: (ctx, setState) {
             return Padding(
               padding: EdgeInsets.only(
-                bottom:
-                    MediaQuery.of(context).viewInsets.bottom, // KEYBOARD SPACE
+                bottom: MediaQuery.of(
+                  context,
+                ).viewInsets.bottom, // KEYBOARD SPACE
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -880,24 +926,27 @@ class _ContractScreenState extends State<ContractScreen> {
                           filled: true,
                           fillColor: Colors.green.shade50,
                           labelStyle: TextStyle(
-                              color: reviewError
-                                  ? Colors.red
-                                  : AppTheme.lableText),
+                            color: reviewError
+                                ? Colors.red
+                                : AppTheme.lableText,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color:
-                                  reviewError ? Colors.red : AppTheme.appColor,
+                              color: reviewError
+                                  ? Colors.red
+                                  : AppTheme.appColor,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color:
-                                  reviewError ? Colors.red : AppTheme.appColor,
+                              color: reviewError
+                                  ? Colors.red
+                                  : AppTheme.appColor,
                               width: 1,
                             ),
                           ),
@@ -934,14 +983,17 @@ class _ContractScreenState extends State<ContractScreen> {
                             return;
                           }
 
-                          final prov = Provider.of<ContractProvider>(context,
-                              listen: false);
+                          final prov = Provider.of<ContractProvider>(
+                            context,
+                            listen: false,
+                          );
 
                           // 🚀 SHOW LOADER
                           showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) => GifLoader());
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => GifLoader(),
+                          );
 
                           bool ok = await prov.submitRating(
                             context,
@@ -962,7 +1014,8 @@ class _ContractScreenState extends State<ContractScreen> {
                           Navigator.pop(ctx);
 
                           await Future.delayed(
-                              const Duration(milliseconds: 200));
+                            const Duration(milliseconds: 200),
+                          );
 
                           if (mounted) {
                             AppToast.success(
@@ -970,9 +1023,10 @@ class _ContractScreenState extends State<ContractScreen> {
                               msg: "Rating submitted successfully",
                             );
 
-                            Provider.of<ContractProvider>(context,
-                                    listen: false)
-                                .getContracts(context, widget.isParentSide);
+                            Provider.of<ContractProvider>(
+                              context,
+                              listen: false,
+                            ).getContracts(context, widget.isParentSide);
                           }
                         },
                         "Submit",

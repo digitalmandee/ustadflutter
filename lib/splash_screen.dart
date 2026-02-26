@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/SignIn/login_screen.dart';
-import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
+import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,12 +24,10 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     );
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.forward();
     _navigateToHome(context);
@@ -49,17 +47,9 @@ class _SplashScreenState extends State<SplashScreen>
       String? isOnBoard = prefs.getString(PrefKey.onBoard);
       if (token != null && token.isNotEmpty) {
         if (role == "PARENT" && isOnBoard != "required") {
-          pushReplacement(
-              context,
-              const BottomNavView(
-                tutor: false,
-              ));
+          pushReplacement(context, const BottomNavView(tutor: false));
         } else if (role == "TUTOR" && isOnBoard != "required") {
-          pushReplacement(
-              context,
-              const BottomNavView(
-                tutor: true,
-              ));
+          pushReplacement(context, const BottomNavView(tutor: true));
         } else {
           pushReplacement(context, const LogInScreen());
         }
@@ -79,15 +69,8 @@ class _SplashScreenState extends State<SplashScreen>
             height: 200,
             child: Column(
               children: [
-                Image.asset(
-                  'assets/images/logo.png',
-                  height: 150,
-                ),
-                Image.asset(
-                  'assets/images/ustaad.png',
-                  width: 76,
-                  height: 50,
-                ),
+                Image.asset('assets/images/logo.png', height: 150),
+                Image.asset('assets/images/ustaad.png', width: 76, height: 50),
               ],
             ),
           ),

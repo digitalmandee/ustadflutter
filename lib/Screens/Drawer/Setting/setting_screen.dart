@@ -3,25 +3,23 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Screens/Authentication/Forgot%20Pass/forgot_pass.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Drawer/Setting/change_email_phone.dart';
-import 'package:ustaad/config/keys/global.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.dart';
+import 'package:flutterustad/Screens/Authentication/Forgot%20Pass/forgot_pass.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Drawer/Setting/change_email_phone.dart';
+import 'package:flutterustad/config/keys/global.dart';
 
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({
-    super.key,
-  });
+  const SettingScreen({super.key});
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();
@@ -41,8 +39,10 @@ class _SettingScreenState extends State<SettingScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final provider =
-          Provider.of<TutorEditProfileProvider>(context, listen: false);
+      final provider = Provider.of<TutorEditProfileProvider>(
+        context,
+        listen: false,
+      );
       emailController.text = provider.email;
       phoneController.text = provider.phone;
       provider.resetEditStates();
@@ -89,17 +89,15 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<TutorEditProfileProvider>(context);
-    bool canDelete = profile.hasData &&
+    bool canDelete =
+        profile.hasData &&
         !profile.isLoading &&
         !profile.picLoading &&
         profile.image.isNotEmpty;
     return Stack(
       children: [
         Scaffold(
-          appBar: CustomAppBar1(
-            title: "Settings",
-            backArrow: true,
-          ),
+          appBar: CustomAppBar1(title: "Settings", backArrow: true),
           backgroundColor: AppTheme.white,
           body: Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 20, top: 20),
@@ -114,44 +112,53 @@ class _SettingScreenState extends State<SettingScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              width: 2, color: AppTheme.primaryCOlor),
+                            width: 2,
+                            color: AppTheme.primaryCOlor,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Container(
                             height: 100,
                             width: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
+                            decoration: BoxDecoration(shape: BoxShape.circle),
                             child: profile.picLoading
                                 ? GifLoader()
                                 : ClipOval(
                                     child: selectedImage != null
-                                        ? Image.file(File(selectedImage!.path),
-                                            fit: BoxFit.cover)
+                                        ? Image.file(
+                                            File(selectedImage!.path),
+                                            fit: BoxFit.cover,
+                                          )
                                         : profile.image.isNotEmpty
-                                            ? profile.image.startsWith("http")
-                                                ? Image.network(
-                                                    profile.image,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return Image.asset(
+                                        ? profile.image.startsWith("http")
+                                              ? Image.network(
+                                                  profile.image,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder:
+                                                      (
+                                                        context,
+                                                        error,
+                                                        stackTrace,
+                                                      ) {
+                                                        return Image.asset(
                                                           globalUserRole ==
                                                                   'TUTOR'
                                                               ? 'assets/images/tutorProfile.jpeg'
-                                                              : "assets/images/parentProfile.jpeg");
-                                                    },
-                                                  )
-                                                : Base64ImageWidget(
-                                                    base64String: profile.image)
-                                            : ClipOval(
-                                                child: Image.asset(globalUserRole ==
-                                                        'TUTOR'
-                                                    ? 'assets/images/tutorProfile.jpeg'
-                                                    : "assets/images/parentProfile.jpeg"),
-                                              ),
+                                                              : "assets/images/parentProfile.jpeg",
+                                                        );
+                                                      },
+                                                )
+                                              : Base64ImageWidget(
+                                                  base64String: profile.image,
+                                                )
+                                        : ClipOval(
+                                            child: Image.asset(
+                                              globalUserRole == 'TUTOR'
+                                                  ? 'assets/images/tutorProfile.jpeg'
+                                                  : "assets/images/parentProfile.jpeg",
+                                            ),
+                                          ),
                                   ),
                           ),
                         ),
@@ -171,14 +178,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         backgroundColor: AppTheme.primaryCOlor,
                         border: false,
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
+                      SizedBox(width: 10),
                       InkWell(
                         onTap: canDelete
                             ? () async {
-                                bool deleted =
-                                    await profile.deletePicture(context);
+                                bool deleted = await profile.deletePicture(
+                                  context,
+                                );
                                 if (deleted && mounted) {
                                   setState(() {
                                     selectedImage = null;
@@ -191,7 +197,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: canDelete ? Colors.red : AppTheme.hintColor,
                           size: 30,
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(width: 10),
@@ -220,11 +226,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     label: "Contact Number",
                     controller: phoneController,
                     onTap: () {
-                      push(
-                          context,
-                          ChangeEmailPhone(
-                            isPhone: true,
-                          ));
+                      push(context, ChangeEmailPhone(isPhone: true));
                     },
                   ),
                   const SizedBox(height: 20),
@@ -249,19 +251,22 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 10),
+                              horizontal: 8.0,
+                              vertical: 10,
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                AppText.appText("********** ",
-                                    fontSize: 20,
-                                    textColor: AppTheme.hintColor),
+                                AppText.appText(
+                                  "********** ",
+                                  fontSize: 20,
+                                  textColor: AppTheme.hintColor,
+                                ),
                                 InkWell(
                                   onTap: () => push(
-                                      context,
-                                      ForgotPassScreen(
-                                        isEditing: true,
-                                      )),
+                                    context,
+                                    ForgotPassScreen(isEditing: true),
+                                  ),
                                   child: Row(
                                     children: [
                                       Container(
@@ -277,13 +282,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ),
                                     ],
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
                         ),
                       ],
-                    )
+                    ),
                 ],
               ),
             ),
@@ -306,8 +311,10 @@ class _SettingScreenState extends State<SettingScreen> {
       setState(() {
         selectedImage = pickedFile;
       });
-      final provider =
-          Provider.of<TutorEditProfileProvider>(context, listen: false);
+      final provider = Provider.of<TutorEditProfileProvider>(
+        context,
+        listen: false,
+      );
 
       if (globalUserRole == "TUTOR") {
         provider.updateTutorProfileImage(context, pickedFile);
@@ -344,9 +351,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 textColor: Color(0xffA6ADBF),
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
+            SizedBox(width: 10),
             InkWell(
               onTap: onTap,
               child: Image.asset(

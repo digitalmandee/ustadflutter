@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Models/Parent%20Side/spending_model.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Models/Parent%20Side/spending_model.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ParentDashboardProvider extends ChangeNotifier {
   final AppDio dio;

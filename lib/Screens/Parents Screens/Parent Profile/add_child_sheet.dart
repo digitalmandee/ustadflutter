@@ -3,15 +3,15 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Parent%20Side/child_detail_model.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Parent%20Side/child_detail_model.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
 
 class AddChildBottomSheet extends StatefulWidget {
   final Child? child;
@@ -39,7 +39,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
     "Punjab Board",
     "Sindh Board",
     "Local",
-    "Others"
+    "Others",
   ];
   final List<String> allGrades = [
     "Pre-KG",
@@ -56,7 +56,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
     "Matriculation",
     "Intermediate",
     "O Level",
-    "A Level"
+    "A Level",
   ];
   String? selectedGender;
   String? selectedGrade;
@@ -154,20 +154,21 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                             firstName: firstNameController.text,
                                             lastName: lastNameController.text,
                                             grade: selectedGrade!,
-                                            curriculum: selectedCurriculum ==
-                                                    "Others"
+                                            curriculum:
+                                                selectedCurriculum == "Others"
                                                 ? otherCurriculum.text.trim()
                                                 : selectedCurriculum!,
                                             age: age.text,
                                             schoolName: schoolName.text,
-                                            gender:
-                                                selectedGender!.toLowerCase(),
+                                            gender: selectedGender!
+                                                .toLowerCase(),
                                             imageFile: selectedImage,
                                             base64Image: profilePic,
                                           );
                                           Navigator.pop(context);
-                                          await Future.delayed(const Duration(
-                                              milliseconds: 200));
+                                          await Future.delayed(
+                                            const Duration(milliseconds: 200),
+                                          );
                                           if (mounted) {
                                             AppToast.success(
                                               context: context,
@@ -175,11 +176,14 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                             );
                                           }
                                         } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
-                                                content: Text(
-                                                    "Error adding child.")),
+                                              content: Text(
+                                                "Error adding child.",
+                                              ),
+                                            ),
                                           );
                                         } finally {
                                           setState(() => isSubmitting = false);
@@ -187,24 +191,25 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                       } else {
                                         try {
                                           await provider.addChild(
-                                              firstName:
-                                                  firstNameController.text,
-                                              lastName: lastNameController.text,
-                                              curriculum: selectedCurriculum ==
-                                                      "Others"
-                                                  ? otherCurriculum.text.trim()
-                                                  : selectedCurriculum!,
-                                              grade: selectedGrade!,
-                                              age: age.text,
-                                              schoolName: schoolName.text,
-                                              gender:
-                                                  selectedGender!.toLowerCase(),
-                                              imageFile: selectedImage,
-                                              context: context);
+                                            firstName: firstNameController.text,
+                                            lastName: lastNameController.text,
+                                            curriculum:
+                                                selectedCurriculum == "Others"
+                                                ? otherCurriculum.text.trim()
+                                                : selectedCurriculum!,
+                                            grade: selectedGrade!,
+                                            age: age.text,
+                                            schoolName: schoolName.text,
+                                            gender: selectedGender!
+                                                .toLowerCase(),
+                                            imageFile: selectedImage,
+                                            context: context,
+                                          );
                                           Navigator.pop(context);
 
-                                          await Future.delayed(const Duration(
-                                              milliseconds: 200));
+                                          await Future.delayed(
+                                            const Duration(milliseconds: 200),
+                                          );
 
                                           if (mounted) {
                                             AppToast.success(
@@ -213,11 +218,14 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                                             );
                                           }
                                         } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
-                                                content: Text(
-                                                    "Error adding child.")),
+                                              content: Text(
+                                                "Error adding child.",
+                                              ),
+                                            ),
                                           );
                                         } finally {
                                           setState(() => isSubmitting = false);
@@ -227,7 +235,9 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.primaryCOlor,
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 32, vertical: 12),
+                                  horizontal: 32,
+                                  vertical: 12,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -235,18 +245,19 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                               child: Text(
                                 widget.isEdit == true ? "Update" : "Add",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -329,9 +340,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
     }
     // EDIT MODE + SERVER IMAGE (base64)
     if (widget.child != null && profilePic != null && profilePic!.isNotEmpty) {
-      return Base64ImageWidget(
-        base64String: profilePic!,
-      );
+      return Base64ImageWidget(base64String: profilePic!);
     }
 
     // DEFAULT IMAGE
@@ -356,92 +365,95 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                 height: 90,
                 width: 90,
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppTheme.appColor, width: 1)),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppTheme.appColor, width: 1),
+                ),
                 child: ClipOval(child: _buildProfileImage()),
               ),
               Column(
                 children: [
-                  AppButton.appButton("Upload New",
-                      context: context,
-                      width: 200,
-                      onTap: () => _pickImage(),
-                      backgroundColor: const Color(0xffF1FCF9),
-                      border: false,
-                      textColor: AppTheme.appColor),
-                  SizedBox(
-                    height: 10,
+                  AppButton.appButton(
+                    "Upload New",
+                    context: context,
+                    width: 200,
+                    onTap: () => _pickImage(),
+                    backgroundColor: const Color(0xffF1FCF9),
+                    border: false,
+                    textColor: AppTheme.appColor,
                   ),
+                  SizedBox(height: 10),
                   selectedImage != null
-                      ? AppButton.appButton("Delete Image",
+                      ? AppButton.appButton(
+                          "Delete Image",
                           context: context,
                           width: 200,
                           onTap: () => _deleteImage(),
                           backgroundColor: const Color(0xffFEECEC),
                           border: false,
-                          textColor: Colors.red)
+                          textColor: Colors.red,
+                        )
                       : SizedBox.shrink(),
                 ],
-              )
+              ),
             ],
           ),
           const SizedBox(height: 20),
           customLableField(
-              lable: "First Name", controller: firstNameController),
+            lable: "First Name",
+            controller: firstNameController,
+          ),
           const SizedBox(height: 20),
           customLableField(lable: "Last Name", controller: lastNameController),
           const SizedBox(height: 20),
-          AppText.appText("Curriculum",
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              textColor: AppTheme.lableText),
+          AppText.appText(
+            "Curriculum",
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            textColor: AppTheme.lableText,
+          ),
           const SizedBox(height: 10),
           DropdownButtonHideUnderline(
-              child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: Text(
-                    'Select Curriculum',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppTheme.hintColor,
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              hint: Text(
+                'Select Curriculum',
+                style: TextStyle(fontSize: 14, color: AppTheme.hintColor),
+              ),
+              items: allCurriculums
+                  .map(
+                    (e) => DropdownMenuItem<String>(
+                      value: e,
+                      child: Text(e, style: const TextStyle(fontSize: 14)),
                     ),
-                  ),
-                  items: allCurriculums
-                      .map((e) => DropdownMenuItem<String>(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                  value: selectedCurriculum,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCurriculum = value;
-                      if (value != "Others") {
-                        otherCurriculum.clear();
-                      }
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.borderCOlor),
-                    ),
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    maxHeight: 150,
-                    offset: const Offset(0, -5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ))),
+                  )
+                  .toList(),
+              value: selectedCurriculum,
+              onChanged: (value) {
+                setState(() {
+                  selectedCurriculum = value;
+                  if (value != "Others") {
+                    otherCurriculum.clear();
+                  }
+                });
+              },
+              buttonStyleData: ButtonStyleData(
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.borderCOlor),
+                ),
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 150,
+                offset: const Offset(0, -5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
           if (selectedCurriculum == "Others")
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -452,22 +464,18 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
               ),
             ),
           const SizedBox(height: 20),
-          AppText.appText("Gender",
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              textColor: AppTheme.lableText),
+          AppText.appText(
+            "Gender",
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            textColor: AppTheme.lableText,
+          ),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: _genderTile(
-                  "Male",
-                ),
-              ),
-              SizedBox(
-                width: 5,
-              ),
+              Expanded(child: _genderTile("Male")),
+              SizedBox(width: 5),
               Expanded(child: _genderTile("Female")),
             ],
           ),
@@ -487,63 +495,64 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: Text(
-                              'Select Grade',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppTheme.hintColor,
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Text(
+                          'Select Grade',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppTheme.hintColor,
+                          ),
+                        ),
+                        items: allGrades
+                            .map(
+                              (e) => DropdownMenuItem<String>(
+                                value: e,
+                                child: Text(
+                                  e,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
                               ),
-                            ),
-                            items: allGrades
-                                .map((e) => DropdownMenuItem<String>(
-                                      value: e,
-                                      child: Text(
-                                        e,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            value: selectedGrade,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedGrade = value;
-                              });
-                            },
-                            buttonStyleData: ButtonStyleData(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: AppTheme.borderCOlor),
-                              ),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              maxHeight: 150,
-                              offset: const Offset(0, -5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ))),
+                            )
+                            .toList(),
+                        value: selectedGrade,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedGrade = value;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppTheme.borderCOlor),
+                          ),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 150,
+                          offset: const Offset(0, -5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              SizedBox(
-                width: 5,
-              ),
+              SizedBox(width: 5),
               // customLableField(
               //     lable: "Grade",
               //     width: ScreenSize(context).width * 0.4,
               //     controller: grade),
               Expanded(
                 child: customLableField(
-                    lable: "Age",
-                    controller: age,
-                    textType: TextInputType.numberWithOptions()),
+                  lable: "Age",
+                  controller: age,
+                  textType: TextInputType.numberWithOptions(),
+                ),
               ),
             ],
           ),
@@ -554,9 +563,7 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
     );
   }
 
-  Widget _genderTile(
-    String gender,
-  ) {
+  Widget _genderTile(String gender) {
     return GestureDetector(
       onTap: () => setState(() => selectedGender = gender),
       child: Container(

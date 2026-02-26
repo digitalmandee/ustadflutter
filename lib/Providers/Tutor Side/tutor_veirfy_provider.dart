@@ -1,6 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
+import 'package:flutterustad/Helpers/utils.dart';
 
 class SelectedFile {
   final PlatformFile file;
@@ -35,7 +35,7 @@ class FileProvider with ChangeNotifier {
 
       // size check (only for resume)
       if (type == "resume" && file.size > 2 * 1024 * 1024) {
-        AppToast.error(context: context, msg: 'File is greater than 2MB', );
+        AppToast.error(context: context, msg: 'File is greater than 2MB');
         notifyListeners();
         return;
       }

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 
 class ReverseTimer extends StatefulWidget {
   final String startTime;
@@ -92,7 +92,6 @@ class _ReverseTimerState extends State<ReverseTimer> {
     );
   }
 }
-
 
 // import 'dart:async';
 // import 'package:flutter/material.dart';

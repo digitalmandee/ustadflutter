@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/additional_detail.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/signup_otp.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/stepper.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/user_detail_form.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/additional_detail.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/signup_otp.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/stepper.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/user_detail_form.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -23,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen>
     tabController = TabController(length: 3, vsync: this);
     signupData = SignupData();
     tabController.addListener(() {
-      setState(() {}); 
+      setState(() {});
     });
   }
 
@@ -53,12 +53,10 @@ class _SignupScreenState extends State<SignupScreen>
                   tabController: tabController,
                   signupData: signupData,
                 ),
-                OtpVerificationScreen(
-                  signupData: signupData,
-                ),
+                OtpVerificationScreen(signupData: signupData),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

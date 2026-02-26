@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -11,9 +12,10 @@ class GoogleSignInService {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   Future<void> init() async {
+    log("Initializing Google Sign-In...");
     await _googleSignIn.initialize(
       serverClientId:
-          '349544989753-bpcme9hi67ipua3iudgt5fmm5j692epa.apps.googleusercontent.com',
+          "1022247289156-m8el3dk5mqb3jrj1smdrmuvk2fqk9n9e.apps.googleusercontent.com",
     );
   }
 
@@ -41,15 +43,8 @@ class GoogleSignInService {
       };
 
       if (kDebugMode) {
-        print("object$userData");
+        log("object$userData");
       }
-      // if (context.mounted) {
-      //   // ScaffoldMessenger.of(context).showSnackBar(
-      //   //   SnackBar(
-      //   //     content: Text("Signed in as ${account.displayName ?? 'User'}"),
-      //   //   ),
-      //   // );
-      // }
 
       return userData;
     } on SocketException {
@@ -59,14 +54,25 @@ class GoogleSignInService {
         );
       }
       return null;
-    } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Google Sign-In failed. Try again.")),
-        );
+    } on GoogleSignInException catch (e) {
+      if (e.code == 'canceled') {
+        if (kDebugMode) log("Google Sign-In canceled by user.");
+        return null; // user canceled
+      } else {
+        if (kDebugMode) log("Google Sign-In error: $e");
       }
-      return null;
+    } catch (e, stack) {
+      if (kDebugMode) {
+        log("Google Sign-In Exception: $e");
+        log("Stack trace: $stack");
+      }
     }
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Google Sign-In failed. Try again.")),
+      );
+    }
+    return null;
   }
 
   Future<void> signOut() async {

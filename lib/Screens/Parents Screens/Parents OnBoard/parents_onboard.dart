@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Screens/Authentication/widgets/widgets.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/child_profile.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/parent_bank_selection.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/parents_verify.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/child_profile.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/parent_bank_selection.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/parents_verify.dart';
 
 class ParentsOnboardScreen extends StatefulWidget {
   const ParentsOnboardScreen({super.key});
@@ -38,18 +38,26 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
-                  stepIndicator("Profile", 0, context,
-                      controller: _tabController),
-                  SizedBox(
-                    width: 5,
+                  stepIndicator(
+                    "Profile",
+                    0,
+                    context,
+                    controller: _tabController,
                   ),
-                  stepIndicator("Banks", 1, context,
-                      controller: _tabController),
-                  SizedBox(
-                    width: 5,
+                  SizedBox(width: 5),
+                  stepIndicator(
+                    "Banks",
+                    1,
+                    context,
+                    controller: _tabController,
                   ),
-                  stepIndicator("Verifications", 2, context,
-                      controller: _tabController),
+                  SizedBox(width: 5),
+                  stepIndicator(
+                    "Verifications",
+                    2,
+                    context,
+                    controller: _tabController,
+                  ),
                 ],
               ),
             ),
@@ -75,21 +83,22 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
                     // },
                   ),
                   ParentBankSelectionScreen(
-                      onTap: () {
-                        if (_tabController.index < 2) {
-                          setState(() {
-                            _tabController.animateTo(_tabController.index + 1);
-                          });
-                        }
-                      },
-                      onBackTap: () {
-                        if (_tabController.index < 2) {
-                          setState(() {
-                            _tabController.animateTo(_tabController.index - 1);
-                          });
-                        }
-                      },
-                      parentOnboardData: parentOnboardData),
+                    onTap: () {
+                      if (_tabController.index < 2) {
+                        setState(() {
+                          _tabController.animateTo(_tabController.index + 1);
+                        });
+                      }
+                    },
+                    onBackTap: () {
+                      if (_tabController.index < 2) {
+                        setState(() {
+                          _tabController.animateTo(_tabController.index - 1);
+                        });
+                      }
+                    },
+                    parentOnboardData: parentOnboardData,
+                  ),
                   ParentsVerificationScreen(
                     parentOnboardData: parentOnboardData,
                     onBackTap: () {
@@ -102,7 +111,7 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_education_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
 
 class AddEducationBottomSheet extends StatefulWidget {
   final Education? education;
@@ -65,25 +65,30 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
             _buildHeader(),
             const SizedBox(height: 16),
             Container(
-                height: 1,
-                width: ScreenSize(context).width,
-                color: AppTheme.hintColor),
+              height: 1,
+              width: ScreenSize(context).width,
+              color: AppTheme.hintColor,
+            ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 20,
+              ),
               child: Column(
                 children: [
                   customLableField(
-                      height: 52.0,
-                      lable: "Name of Institute *",
-                      controller: _institute,
-                      hintText: "University of the Punjab"),
+                    height: 52.0,
+                    lable: "Name of Institute *",
+                    controller: _institute,
+                    hintText: "University of the Punjab",
+                  ),
                   const SizedBox(height: 12),
                   customLableField(
-                      height: 52.0,
-                      lable: "Degree *",
-                      controller: _degree,
-                      hintText: "BS-IT"),
+                    height: 52.0,
+                    lable: "Degree *",
+                    controller: _degree,
+                    hintText: "BS-IT",
+                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -120,8 +125,13 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                   Row(
                     children: [
                       Expanded(
-                          child: _dateField(context, "From Date", _startDate,
-                              (date) => _startDateRaw = date)),
+                        child: _dateField(
+                          context,
+                          "From Date",
+                          _startDate,
+                          (date) => _startDateRaw = date,
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _dateField(
@@ -136,11 +146,12 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                   ),
                   const SizedBox(height: 12),
                   customLableField(
-                      height: 100.0,
-                      lable: "Description",
-                      controller: _description,
-                      hintText: "Enter Description",
-                      maxLines: 3),
+                    height: 100.0,
+                    lable: "Description",
+                    controller: _description,
+                    hintText: "Enter Description",
+                    maxLines: 3,
+                  ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: widget.education == null
@@ -158,18 +169,20 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                         ),
                       if (widget.education != null) const SizedBox(width: 10),
                       AppButton.appButton(
-                          context: context,
-                          widget.education == null ? "Add" : "Update",
-                          width: 83, onTap: () {
-                        if (provider.addEduLoader == false) {
-                          _saveEducation(context, provider);
-                        }
-                      }),
+                        context: context,
+                        widget.education == null ? "Add" : "Update",
+                        width: 83,
+                        onTap: () {
+                          if (provider.addEduLoader == false) {
+                            _saveEducation(context, provider);
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -191,13 +204,17 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                 height: 120,
                 width: 120,
                 decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("assets/images/radial.png"))),
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/radial.png"),
+                  ),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(isEdit
-                      ? "assets/images/editBottom.png"
-                      : "assets/images/addPlus.png"),
+                  child: Image.asset(
+                    isEdit
+                        ? "assets/images/editBottom.png"
+                        : "assets/images/addPlus.png",
+                  ),
                 ),
               ),
               IconButton(
@@ -214,18 +231,24 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
             fontWeight: FontWeight.w600,
           ),
           const SizedBox(height: 10),
-          AppText.appText("Edit Education to your profile",
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              textColor: Color(0xff4D5874)),
+          AppText.appText(
+            "Edit Education to your profile",
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            textColor: Color(0xff4D5874),
+          ),
         ],
       ),
     );
   }
 
-  Widget _dateField(context, String label, TextEditingController controller,
-      Function(DateTime) onPicked,
-      {bool isDisabled = false}) {
+  Widget _dateField(
+    context,
+    String label,
+    TextEditingController controller,
+    Function(DateTime) onPicked, {
+    bool isDisabled = false,
+  }) {
     return GestureDetector(
       onTap: isDisabled
           ? null
@@ -248,15 +271,17 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                         backgroundColor: Colors.white,
 
                         /// Selected date
-                        dayBackgroundColor:
-                            WidgetStateProperty.resolveWith((states) {
+                        dayBackgroundColor: WidgetStateProperty.resolveWith((
+                          states,
+                        ) {
                           if (states.contains(WidgetState.selected)) {
                             return AppTheme.primaryCOlor;
                           }
                           return null;
                         }),
-                        dayForegroundColor:
-                            WidgetStateProperty.resolveWith((states) {
+                        dayForegroundColor: WidgetStateProperty.resolveWith((
+                          states,
+                        ) {
                           if (states.contains(WidgetState.selected)) {
                             return Colors.white;
                           }
@@ -264,8 +289,10 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                         }),
 
                         /// Today border
-                        todayBorder:
-                            BorderSide(color: AppTheme.primaryCOlor, width: 1),
+                        todayBorder: BorderSide(
+                          color: AppTheme.primaryCOlor,
+                          width: 1,
+                        ),
 
                         /// Shape
                         shape: RoundedRectangleBorder(
@@ -280,8 +307,9 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
                           foregroundColor: Colors.grey,
                         ),
                       ),
-                      dialogTheme:
-                          DialogThemeData(backgroundColor: Colors.white),
+                      dialogTheme: DialogThemeData(
+                        backgroundColor: Colors.white,
+                      ),
                     ),
                     child: child!,
                   );
@@ -366,10 +394,7 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
       success = await provider.addEducation(edu, context);
     } else {
       if (!_hasEducationChanges()) {
-        AppToast.error(
-          context: context,
-          msg: "No changes detected",
-        );
+        AppToast.error(context: context, msg: "No changes detected");
         return;
       }
 
@@ -395,8 +420,9 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
     final original = widget.education!;
 
     final currentStart = _startDateRaw?.toIso8601String() ?? '';
-    final currentEnd =
-        isContinue ? 'Present' : _endDateRaw?.toIso8601String() ?? '';
+    final currentEnd = isContinue
+        ? 'Present'
+        : _endDateRaw?.toIso8601String() ?? '';
 
     return original.institute != _institute.text.trim() ||
         original.degree != _degree.text.trim() ||
@@ -414,19 +440,21 @@ class _AddEducationBottomSheetState extends State<AddEducationBottomSheet> {
         content: const Text("Are you sure you want to delete this?"),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child:
-                  AppText.appText("Cancel", textColor: AppTheme.primaryCOlor)),
+            onPressed: () => Navigator.pop(context, false),
+            child: AppText.appText("Cancel", textColor: AppTheme.primaryCOlor),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child:
-                  AppText.appText("Delete", textColor: AppTheme.primaryCOlor)),
+            onPressed: () => Navigator.pop(context, true),
+            child: AppText.appText("Delete", textColor: AppTheme.primaryCOlor),
+          ),
         ],
       ),
     );
     if (confirmed == true) {
-      bool success =
-          await provider.deleteEducation(widget.education!.id, context);
+      bool success = await provider.deleteEducation(
+        widget.education!.id,
+        context,
+      );
       if (success) {
         Navigator.pop(context);
         await Future.delayed(const Duration(milliseconds: 200));

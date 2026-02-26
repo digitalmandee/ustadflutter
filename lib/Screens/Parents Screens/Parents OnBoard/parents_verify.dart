@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/submission_screen.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/submission_screen.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ParentsVerificationScreen extends StatefulWidget {
   final VoidCallback onBackTap;
@@ -51,10 +51,7 @@ class _ParentsVerificationScreenState extends State<ParentsVerificationScreen> {
                 onTap: () {
                   widget.onBackTap.call();
                 },
-                child: Image.asset(
-                  "assets/images/arrowBack.png",
-                  height: 28,
-                ),
+                child: Image.asset("assets/images/arrowBack.png", height: 28),
               ),
             ),
             _buildHeader(),
@@ -233,40 +230,36 @@ class _ParentsVerificationScreenState extends State<ParentsVerificationScreen> {
       final idBack = fileProvider.idBackFile!.file;
 
       final formData = FormData.fromMap({
-        "idFront":
-            await MultipartFile.fromFile(idFront.path!, filename: idFront.name),
-        "idBack":
-            await MultipartFile.fromFile(idBack.path!, filename: idBack.name),
-        "accountNumber": widget.parentOnboardData.accountNumber
-            ?.replaceAll(RegExp(r'\D'), ''),
+        "idFront": await MultipartFile.fromFile(
+          idFront.path!,
+          filename: idFront.name,
+        ),
+        "idBack": await MultipartFile.fromFile(
+          idBack.path!,
+          filename: idBack.name,
+        ),
+        "accountNumber": widget.parentOnboardData.accountNumber?.replaceAll(
+          RegExp(r'\D'),
+          '',
+        ),
         "bankName": widget.parentOnboardData.selectedBank,
       });
 
-      final response =
-          await dio.post(path: AppUrls.parentOnBoard, data: formData);
+      final response = await dio.post(
+        path: AppUrls.parentOnBoard,
+        data: formData,
+      );
       final data = response.data;
 
       if (response.statusCode == 201) {
-        AppToast.success(
-          context: context,
-          msg: "${data["message"]}",
-        );
+        AppToast.success(context: context, msg: "${data["message"]}");
         fileProvider.clearAll();
-        pushUntil(
-          context,
-          const SubmissionCompleteScreen(tutor: false),
-        );
+        pushUntil(context, const SubmissionCompleteScreen(tutor: false));
       } else {
-        AppToast.error(
-          context: context,
-          msg: data["errors"][0]["message"],
-        );
+        AppToast.error(context: context, msg: data["errors"][0]["message"]);
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Upload failed: $e",
-      );
+      AppToast.error(context: context, msg: "Upload failed: $e");
     } finally {
       setState(() => isLoading = false);
     }

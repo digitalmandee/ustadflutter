@@ -2,19 +2,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Models/Tutor%20Side/subjects_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subjects_model.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   final Function()? onTap;
   final TutorOnboardData onboardData;
 
-  const SubjectSelectionScreen(
-      {super.key, this.onTap, required this.onboardData});
+  const SubjectSelectionScreen({
+    super.key,
+    this.onTap,
+    required this.onboardData,
+  });
 
   @override
   State<SubjectSelectionScreen> createState() => _SubjectSelectionScreenState();
@@ -43,7 +46,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     "Matriculation",
     "Intermediate",
     "O Level",
-    "A Level"
+    "A Level",
   ];
   List<String> selectedGrades = [];
 
@@ -56,7 +59,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     "Punjab Board",
     "Sindh Board",
     "Local",
-    "Others"
+    "Others",
   ];
   List<String> selectedCurriculums = [];
   List<String> otherCurriculums = [];
@@ -120,8 +123,10 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                     alignment: Alignment.centerLeft,
                     child: InkWell(
                       onTap: () => Navigator.pop(context),
-                      child: Image.asset("assets/images/arrowBack.png",
-                          height: 28),
+                      child: Image.asset(
+                        "assets/images/arrowBack.png",
+                        height: 28,
+                      ),
                     ),
                   ),
 
@@ -139,16 +144,18 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                             TextSpan(
                               text: 'Let Us ',
                               style: TextStyle(
-                                  fontSize: 48,
-                                  color: AppTheme.black,
-                                  fontWeight: FontWeight.w400),
+                                fontSize: 48,
+                                color: AppTheme.black,
+                                fontWeight: FontWeight.w400,
+                              ),
                               children: [
                                 TextSpan(
                                   text: 'Know You Before',
                                   style: TextStyle(
-                                      color: AppTheme.appColor,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 48),
+                                    color: AppTheme.appColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 48,
+                                  ),
                                 ),
                                 const TextSpan(text: ' You Start'),
                               ],
@@ -214,8 +221,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                               .isNotEmpty) {
                                             setState(() {
                                               otherCurriculums.add(
-                                                  otherCurriculumController.text
-                                                      .trim());
+                                                otherCurriculumController.text
+                                                    .trim(),
+                                              );
                                               otherCurriculumController.clear();
                                             });
                                           }
@@ -224,13 +232,16 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                           padding: const EdgeInsets.all(10),
                                           decoration: BoxDecoration(
                                             color: AppTheme.primaryCOlor,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
-                                          child: const Icon(Icons.add,
-                                              color: Colors.white),
+                                          child: const Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
 
@@ -271,7 +282,8 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                     label: AppText.appText(
                                       e == "Others" &&
                                               otherCurriculumController
-                                                  .text.isNotEmpty
+                                                  .text
+                                                  .isNotEmpty
                                           ? otherCurriculumController.text
                                           : e,
                                       textColor: AppTheme.lableText,
@@ -300,8 +312,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 context: context,
                 onTap: isFormValid
                     ? () {
-                        widget.onboardData.selectedSubjects =
-                            selectedSubjects.map((s) => s.name).toList();
+                        widget.onboardData.selectedSubjects = selectedSubjects
+                            .map((s) => s.name)
+                            .toList();
                         widget.onboardData.selectedGrades = selectedGrades;
                         List<String> finalCurriculums = selectedCurriculums
                             .where((e) => e != "Others")
@@ -316,8 +329,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                             .map((e) => e.toString().trim())
                             .toList();
 
-                        widget.onboardData.selectedSubjects =
-                            selectedSubjects.map((s) => s.name.trim()).toList();
+                        widget.onboardData.selectedSubjects = selectedSubjects
+                            .map((s) => s.name.trim())
+                            .toList();
 
                         widget.onTap?.call();
                       }
@@ -325,8 +339,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 backgroundColor: isFormValid
                     ? AppTheme.primaryCOlor
                     : const Color(0xffD9D9D9),
-                textColor:
-                    isFormValid ? AppTheme.white : AppTheme.lighttxtColor,
+                textColor: isFormValid
+                    ? AppTheme.white
+                    : AppTheme.lighttxtColor,
                 border: false,
               ),
             ),
@@ -364,20 +379,19 @@ class MultiSelectDropdown<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// HEADING
-        AppText.appText(title,
-            fontSize: 16,
-            fontWeight: fontWeight ?? FontWeight.w400,
-            textColor: AppTheme.lableText),
+        AppText.appText(
+          title,
+          fontSize: 16,
+          fontWeight: fontWeight ?? FontWeight.w400,
+          textColor: AppTheme.lableText,
+        ),
         const SizedBox(height: 6),
 
         /// DROPDOWN FIELD
         DropdownButtonHideUnderline(
           child: DropdownButton2<T>(
             isExpanded: true,
-            hint: AppText.appText(
-              "Select",
-              textColor: Color(0xffA6ADBF),
-            ),
+            hint: AppText.appText("Select", textColor: Color(0xffA6ADBF)),
             items: items.map((item) {
               final isSelected = selectedItems.contains(item);
               return DropdownMenuItem<T>(
@@ -415,16 +429,15 @@ class MultiSelectDropdown<T> extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: AppTheme.white,
-                border: Border.all(
-                  color: AppTheme.primaryCOlor,
-                ),
+                border: Border.all(color: AppTheme.primaryCOlor),
               ),
             ),
             dropdownStyleData: DropdownStyleData(
               maxHeight: 40 * 5,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: AppTheme.white),
+                borderRadius: BorderRadius.circular(12),
+                color: AppTheme.white,
+              ),
               offset: const Offset(0, 0),
             ),
           ),
@@ -439,8 +452,10 @@ class MultiSelectDropdown<T> extends StatelessWidget {
               runSpacing: 6,
               children: selectedItems.map((e) {
                 return Chip(
-                  label: AppText.appText(itemLabel(e),
-                      textColor: AppTheme.lableText),
+                  label: AppText.appText(
+                    itemLabel(e),
+                    textColor: AppTheme.lableText,
+                  ),
                   backgroundColor: AppTheme.white,
                   labelStyle: const TextStyle(color: Colors.white),
                 );

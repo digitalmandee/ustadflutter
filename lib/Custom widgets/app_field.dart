@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 
 class CustomAppTextField extends StatefulWidget {
   final String? texthint;
@@ -108,7 +108,8 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
               ? const EdgeInsets.all(15)
               : const EdgeInsets.all(9),
           hintText: widget.texthint,
-          hintStyle: widget.hintStyle ??
+          hintStyle:
+              widget.hintStyle ??
               TextStyle(
                 color: AppTheme.hintColor,
                 fontSize: 14,
@@ -116,7 +117,8 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
                 fontFamily: "InstrumentSans",
               ),
           prefixIcon: widget.prefixIcon,
-          suffixIcon: widget.suffix ??
+          suffixIcon:
+              widget.suffix ??
               (widget.isPasswordField
                   ? InkWell(
                       onTap: () {
@@ -138,8 +140,12 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
   }
 }
 
-Widget parentHomeSearchField(context, controller,
-    {ValueChanged<String>? onChanged, required String hintText}) {
+Widget parentHomeSearchField(
+  context,
+  controller, {
+  ValueChanged<String>? onChanged,
+  required String hintText,
+}) {
   return Container(
     height: 44,
     width: MediaQuery.of(context).size.width,

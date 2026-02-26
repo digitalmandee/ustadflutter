@@ -5,12 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/global.dart';
 
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class TutorEditProfileProvider extends ChangeNotifier {
   final AppDio dio;
@@ -114,10 +114,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateTutorProfileImage(
-    context,
-    XFile? imageFile,
-  ) async {
+  Future<void> updateTutorProfileImage(context, XFile? imageFile) async {
     picLoading = true;
     notifyListeners();
 
@@ -128,8 +125,10 @@ class TutorEditProfileProvider extends ChangeNotifier {
             : "",
       };
 
-      final response =
-          await dio.post(path: AppUrls.editTutorProfile, data: body);
+      final response = await dio.post(
+        path: AppUrls.editTutorProfile,
+        data: body,
+      );
 
       if (response.statusCode == 200) {
         image = response.data["data"]["image"] ?? image;
@@ -148,26 +147,22 @@ class TutorEditProfileProvider extends ChangeNotifier {
         notifyListeners();
         AppToast.error(
           context: context,
-          msg: response.data["errors"]?[0]?["message"] ??
+          msg:
+              response.data["errors"]?[0]?["message"] ??
               "Failed to update image",
         );
       }
     } catch (e) {
       picLoading = false;
       notifyListeners();
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
       picLoading = false;
       notifyListeners();
     }
   }
 
-  Future<bool> deletePicture(
-    context,
-  ) async {
+  Future<bool> deletePicture(context) async {
     picLoading = true;
     notifyListeners();
 
@@ -192,7 +187,8 @@ class TutorEditProfileProvider extends ChangeNotifier {
         notifyListeners();
         AppToast.error(
           context: context,
-          msg: response.data["errors"]?[0]?["message"] ??
+          msg:
+              response.data["errors"]?[0]?["message"] ??
               "Failed to update image",
         );
         return false;
@@ -200,10 +196,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
     } catch (e) {
       picLoading = false;
       notifyListeners();
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
       return false;
     } finally {
       picLoading = false;
@@ -211,12 +204,12 @@ class TutorEditProfileProvider extends ChangeNotifier {
     }
   }
 
-///////////////////////////////////////////  PArent Side ////////////////////////////////////////////
+  ///////////////////////////////////////////  PArent Side ////////////////////////////////////////////
 
   Future<void> getParentProfile(context, {bool refresh = false}) async {
     if (!hasData || refresh) {
-    isLoading = true;
-    notifyListeners();
+      isLoading = true;
+      notifyListeners();
     }
 
     try {
@@ -235,7 +228,8 @@ class TutorEditProfileProvider extends ChangeNotifier {
       } else {
         if (kDebugMode) {
           print(
-              "Something went wrong: ${response.data["errors"]?[0]?["message"]}");
+            "Something went wrong: ${response.data["errors"]?[0]?["message"]}",
+          );
         }
         // AppToast.error(
         //   context: context,
@@ -257,10 +251,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateParentProfileImage(
-    context,
-    XFile? imageFile,
-  ) async {
+  Future<void> updateParentProfileImage(context, XFile? imageFile) async {
     picLoading = true;
     notifyListeners();
 
@@ -271,8 +262,10 @@ class TutorEditProfileProvider extends ChangeNotifier {
             : "",
       };
 
-      final response =
-          await dio.post(path: AppUrls.editParentProfile, data: body);
+      final response = await dio.post(
+        path: AppUrls.editParentProfile,
+        data: body,
+      );
 
       if (response.statusCode == 200) {
         image = response.data["data"]["image"] ?? image;
@@ -291,17 +284,15 @@ class TutorEditProfileProvider extends ChangeNotifier {
         notifyListeners();
         AppToast.error(
           context: context,
-          msg: response.data["errors"]?[0]?["message"] ??
+          msg:
+              response.data["errors"]?[0]?["message"] ??
               "Failed to update image",
         );
       }
     } catch (e) {
       picLoading = false;
       notifyListeners();
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
       picLoading = false;
       notifyListeners();

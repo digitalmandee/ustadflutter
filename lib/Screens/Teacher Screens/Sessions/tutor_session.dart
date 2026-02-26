@@ -3,25 +3,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/calculate_duration.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/timeformat.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Drawer/drawer.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/session_cards.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/session_update_screen.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/subsession_list.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/calculate_duration.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/timeformat.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/session_cards.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/checkout.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/session_update_screen.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/subsession_list.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class TutorSessionScreen extends StatefulWidget {
   const TutorSessionScreen({super.key});
@@ -61,8 +61,10 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child:
-                Image.asset("assets/images/Background.png", fit: BoxFit.fill),
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
+            ),
           ),
           Column(
             children: [
@@ -99,21 +101,31 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
         child: Row(
           children: [
-            _buildToggleButton("Upcoming", isSelected: showUpcoming, onTap: () {
-              setState(() => showUpcoming = true);
-            }),
-            _buildToggleButton("Completed", isSelected: !showUpcoming,
-                onTap: () {
-              setState(() => showUpcoming = false);
-            }),
+            _buildToggleButton(
+              "Upcoming",
+              isSelected: showUpcoming,
+              onTap: () {
+                setState(() => showUpcoming = true);
+              },
+            ),
+            _buildToggleButton(
+              "Completed",
+              isSelected: !showUpcoming,
+              onTap: () {
+                setState(() => showUpcoming = false);
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildToggleButton(String text,
-      {required bool isSelected, required VoidCallback onTap}) {
+  Widget _buildToggleButton(
+    String text, {
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -173,8 +185,9 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
             (r) => r["sessionId"] == session["id"] && r["status"] == "CREATED",
           );
 
-          final runningSubSessionId =
-              runningSessions.isNotEmpty ? runningSessions[0]["id"] : "";
+          final runningSubSessionId = runningSessions.isNotEmpty
+              ? runningSessions[0]["id"]
+              : "";
 
           return InkWell(
             onTap: () => _onSessionTap(session, isRunning),
@@ -194,12 +207,13 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SessionCheckOut(
-                            ruuningId: runningSubSessionId,
-                            parentId: "${session["parentId"]}",
-                            tutorId: "${session["tutorId"]}",
-                            sessionId: "${session["id"]}",
-                          )),
+                    builder: (context) => SessionCheckOut(
+                      ruuningId: runningSubSessionId,
+                      parentId: "${session["parentId"]}",
+                      tutorId: "${session["tutorId"]}",
+                      sessionId: "${session["id"]}",
+                    ),
+                  ),
                 ).then((_) {
                   getSessions(context);
                 });
@@ -225,12 +239,13 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SessionCheckOut(
-                    ruuningId: runningSessions[0]["id"],
-                    parentId: "${session["parentId"]}",
-                    tutorId: "${session["tutorId"]}",
-                    sessionId: "${session["id"]}",
-                  )),
+            builder: (context) => SessionCheckOut(
+              ruuningId: runningSessions[0]["id"],
+              parentId: "${session["parentId"]}",
+              tutorId: "${session["tutorId"]}",
+              sessionId: "${session["id"]}",
+            ),
+          ),
         ).then((_) {
           getSessions(context);
         });
@@ -239,8 +254,9 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => SessionUpdateScreen(
-              runningId:
-                  runningSessions.isEmpty ? "" : runningSessions[0]["id"],
+              runningId: runningSessions.isEmpty
+                  ? ""
+                  : runningSessions[0]["id"],
               isRunning: isonTap,
               name: "${session["parentName"]}",
               parentId: "${session["parentId"]}",
@@ -308,8 +324,9 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
             responseData["data"]["runningSessions"] as List<dynamic>;
 
         setState(() {
-          upcomingSessions =
-              sessions.where((s) => s["status"] == "active").toList();
+          upcomingSessions = sessions
+              .where((s) => s["status"] == "active")
+              .toList();
           runningSessions = running;
           isLoading = false;
         });
@@ -338,10 +355,7 @@ class _TutorSessionScreenState extends State<TutorSessionScreen> {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       setState(() => isLoading = false);
     }

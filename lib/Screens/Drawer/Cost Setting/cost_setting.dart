@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subject_cost_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Drawer/Cost%20Setting/add_sub_bottomsheett.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subject_cost_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/subject_cost_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Screens/Drawer/Cost%20Setting/add_sub_bottomsheett.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
 
 class CostSetting extends StatefulWidget {
   const CostSetting({super.key});
@@ -28,8 +28,10 @@ class _CostSettingState extends State<CostSetting> {
     super.initState();
     Future.microtask(() {
       if (mounted) {
-        Provider.of<CostSettingProvider>(context, listen: false)
-            .fetchCostSettings(context, false);
+        Provider.of<CostSettingProvider>(
+          context,
+          listen: false,
+        ).fetchCostSettings(context, false);
       }
     });
   }
@@ -91,8 +93,11 @@ class _CostSettingState extends State<CostSetting> {
               ],
             ),
             SizedBox(height: 20),
-            AppText.appText("Cost Settings (Monthly)",
-                fontWeight: FontWeight.w600, fontSize: 16),
+            AppText.appText(
+              "Cost Settings (Monthly)",
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
             SizedBox(height: 10),
             Expanded(
               child: Consumer<CostSettingProvider>(
@@ -110,8 +115,9 @@ class _CostSettingState extends State<CostSetting> {
                     itemBuilder: (context, index) {
                       final subject = provider.subjects[index];
                       if (!_controllers.containsKey(index)) {
-                        _controllers[index] =
-                            TextEditingController(text: subject.cost);
+                        _controllers[index] = TextEditingController(
+                          text: subject.cost,
+                        );
                       } else {
                         if (_controllers[index]!.text != subject.cost) {
                           _controllers[index]!.text = subject.cost;
@@ -124,8 +130,11 @@ class _CostSettingState extends State<CostSetting> {
                         children: [
                           Row(
                             children: [
-                              AppText.appText(capitalizeEachWord(subject.name),
-                                  fontSize: 14, fontWeight: FontWeight.w500),
+                              AppText.appText(
+                                capitalizeEachWord(subject.name),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                               const Spacer(),
                               Transform.scale(
                                 scale: 0.60,
@@ -166,20 +175,16 @@ class _CostSettingState extends State<CostSetting> {
                                     ),
                                   );
                                 },
-                              )
+                              ),
                             ],
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
                           Container(
                             height: 1,
                             width: ScreenSize(context).width,
                             color: const Color(0xffE0E3EB),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
                         ],
                       );
                     },
@@ -189,8 +194,10 @@ class _CostSettingState extends State<CostSetting> {
             ),
             SizedBox(height: 20),
             Align(
-                alignment: Alignment.centerLeft,
-                child: AppButton.appButton("Add More", onTap: () {
+              alignment: Alignment.centerLeft,
+              child: AppButton.appButton(
+                "Add More",
+                onTap: () {
                   showModalBottomSheet(
                     backgroundColor: AppTheme.white,
                     context: context,
@@ -198,24 +205,27 @@ class _CostSettingState extends State<CostSetting> {
                     isDismissible: false,
                     enableDrag: false,
                     shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
                     ),
                     builder: (context) => AddCostSubjectSheet(),
                   );
                 },
-                    context: context,
-                    height: 28,
-                    width: 105,
-                    radius: 8.0,
-                    fontSize: 14,
-                    imgHeight: 9.33,
-                    fontWeight: FontWeight.w400,
-                    textColor: AppTheme.appColor,
-                    borderColor: AppTheme.appColor,
-                    border: true,
-                    image: "assets/images/add.png",
-                    backgroundColor: Color.fromARGB(255, 238, 253, 245))),
+                context: context,
+                height: 28,
+                width: 105,
+                radius: 8.0,
+                fontSize: 14,
+                imgHeight: 9.33,
+                fontWeight: FontWeight.w400,
+                textColor: AppTheme.appColor,
+                borderColor: AppTheme.appColor,
+                border: true,
+                image: "assets/images/add.png",
+                backgroundColor: Color.fromARGB(255, 238, 253, 245),
+              ),
+            ),
             SizedBox(height: 20),
             Consumer<CostSettingProvider>(
               builder: (context, provider, _) {
@@ -228,27 +238,31 @@ class _CostSettingState extends State<CostSetting> {
                   textColor: AppTheme.white,
                   backgroundColor: AppTheme.primaryCOlor,
                   onTap: () {
-                    Provider.of<CostSettingProvider>(context, listen: false)
-                        .saveCostSettings(context);
+                    Provider.of<CostSettingProvider>(
+                      context,
+                      listen: false,
+                    ).saveCostSettings(context);
                   },
                 );
               },
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _counterTile(String label, int value, VoidCallback onDecrement,
-      VoidCallback onIncrement) {
+  Widget _counterTile(
+    String label,
+    int value,
+    VoidCallback onDecrement,
+    VoidCallback onIncrement,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppText.appText(label, fontSize: 14, fontWeight: FontWeight.w500),
-        SizedBox(
-          height: 10,
-        ),
+        SizedBox(height: 10),
         Row(
           children: [
             Container(
@@ -256,8 +270,9 @@ class _CostSettingState extends State<CostSetting> {
               padding: EdgeInsets.symmetric(horizontal: 5),
               width: ScreenSize(context).width * 0.4,
               decoration: BoxDecoration(
-                  border: Border.all(color: AppTheme.borderCOlor),
-                  borderRadius: BorderRadius.circular(8)),
+                border: Border.all(color: AppTheme.borderCOlor),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Stack(
                 children: [
                   Align(
@@ -268,8 +283,9 @@ class _CostSettingState extends State<CostSetting> {
                         height: 28,
                         width: 28,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: AppTheme.primaryCOlor),
+                          borderRadius: BorderRadius.circular(8),
+                          color: AppTheme.primaryCOlor,
+                        ),
                         child: Icon(
                           Icons.remove,
                           color: AppTheme.white,
@@ -279,10 +295,15 @@ class _CostSettingState extends State<CostSetting> {
                     ),
                   ),
                   Align(
-                      alignment: Alignment.center,
-                      child: Text("$value",
-                          style: TextStyle(
-                              fontSize: 18, color: AppTheme.lighttxtColor))),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "$value",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: AppTheme.lighttxtColor,
+                      ),
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: InkWell(
@@ -291,13 +312,10 @@ class _CostSettingState extends State<CostSetting> {
                         height: 28,
                         width: 28,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: AppTheme.primaryCOlor),
-                        child: Icon(
-                          Icons.add,
-                          color: AppTheme.white,
-                          size: 16,
+                          borderRadius: BorderRadius.circular(8),
+                          color: AppTheme.primaryCOlor,
                         ),
+                        child: Icon(Icons.add, color: AppTheme.white, size: 16),
                       ),
                     ),
                   ),

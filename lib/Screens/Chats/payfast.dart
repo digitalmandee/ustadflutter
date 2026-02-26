@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/loader.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PayFastWebView extends StatefulWidget {
@@ -47,8 +47,10 @@ class _PayFastWebViewState extends State<PayFastWebView> {
 
     // Build POST body
     final postData = widget.formFields.entries
-        .map((e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
 
     print("POST data: $postData");

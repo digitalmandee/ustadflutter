@@ -3,26 +3,26 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom widgets/app_field.dart';
-import 'package:ustaad/Custom widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Custom widgets/chart.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Helpers/get_location.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/subjets_format.dart';
-import 'package:ustaad/Models/Tutor Side/subjects_model.dart';
-import 'package:ustaad/Providers/Parent Side/dashboard_provider.dart';
-import 'package:ustaad/Providers/Parent Side/get_tutors_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Drawer/drawer.dart';
-import 'package:ustaad/Screens/Parents Screens/Categories Tutor/category_tutor.dart';
-import 'package:ustaad/Screens/Parents Screens/Categories Tutor/subject_categories.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/search_screeen.dart';
-import 'package:ustaad/Screens/Teacher Screens/Profile/tutor_profile.dart';
-import 'package:ustaad/Custom widgets/app_bar.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/keys/global.dart';
+import 'package:flutterustad/Custom widgets/app_field.dart';
+import 'package:flutterustad/Custom widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Custom widgets/chart.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Helpers/get_location.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/subjets_format.dart';
+import 'package:flutterustad/Models/Tutor Side/subjects_model.dart';
+import 'package:flutterustad/Providers/Parent Side/dashboard_provider.dart';
+import 'package:flutterustad/Providers/Parent Side/get_tutors_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Screens/Parents Screens/Categories Tutor/category_tutor.dart';
+import 'package:flutterustad/Screens/Parents Screens/Categories Tutor/subject_categories.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Dashboard/search_screeen.dart';
+import 'package:flutterustad/Screens/Teacher Screens/Profile/tutor_profile.dart';
+import 'package:flutterustad/Custom widgets/app_bar.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/keys/global.dart';
 
 class ParentsDashBoardScreen extends StatefulWidget {
   const ParentsDashBoardScreen({super.key});
@@ -46,16 +46,22 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
       globalParentLatitutde = position!.latitude;
       globalParentLongitude = position.longitude;
       if (mounted) {
-        Provider.of<ParentProfileProvider>(context, listen: false)
-            .getParentProfile(context);
+        Provider.of<ParentProfileProvider>(
+          context,
+          listen: false,
+        ).getParentProfile(context);
       }
       if (mounted) {
         Provider.of<GetTutorsProvider>(context, listen: false).fetchTutors(
-            latitude: position.latitude, longitude: position.longitude);
+          latitude: position.latitude,
+          longitude: position.longitude,
+        );
       }
       if (mounted) {
-        Provider.of<ParentDashboardProvider>(context, listen: false)
-            .getMonthlySpending(context);
+        Provider.of<ParentDashboardProvider>(
+          context,
+          listen: false,
+        ).getMonthlySpending(context);
       }
     });
     loadSubjects();
@@ -108,9 +114,14 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10),
-                  child: AppText.appText("Trending Tutors in Your Area",
-                      fontSize: 16, fontWeight: FontWeight.w600),
+                    horizontal: 20.0,
+                    vertical: 10,
+                  ),
+                  child: AppText.appText(
+                    "Trending Tutors in Your Area",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 _buildTrendingTutors(),
               ],
@@ -138,8 +149,11 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
               });
             },
             child: AbsorbPointer(
-              child: parentHomeSearchField(context, _searchController,
-                  hintText: "Explore Tutors"),
+              child: parentHomeSearchField(
+                context,
+                _searchController,
+                hintText: "Explore Tutors",
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -170,23 +184,28 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppText.appText("Subject Categories",
-                  fontSize: 16, fontWeight: FontWeight.w600),
+              AppText.appText(
+                "Subject Categories",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
               InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) =>
-                            SubjectCategoriesScreen(data: subjects)),
+                      builder: (_) => SubjectCategoriesScreen(data: subjects),
+                    ),
                   ).then((_) {
                     _hitNearbyTutorApi();
                   });
                 },
-                child: AppText.appText("View All",
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    textColor: const Color(0xffA4B0BE)),
+                child: AppText.appText(
+                  "View All",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  textColor: const Color(0xffA4B0BE),
+                ),
               ),
             ],
           ),
@@ -211,8 +230,9 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) =>
-                          TutorCategoriesScreen(categoryName: subject.name)),
+                    builder: (_) =>
+                        TutorCategoriesScreen(categoryName: subject.name),
+                  ),
                 ).then((_) {
                   _hitNearbyTutorApi();
                 });
@@ -225,8 +245,9 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                       height: 60,
                       width: 60,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppTheme.primaryCOlor)),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppTheme.primaryCOlor),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: CircleAvatar(
@@ -237,12 +258,14 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                     ),
                     const SizedBox(height: 10),
                     Flexible(
-                      child: AppText.appText(subject.name,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          textColor: AppTheme.grey),
+                      child: AppText.appText(
+                        subject.name,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        textColor: AppTheme.grey,
+                      ),
                     ),
                   ],
                 ),
@@ -280,11 +303,13 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => TutorProfileScreen(
-                              isParentSide: true,
-                              name: "${tutor.firstName} ${tutor.lastName}",
-                              tutorId: tutor.tutorId,
-                              experience: tutor.experience)),
+                        builder: (_) => TutorProfileScreen(
+                          isParentSide: true,
+                          name: "${tutor.firstName} ${tutor.lastName}",
+                          tutorId: tutor.tutorId,
+                          experience: tutor.experience,
+                        ),
+                      ),
                     ).then((_) {
                       _hitNearbyTutorApi();
                     });
@@ -307,17 +332,16 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                                   fit: BoxFit.cover,
                                 )
                               : tutor.image.startsWith("http")
-                                  ? Image.network(
-                                      tutor.image,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                            "assets/images/tutorProfile.jpeg");
-                                      },
-                                    )
-                                  : Base64ImageWidget(
-                                      base64String: tutor.image),
+                              ? Image.network(
+                                  tutor.image,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      "assets/images/tutorProfile.jpeg",
+                                    );
+                                  },
+                                )
+                              : Base64ImageWidget(base64String: tutor.image),
                           _buildTutorCardOverlay(tutor),
                         ],
                       ),
@@ -343,10 +367,12 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
             children: [
               const Icon(Icons.star, color: Colors.amber, size: 12),
               const SizedBox(width: 5),
-              AppText.appText("${tutor.rating}",
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400,
-                  textColor: AppTheme.black),
+              AppText.appText(
+                "${tutor.rating}",
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+                textColor: AppTheme.black,
+              ),
             ],
           ),
         ),
@@ -361,21 +387,27 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
               height: 60,
               width: double.infinity,
               color: Colors.black.withValues(alpha: 0.3),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 7),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 7,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText.appText("${tutor.firstName} ${tutor.lastName}",
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      textColor: Colors.white),
-                  AppText.appText(formatSubjects(tutor.subjects),
-                      fontSize: 10,
-                      maxlines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      fontWeight: FontWeight.w400,
-                      textColor: Colors.white),
+                  AppText.appText(
+                    "${tutor.firstName} ${tutor.lastName}",
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    textColor: Colors.white,
+                  ),
+                  AppText.appText(
+                    formatSubjects(tutor.subjects),
+                    fontSize: 10,
+                    maxlines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    fontWeight: FontWeight.w400,
+                    textColor: Colors.white,
+                  ),
                 ],
               ),
             ),
@@ -393,14 +425,18 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
         children: [
           Row(
             children: [
-              AppText.appText("Monthly Spending",
-                  fontSize: 16, fontWeight: FontWeight.w600),
+              AppText.appText(
+                "Monthly Spending",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Builder(
                   builder: (context) {
-                    final provider =
-                        Provider.of<ParentDashboardProvider>(context);
+                    final provider = Provider.of<ParentDashboardProvider>(
+                      context,
+                    );
 
                     if (provider.monthlySpending.isEmpty) {
                       return AppText.appText(
@@ -412,10 +448,10 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                       );
                     }
 
-                    final firstMonth =
-                        provider.monthlySpending.first.month.toString();
-                    final lastMonth =
-                        provider.monthlySpending.last.month.toString();
+                    final firstMonth = provider.monthlySpending.first.month
+                        .toString();
+                    final lastMonth = provider.monthlySpending.last.month
+                        .toString();
 
                     String formatMonth(String monthString) {
                       final parts = monthString.split(" ");

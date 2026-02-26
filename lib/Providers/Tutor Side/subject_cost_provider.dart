@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subject_cost_model.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subject_cost_model.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class CostSettingProvider with ChangeNotifier {
   int minSubjects = 0;
@@ -38,8 +38,8 @@ class CostSettingProvider with ChangeNotifier {
             'name': entry.key,
             'active':
                 entry.value['active'] == true || entry.value['active'] == "true"
-                    ? "true"
-                    : "false",
+                ? "true"
+                : "false",
             'cost': entry.value['cost']?.toString() ?? '0',
           });
         }).toList();
@@ -48,7 +48,9 @@ class CostSettingProvider with ChangeNotifier {
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
 
         handleTokenExpiration();
       }
@@ -89,7 +91,9 @@ class CostSettingProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         AppToast.success(
-            context: context, msg: "Cost settings saved successfully!");
+          context: context,
+          msg: "Cost settings saved successfully!",
+        );
       } else {
         AppToast.error(context: context, msg: "Failed to save cost settings");
       }
@@ -124,7 +128,9 @@ class CostSettingProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         AppToast.success(
-            context: context, msg: "Cost settings saved successfully!");
+          context: context,
+          msg: "Cost settings saved successfully!",
+        );
       } else {
         AppToast.error(context: context, msg: "Failed to save cost settings");
       }

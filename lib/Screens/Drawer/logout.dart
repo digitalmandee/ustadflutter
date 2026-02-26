@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Helpers/utils.dart' as Navigator;
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Helpers/utils.dart' as Navigator;
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class AuthService {
   static Future<void> logout(context) async {
@@ -18,9 +18,7 @@ class AuthService {
     final dio = AppDio(context);
 
     try {
-      Response response = await dio.post(
-        path: AppUrls.logout,
-      );
+      Response response = await dio.post(path: AppUrls.logout);
 
       Navigator.pop(context); // ✅ Close loader FIRST
 
@@ -41,10 +39,7 @@ class AuthService {
         message = e.response?.data?["message"] ?? "Check Internet Connection";
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     }
   }
 }

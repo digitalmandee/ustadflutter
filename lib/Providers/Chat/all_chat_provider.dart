@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Chat/all_chat_model.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Chat/all_chat_model.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class AllChatProvider with ChangeNotifier {
   final AppDio dio;
@@ -34,17 +34,22 @@ class AllChatProvider with ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List conversations = responseData['data']['conversations'];
 
-        _chats =
-            conversations.map((json) => AllChatsModel.fromJson(json)).toList();
+        _chats = conversations
+            .map((json) => AllChatsModel.fromJson(json))
+            .toList();
         _filteredChats = _chats;
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       } else {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       String message = "Something went wrong";
@@ -55,10 +60,7 @@ class AllChatProvider with ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -71,7 +73,8 @@ class AllChatProvider with ChangeNotifier {
     } else {
       _filteredChats = _chats
           .where(
-              (chat) => chat.name.toLowerCase().contains(query.toLowerCase()))
+            (chat) => chat.name.toLowerCase().contains(query.toLowerCase()),
+          )
           .toList();
     }
 

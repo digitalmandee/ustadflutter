@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 
 class SessionCard extends StatelessWidget {
   final String title;
@@ -58,9 +58,7 @@ class SessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: AppTheme.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 5,
       child: Container(
         width: 185,
@@ -68,17 +66,15 @@ class SessionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isCompleted ? AppTheme.white : (color ?? Colors.white),
           border: Border.all(
-              color: isCompleted ? AppTheme.appColor : Colors.transparent,
-              width: 1),
+            color: isCompleted ? AppTheme.appColor : Colors.transparent,
+            width: 1,
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isRunning == false && isCompleted == false)
-              SizedBox(
-                height: 8,
-              ),
+            if (isRunning == false && isCompleted == false) SizedBox(height: 8),
             if (isRunning == true && isCompleted == false)
               Align(
                 alignment: AlignmentGeometry.topRight,
@@ -101,9 +97,7 @@ class SessionCard extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                   fontSize: 14,
                 ),
-                SizedBox(
-                  width: 5,
-                ),
+                SizedBox(width: 5),
                 Expanded(
                   child: AppText.appText(
                     "$childName",
@@ -122,15 +116,20 @@ class SessionCard extends StatelessWidget {
             Row(
               children: [
                 Flexible(
-                    child: AppText.appText("Remaining:  ",
-                        overflow: TextOverflow.ellipsis,
-                        textColor: _textColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800)),
-                AppText.appText("${totalSessions! - sessionsCompleted!}",
+                  child: AppText.appText(
+                    "Remaining:  ",
+                    overflow: TextOverflow.ellipsis,
                     textColor: _textColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                AppText.appText(
+                  "${totalSessions! - sessionsCompleted!}",
+                  textColor: _textColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ],
             ),
             if (isCompleted)
@@ -139,15 +138,20 @@ class SessionCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Flexible(
-                        child: AppText.appText("Completed:  ",
-                            overflow: TextOverflow.ellipsis,
-                            textColor: _textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800)),
-                    AppText.appText("${sessionsCompleted!}",
+                      child: AppText.appText(
+                        "Completed:  ",
+                        overflow: TextOverflow.ellipsis,
                         textColor: _textColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    AppText.appText(
+                      "${sessionsCompleted!}",
+                      textColor: _textColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ],
                 ),
               ),
@@ -168,12 +172,14 @@ class SessionCard extends StatelessWidget {
     return Column(
       children: [
         Container(
-          child: AppText.appText(title,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              textColor: _textColor,
-              maxlines: isCompleted ? 1 : 2,
-              overflow: TextOverflow.ellipsis),
+          child: AppText.appText(
+            title,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            textColor: _textColor,
+            maxlines: isCompleted ? 1 : 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

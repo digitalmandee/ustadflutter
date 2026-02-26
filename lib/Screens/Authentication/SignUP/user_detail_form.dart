@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:password_strength_indicator/password_strength_indicator.dart';
 import 'package:phone_form_field/phone_form_field.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/sign_up_screen.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Authentication/widgets/widgets.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/sign_up_screen.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
 
 class UserDetailsForm extends StatefulWidget {
   final TabController tabController;
@@ -38,10 +38,12 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppText.appText("Sign Up As:",
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                textColor: AppTheme.lableText),
+            AppText.appText(
+              "Sign Up As:",
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              textColor: AppTheme.lableText,
+            ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -52,13 +54,13 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
               ],
             ),
             const SizedBox(height: 20),
-            AppText.appText("Gender",
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                textColor: AppTheme.lableText),
-            SizedBox(
-              height: 10,
+            AppText.appText(
+              "Gender",
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              textColor: AppTheme.lableText,
             ),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -69,29 +71,37 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
             ),
             const SizedBox(height: 20),
             customLableField(
-                lable: "First Name",
-                controller: widget.signupData.fNameController),
+              lable: "First Name",
+              controller: widget.signupData.fNameController,
+            ),
             const SizedBox(height: 20),
             customLableField(
-                lable: "Last Name",
-                controller: widget.signupData.lNameController),
+              lable: "Last Name",
+              controller: widget.signupData.lNameController,
+            ),
             const SizedBox(height: 20),
             customLableField(
-                lable: "Email", controller: widget.signupData.emailController),
+              lable: "Email",
+              controller: widget.signupData.emailController,
+            ),
             const SizedBox(height: 20),
             _phoneInput(),
             const SizedBox(height: 20),
             customLableField(
-                lable: "Password",
-                isPassword: true,
-                controller: widget.signupData.passwordController),
+              lable: "Password",
+              isPassword: true,
+              controller: widget.signupData.passwordController,
+            ),
             const SizedBox(height: 20),
             _passwordStrength(),
             const SizedBox(height: 10),
             passwordRequirements(),
             const SizedBox(height: 20),
-            AppButton.appButton("Next",
-                onTap: _validateUserDetails, context: context),
+            AppButton.appButton(
+              "Next",
+              onTap: _validateUserDetails,
+              context: context,
+            ),
             const SizedBox(height: 20),
           ],
         ),
@@ -123,11 +133,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
               onChanged: (value) =>
                   setState(() => widget.signupData.selectedGender = value!),
             ),
-            AppText.appText(
-              gender,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+            AppText.appText(gender, fontSize: 14, fontWeight: FontWeight.w500),
           ],
         ),
       ),
@@ -138,10 +144,12 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText.appText("Phone Number",
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            textColor: AppTheme.lableText),
+        AppText.appText(
+          "Phone Number",
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          textColor: AppTheme.lableText,
+        ),
         const SizedBox(height: 10),
         Container(
           height: 40,
@@ -199,8 +207,9 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
     final password = widget.signupData.passwordController.text.trim();
 
     final emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    final passwordRegex =
-        RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$');
+    final passwordRegex = RegExp(
+      r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$',
+    );
 
     if (firstName.isEmpty) {
       AppToast.error(context: context, msg: "Please enter your First name.");
@@ -209,19 +218,24 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
       AppToast.error(context: context, msg: "Please enter your First name.");
     } else if (email.isEmpty || !emailPattern.hasMatch(email)) {
       AppToast.error(
-          context: context, msg: "Please enter a valid email address.");
+        context: context,
+        msg: "Please enter a valid email address.",
+      );
     } else if (phone.isEmpty || phone.length != 12) {
       AppToast.error(
-          context: context, msg: "Please enter a valid phone number.");
+        context: context,
+        msg: "Please enter a valid phone number.",
+      );
     } else if (password.isEmpty || password.length < 6) {
       AppToast.error(
-          context: context,
-          msg: "Password must be at least 6 characters long.");
+        context: context,
+        msg: "Password must be at least 6 characters long.",
+      );
     } else if (!passwordRegex.hasMatch(password)) {
       AppToast.error(
-          context: context,
-          msg:
-              "Password must include uppercase, number, and special character.");
+        context: context,
+        msg: "Password must include uppercase, number, and special character.",
+      );
     } else {
       widget.tabController.animateTo(1);
     }

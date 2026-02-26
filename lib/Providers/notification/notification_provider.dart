@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class NotificationProvider with ChangeNotifier {
   bool _isLoading = false;
@@ -36,10 +36,7 @@ class NotificationProvider with ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -56,10 +53,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   ///////////// ....... Delete Multiple Notifications ........ ////////////
-  Future<void> deleteNotifications(
-    context,
-    List<String> ids,
-  ) async {
+  Future<void> deleteNotifications(context, List<String> ids) async {
     _isLoading = true;
     notifyListeners();
 

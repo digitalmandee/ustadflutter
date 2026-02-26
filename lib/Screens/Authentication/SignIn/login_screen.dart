@@ -1,28 +1,30 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Custom widgets/app_button.dart';
-import 'package:ustaad/Custom widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/google_signup_detail.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/sign_up_screen.dart';
-import 'package:ustaad/Screens/Authentication/google_signin.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Authentication/Forgot Pass/forgot_pass.dart';
-import 'package:ustaad/Screens/Authentication/otp.dart';
-import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
-import 'package:ustaad/Screens/Parents Screens/Parents OnBoard/parents_onboard.dart';
-import 'package:ustaad/Screens/Teacher Screens/0nBoard Screens/tutor_on_board.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom widgets/app_button.dart';
+import 'package:flutterustad/Custom widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/google_signup_detail.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/sign_up_screen.dart';
+import 'package:flutterustad/Screens/Authentication/google_signin.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/Forgot Pass/forgot_pass.dart';
+import 'package:flutterustad/Screens/Authentication/otp.dart';
+import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
+import 'package:flutterustad/Screens/Parents Screens/Parents OnBoard/parents_onboard.dart';
+import 'package:flutterustad/Screens/Teacher Screens/0nBoard Screens/tutor_on_board.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class LogInScreen extends StatefulWidget {
   final bool showLogoutMessage;
@@ -49,10 +51,7 @@ class _LogInScreenState extends State<LogInScreen> {
     dio = AppDio(context);
     if (widget.showLogoutMessage) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppToast.success(
-          context: context,
-          msg: "Logged out successfully",
-        );
+        AppToast.success(context: context, msg: "Logged out successfully");
       });
     }
     getDeviceToken();
@@ -104,14 +103,12 @@ class _LogInScreenState extends State<LogInScreen> {
                 );
               },
               onGoogleTap: () async {
+                log("Google Sign-up  tapped");
+
                 setState(() => _isGoogleLoading = true);
                 final userData = await _googleSignInService.signIn(context);
                 if (userData != null) {
-                  push(
-                      context,
-                      GoogleSignupDetail(
-                        userData: userData,
-                      ));
+                  push(context, GoogleSignupDetail(userData: userData));
                 }
                 if (mounted) {
                   setState(() => _isGoogleLoading = false);
@@ -119,8 +116,10 @@ class _LogInScreenState extends State<LogInScreen> {
               },
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 30,
+              ),
               child: Column(
                 children: [
                   customLableField(
@@ -149,11 +148,8 @@ class _LogInScreenState extends State<LogInScreen> {
                       //   ],
                       // ),
                       GestureDetector(
-                        onTap: () => push(
-                            context,
-                            ForgotPassScreen(
-                              isEditing: false,
-                            )),
+                        onTap: () =>
+                            push(context, ForgotPassScreen(isEditing: false)),
                         child: AppText.appText(
                           "Forgot Password?",
                           fontSize: 14,
@@ -184,8 +180,9 @@ class _LogInScreenState extends State<LogInScreen> {
                           context: context,
                           onTap: () async {
                             setState(() => _isGoogleLoading = true);
-                            final userData =
-                                await _googleSignInService.signIn(context);
+                            final userData = await _googleSignInService.signIn(
+                              context,
+                            );
                             if (userData != null) {
                               await _googleSignIn(context, userData);
                             }
@@ -203,7 +200,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   loginFooter(context),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -219,7 +216,9 @@ class _LogInScreenState extends State<LogInScreen> {
     final emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (email.isEmpty || !emailPattern.hasMatch(email)) {
       AppToast.error(
-          context: context, msg: "Please enter a valid email address.");
+        context: context,
+        msg: "Please enter a valid email address.",
+      );
       setState(() => isLoading = false);
       return;
     }
@@ -239,8 +238,7 @@ class _LogInScreenState extends State<LogInScreen> {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "deviceId":
-                fcmTokenget ?? "", // Use FCM token instead of device-id
+            "deviceId": fcmTokenget ?? "", // Use FCM token instead of device-id
           },
         ),
       );
@@ -264,10 +262,7 @@ class _LogInScreenState extends State<LogInScreen> {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -328,7 +323,9 @@ class _LogInScreenState extends State<LogInScreen> {
   }
 
   Future<void> _handleLoginSuccess(
-      context, Map<String, dynamic> responseData) async {
+    context,
+    Map<String, dynamic> responseData,
+  ) async {
     final data = responseData["data"];
     final prefs = await SharedPreferences.getInstance();
 

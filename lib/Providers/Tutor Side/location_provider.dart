@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class LocationModel {
   final String id;
@@ -43,12 +43,17 @@ class LocationProvider extends ChangeNotifier {
 
   // ===================== Distance Calculation =====================
   double calculateDistanceMiles(
-      double lat1, double lon1, double lat2, double lon2) {
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) {
     const double earthRadius = 3958.8; // miles
     final double dLat = _deg2rad(lat2 - lat1);
     final double dLon = _deg2rad(lon2 - lon1);
 
-    final double a = sin(dLat / 2) * sin(dLat / 2) +
+    final double a =
+        sin(dLat / 2) * sin(dLat / 2) +
         cos(_deg2rad(lat1)) *
             cos(_deg2rad(lat2)) *
             sin(dLon / 2) *
@@ -66,8 +71,12 @@ class LocationProvider extends ChangeNotifier {
 
     // Update all existing locations distance
     for (var loc in _locations) {
-      loc.distanceFromUser =
-          calculateDistanceMiles(lat, lon, loc.latitude, loc.longitude);
+      loc.distanceFromUser = calculateDistanceMiles(
+        lat,
+        lon,
+        loc.latitude,
+        loc.longitude,
+      );
     }
 
     notifyListeners();
@@ -78,14 +87,19 @@ class LocationProvider extends ChangeNotifier {
     try {
       final res = await dio.get(path: AppUrls.getLocations);
       final List<dynamic> locationList = res.data['data'];
-      _locations =
-          locationList.map((json) => LocationModel.fromJson(json)).toList();
+      _locations = locationList
+          .map((json) => LocationModel.fromJson(json))
+          .toList();
 
       // calculate distance if user location known
       if (userLatitude != null && userLongitude != null) {
         for (var loc in _locations) {
           loc.distanceFromUser = calculateDistanceMiles(
-              userLatitude!, userLongitude!, loc.latitude, loc.longitude);
+            userLatitude!,
+            userLongitude!,
+            loc.latitude,
+            loc.longitude,
+          );
         }
       }
 
@@ -104,18 +118,25 @@ class LocationProvider extends ChangeNotifier {
       double lat = geo.first.latitude;
       double lng = geo.first.longitude;
 
-      final res = await dio.post(path: AppUrls.addLocation, data: {
-        "address": name,
-        "latitude": lat.toString(),
-        "longitude": lng.toString(),
-      });
+      final res = await dio.post(
+        path: AppUrls.addLocation,
+        data: {
+          "address": name,
+          "latitude": lat.toString(),
+          "longitude": lng.toString(),
+        },
+      );
 
       final newLoc = LocationModel.fromJson(res.data['data']);
 
       // calculate distance
       if (userLatitude != null && userLongitude != null) {
-        newLoc.distanceFromUser =
-            calculateDistanceMiles(userLatitude!, userLongitude!, lat, lng);
+        newLoc.distanceFromUser = calculateDistanceMiles(
+          userLatitude!,
+          userLongitude!,
+          lat,
+          lng,
+        );
       }
 
       _locations.add(newLoc);

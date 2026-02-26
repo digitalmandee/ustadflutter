@@ -8,25 +8,25 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
-import 'package:ustaad/Screens/Chats/parent_card.dart';
-import 'package:ustaad/Screens/Drawer/drawer.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Chats/bubble_widget.dart';
-import 'package:ustaad/Screens/Chats/chat_modet.dart';
-import 'package:ustaad/Screens/Chats/offer_sheet.dart';
-import 'package:ustaad/Screens/Chats/socket.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Providers/Chat/all_chat_provider.dart';
+import 'package:flutterustad/Screens/Chats/parent_card.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Chats/bubble_widget.dart';
+import 'package:flutterustad/Screens/Chats/chat_modet.dart';
+import 'package:flutterustad/Screens/Chats/offer_sheet.dart';
+import 'package:flutterustad/Screens/Chats/socket.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class SingleChatScreen extends StatefulWidget {
   final String conversationId;
@@ -102,8 +102,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       );
 
       if (response.statusCode == 200) {
-        Provider.of<AllChatProvider>(context, listen: false)
-            .fetchChats(context);
+        Provider.of<AllChatProvider>(
+          context,
+          listen: false,
+        ).fetchChats(context);
       }
     } catch (e) {
       debugPrint("❌ Error fetching conversation data: $e");
@@ -247,11 +249,12 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         print("audiolength is this $audioLength");
         setState(() {
           messages[index] = messages[index].copyWith(
-              id: messageId,
-              isPending: false,
-              offer: offerData,
-              fileText: fileText,
-              audioDuration: audioLength);
+            id: messageId,
+            isPending: false,
+            offer: offerData,
+            fileText: fileText,
+            audioDuration: audioLength,
+          );
         });
       }
     } else {
@@ -288,13 +291,14 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       messages.insert(
         0,
         ChatMessage(
-            id: tempId,
-            text: text,
-            time: _formatTime(DateTime.now().toIso8601String()),
-            isMe: true,
-            createdAt: now,
-            isPending: true,
-            type: "TEXT"),
+          id: tempId,
+          text: text,
+          time: _formatTime(DateTime.now().toIso8601String()),
+          isMe: true,
+          createdAt: now,
+          isPending: true,
+          type: "TEXT",
+        ),
       );
     });
     _playSendSound();
@@ -315,7 +319,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         final List<dynamic> messagesJson = response.data['data']['messages'];
 
         final newMessages = messagesJson
-            .map((msg) => ChatMessage(
+            .map(
+              (msg) => ChatMessage(
                 id: msg['id'],
                 isPending: false,
                 text: msg['content'] ?? '',
@@ -327,7 +332,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                     ? int.tryParse(msg["metadata"]!["duration"].toString())
                     : null,
                 fileText: msg["metadata"]?["fileOriginalName"],
-                offer: msg["metadata"]?["offer"]))
+                offer: msg["metadata"]?["offer"],
+              ),
+            )
             .toList();
 
         setState(() {
@@ -419,7 +426,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-                left: 20.0, right: 20, top: 50, bottom: 20),
+              left: 20.0,
+              right: 20,
+              top: 50,
+              bottom: 20,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -430,8 +441,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                       onTap: () {
                         _scaffoldKey.currentState?.openEndDrawer();
                       },
-                      child: _roundIcon("assets/images/menu.png",
-                          iconColor: AppTheme.primaryCOlor),
+                      child: _roundIcon(
+                        "assets/images/menu.png",
+                        iconColor: AppTheme.primaryCOlor,
+                      ),
                     ),
                   ],
                 ),
@@ -471,7 +484,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                       child: ListView.builder(
                         reverse: true,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
                           final current = messages[index];
@@ -479,15 +494,18 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                               ? messages[index + 1]
                               : null;
                           final next = index > 0 ? messages[index - 1] : null;
-                          final showAvatar = !current.isMe &&
+                          final showAvatar =
+                              !current.isMe &&
                               (previous == null ||
                                   previous.isMe != current.isMe);
 
                           bool showTime = true;
                           if (next != null) {
                             final sameSender = next.isMe == current.isMe;
-                            final sameMinute =
-                                _isSameMinute(next.time, current.time);
+                            final sameMinute = _isSameMinute(
+                              next.time,
+                              current.time,
+                            );
 
                             if (sameSender && sameMinute) {
                               showTime = false;
@@ -506,13 +524,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                               message: messages[index],
                               showAvatar: showAvatar,
                               showTime: showTime,
-                              onStatusChange: (
-                                messageId,
-                                newStatus,
-                              ) async {
+                              onStatusChange: (messageId, newStatus) async {
                                 if (newStatus == "ACCEPTED") {
-                                  final msgIndex = messages
-                                      .indexWhere((m) => m.id == messageId);
+                                  final msgIndex = messages.indexWhere(
+                                    (m) => m.id == messageId,
+                                  );
                                   if (msgIndex == -1 ||
                                       messages[msgIndex].offer == null) {
                                     return;
@@ -528,7 +544,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                                   ).then((_) => _refreshChatAfterPayment());
                                 } else if (newStatus == "REJECTED") {
                                   updateOfferStatus(
-                                      context, messageId, newStatus);
+                                    context,
+                                    messageId,
+                                    newStatus,
+                                  );
                                 }
                               },
                             ),
@@ -548,7 +567,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -567,9 +586,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -613,10 +630,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       leading: Icon(icon, color: color),
       title: Text(
         title,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: color, fontWeight: FontWeight.w500),
       ),
       subtitle: subtitle != null
           ? Text(subtitle, style: const TextStyle(fontSize: 12))
@@ -691,10 +705,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     return Container(
       height: 32,
       width: 32,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppTheme.white,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: AppTheme.white),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Image.asset(asset, color: iconColor),
@@ -709,71 +720,80 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         onTap: () {
           if (globalUserRole == "PARENT") {
             push(
-                context,
-                TutorProfileScreen(
-                  isParentSide: true,
-                  tutorId: widget.recieverId,
-                  name: widget.recieverName,
-                  isFromChat: true,
-                ));
+              context,
+              TutorProfileScreen(
+                isParentSide: true,
+                tutorId: widget.recieverId,
+                name: widget.recieverName,
+                isFromChat: true,
+              ),
+            );
           } else {
             push(
-                context,
-                ParentProfileScreen(
-                  isTutorSide: true,
-                  parentId: widget.recieverId,
-                ));
+              context,
+              ParentProfileScreen(
+                isTutorSide: true,
+                parentId: widget.recieverId,
+              ),
+            );
           }
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            gradient: LinearGradient(colors: [
-              Color.fromARGB(255, 141, 192, 177),
-              Color(0xff4BB698),
-              Color.fromARGB(255, 35, 165, 209),
-              Color.fromARGB(255, 43, 145, 180),
-              Color(0xff1D83A5),
-            ]),
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 141, 192, 177),
+                Color(0xff4BB698),
+                Color.fromARGB(255, 35, 165, 209),
+                Color.fromARGB(255, 43, 145, 180),
+                Color(0xff1D83A5),
+              ],
+            ),
           ),
           child: Row(
             children: [
               Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: widget.image == "" || widget.image.isEmpty
-                      ? ClipOval(
-                          child: Image.asset(globalUserRole == 'TUTOR'
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                child: widget.image == "" || widget.image.isEmpty
+                    ? ClipOval(
+                        child: Image.asset(
+                          globalUserRole == 'TUTOR'
                               ? "assets/images/parentProfile.jpeg"
-                              : "assets/images/tutorProfile.jpeg"))
-                      : widget.image.startsWith('http')
-                          ? ClipOval(
-                              child: Image.network(
-                                widget.image,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(globalUserRole == 'TUTOR'
-                                      ? "assets/images/parentProfile.jpeg"
-                                      : "assets/images/tutorProfile.jpeg");
-                                },
-                              ),
-                            )
-                          : ClipOval(
-                              child:
-                                  Base64ImageWidget(base64String: widget.image),
-                            )),
+                              : "assets/images/tutorProfile.jpeg",
+                        ),
+                      )
+                    : widget.image.startsWith('http')
+                    ? ClipOval(
+                        child: Image.network(
+                          widget.image,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              globalUserRole == 'TUTOR'
+                                  ? "assets/images/parentProfile.jpeg"
+                                  : "assets/images/tutorProfile.jpeg",
+                            );
+                          },
+                        ),
+                      )
+                    : ClipOval(
+                        child: Base64ImageWidget(base64String: widget.image),
+                      ),
+              ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText.appText("${widget.recieverName}",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      textColor: Colors.white),
+                  AppText.appText(
+                    "${widget.recieverName}",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    textColor: Colors.white,
+                  ),
                   // AppText.appText("Connected Since 2 months",
                   //     fontSize: 12, textColor: Colors.white70),
                 ],
@@ -789,7 +809,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: AppTheme.borderCOlor))),
+        border: Border(top: BorderSide(color: AppTheme.borderCOlor)),
+      ),
       child: Row(
         children: [
           if (_messageController.text.trim().isEmpty)
@@ -804,11 +825,12 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 });
               },
               child: Icon(
-                  _showOptions == true
-                      ? Icons.highlight_remove_sharp
-                      : Icons.add_circle_outline,
-                  size: 28,
-                  color: AppTheme.primaryCOlor),
+                _showOptions == true
+                    ? Icons.highlight_remove_sharp
+                    : Icons.add_circle_outline,
+                size: 28,
+                color: AppTheme.primaryCOlor,
+              ),
             ),
           const SizedBox(width: 10),
           Expanded(
@@ -839,8 +861,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
           _messageController.text.trim().isEmpty
               ? GestureDetector(
                   onTap: startRecording,
-                  child: Image.asset("assets/images/mic.png",
-                      height: 20, color: AppTheme.primaryCOlor),
+                  child: Image.asset(
+                    "assets/images/mic.png",
+                    height: 20,
+                    color: AppTheme.primaryCOlor,
+                  ),
                 )
               : GestureDetector(
                   onTap: () {
@@ -921,8 +946,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
             children: [
               Icon(icon, size: 28, color: AppTheme.primaryCOlor),
               SizedBox(height: 6),
-              Text(label,
-                  textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12),
+              ),
             ],
           ),
         ),
@@ -946,8 +974,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       ),
       child: Row(
         children: [
-          Image.asset("assets/images/mic.png",
-              height: 24, color: AppTheme.primaryCOlor),
+          Image.asset(
+            "assets/images/mic.png",
+            height: 24,
+            color: AppTheme.primaryCOlor,
+          ),
           const SizedBox(width: 10),
           // 👇 Waveform bar
           AudioWaveforms(
@@ -1010,8 +1041,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> _pickImageFromGallery() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() {
         selectedFile = File(pickedFile.path);
@@ -1030,8 +1062,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> _openCamera() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+    );
     if (pickedFile != null) {
       setState(() {
         selectedFile = File(pickedFile.path);
@@ -1062,7 +1095,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       final offerId = messages[msgIndex].offer!["id"];
 
       debugPrint(
-          "Message ID: $messageId     status:  $newStatus    offerId $offerId");
+        "Message ID: $messageId     status:  $newStatus    offerId $offerId",
+      );
 
       final response = await dio.patch(
         path: "${AppUrls.offerStatus}$newStatus/$offerId",
@@ -1085,18 +1119,22 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       } else {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       debugPrint("Error updating offer status: $e");
     }
   }
 
-//////////////////////////////  Send Media Messages ////////////////////////////////////
+  //////////////////////////////  Send Media Messages ////////////////////////////////////
 
   Widget _mediaPreview(ChatMessage message) {
     print("here is the message ${message.text}  type: ${message.type}");
@@ -1121,8 +1159,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
               ),
             )
           else
-            Icon(Icons.insert_drive_file,
-                size: 40, color: AppTheme.primaryCOlor),
+            Icon(
+              Icons.insert_drive_file,
+              size: 40,
+              color: AppTheme.primaryCOlor,
+            ),
           SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1139,8 +1180,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
             icon: Icon(Icons.send, color: AppTheme.primaryCOlor),
             onPressed: () {
               _sendMedia(
-                  file: message.filePath,
-                  type: message.type == "IMAGE" ? 'IMAGE' : "FILE");
+                file: message.filePath,
+                type: message.type == "IMAGE" ? 'IMAGE' : "FILE",
+              );
               setState(() => _previewMessage = null);
             },
           ),
@@ -1252,10 +1294,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
 
       debugPrint("📦 ==========================");
 
-      final response = await dio.post(
-        path: AppUrls.sendMedia,
-        data: formData,
-      );
+      final response = await dio.post(path: AppUrls.sendMedia, data: formData);
 
       if (response.statusCode == 200) {
         return response.data;

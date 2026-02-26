@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "707536311548",
-    "project_id": "ustaad-77b25",
-    "storage_bucket": "ustaad-77b25.firebasestorage.app"
+    "project_number": "1022247289156",
+    "project_id": "flutterustad",
+    "storage_bucket": "flutterustad.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:707536311548:android:5cd026fa4827d9bdcdb379",
+        "mobilesdk_app_id": "1:1022247289156:android:1a02c9d6aa48da35301711",
         "android_client_info": {
-          "package_name": "com.example.ustaad"
+          "package_name": "com.example.flutterustad"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1022247289156-rrp9klp4k1p6vdt1b8e9b7dmejba9k54.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutterustad",
+            "certificate_hash": "144b87178bb82a78b5ef09e0c5b1d717e7d3d68a"
+          }
+        },
+        {
+          "client_id": "1022247289156-m8el3dk5mqb3jrj1smdrmuvk2fqk9n9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBKoWaaLF0_5oelnY16EwS0mvDIQ1pm4s4"
+          "current_key": "AIzaSyDdpyqxGUn8tlHqGGPJu0-UdIRA2q9cTyI"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022247289156-m8el3dk5mqb3jrj1smdrmuvk2fqk9n9e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

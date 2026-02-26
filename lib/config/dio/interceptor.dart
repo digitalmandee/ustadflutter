@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/keys/headers.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/keys/headers.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class AppDioInterceptor extends Interceptor {
   final AppLogger _logger = AppLogger();
@@ -70,7 +70,9 @@ class AppDioInterceptor extends Interceptor {
 
   @override
   void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     if (AppUrls.baseUrl.isEmpty) {
       throw Exception("Base URL is not set");
     }

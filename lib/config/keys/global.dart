@@ -2,23 +2,23 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
-import 'package:ustaad/Providers/Contracts/contract_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/dashboard_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/get_tutors_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Providers/Tutor%20Side/location_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_about_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_education_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_exp_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
-import 'package:ustaad/Providers/notification/notification_provider.dart';
-import 'package:ustaad/Screens/Authentication/SignIn/login_screen.dart';
-import 'package:ustaad/Screens/Chats/socket.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
+import 'package:flutterustad/Providers/Chat/all_chat_provider.dart';
+import 'package:flutterustad/Providers/Contracts/contract_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/dashboard_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/get_tutors_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/location_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/subject_cost_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
+import 'package:flutterustad/Providers/notification/notification_provider.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
+import 'package:flutterustad/Screens/Chats/socket.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -94,9 +94,7 @@ void handleLogOut(context, {bool isLogout = false}) async {
   print("🧹 Socket disposed on logout");
 
   Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(
-      builder: (_) => LogInScreen(showLogoutMessage: true),
-    ),
+    MaterialPageRoute(builder: (_) => LogInScreen(showLogoutMessage: true)),
     (route) => false,
   );
 }

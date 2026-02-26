@@ -17,13 +17,19 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -47,28 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBKoWaaLF0_5oelnY16EwS0mvDIQ1pm4s4',
-    appId: '1:707536311548:android:5cd026fa4827d9bdcdb379',
-    messagingSenderId: '707536311548',
-    projectId: 'ustaad-77b25',
-    storageBucket: 'ustaad-77b25.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCO0GJiqh169UiuL4ybpf5h0w9NBNI5ol8',
-    appId: '1:707536311548:ios:1a69389bf9b56fe4cdb379',
-    messagingSenderId: '707536311548',
-    projectId: 'ustaad-77b25',
-    storageBucket: 'ustaad-77b25.firebasestorage.app',
-    iosBundleId: 'com.example.ustaad',
-  );
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDE06MhNfwmleJ8VgfY9i27QIHBwoitTRY',
-    appId: '1:349544989753:web:placeholder',
-    messagingSenderId: '349544989753',
-    projectId: 'ustaad-5011f',
-    authDomain: 'ustaad-5011f.firebaseapp.com',
-    storageBucket: 'ustaad-5011f.firebasestorage.app',
+    apiKey: 'AIzaSyDdpyqxGUn8tlHqGGPJu0-UdIRA2q9cTyI',
+    appId: '1:1022247289156:android:1a02c9d6aa48da35301711',
+    messagingSenderId: '1022247289156',
+    projectId: 'flutterustad',
+    storageBucket: 'flutterustad.firebasestorage.app',
   );
 }

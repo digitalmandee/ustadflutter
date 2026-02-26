@@ -2,29 +2,30 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Drawer/drawer.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class SessionCheckOut extends StatefulWidget {
   final String ruuningId;
   final String sessionId;
   final String parentId;
   final String tutorId;
-  const SessionCheckOut(
-      {super.key,
-      required this.sessionId,
-      required this.parentId,
-      required this.tutorId,
-      required this.ruuningId});
+  const SessionCheckOut({
+    super.key,
+    required this.sessionId,
+    required this.parentId,
+    required this.tutorId,
+    required this.ruuningId,
+  });
 
   @override
   State<SessionCheckOut> createState() => _SessionCheckOutState();
@@ -58,8 +59,10 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
       body: Stack(
         children: [
           Positioned.fill(
-            child:
-                Image.asset("assets/images/Background.png", fit: BoxFit.fill),
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
+            ),
           ),
           Column(
             children: [
@@ -98,16 +101,18 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
                               ),
                               const SizedBox(height: 20),
                               customLableField(
-                                  lable: "Heading",
-                                  controller: _headlineController,
-                                  height: 50.0),
+                                lable: "Heading",
+                                controller: _headlineController,
+                                height: 50.0,
+                              ),
                               const SizedBox(height: 20),
                               customLableField(
-                                  lable: "Description",
-                                  textType: TextInputType.multiline,
-                                  controller: _notesController,
-                                  height: 210.0,
-                                  maxLines: 10),
+                                lable: "Description",
+                                textType: TextInputType.multiline,
+                                controller: _notesController,
+                                height: 210.0,
+                                maxLines: 10,
+                              ),
                             ],
                           ),
                         ),
@@ -141,8 +146,10 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
   }
 
   void checkOut(context) async {
-    final provider =
-        Provider.of<TutorDashBoardProvider>(context, listen: false);
+    final provider = Provider.of<TutorDashBoardProvider>(
+      context,
+      listen: false,
+    );
     setState(() {
       isLoading = true;
     });
@@ -155,8 +162,10 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
         "sessionId": widget.sessionId,
         "status": "COMPLETED",
       };
-      Response response =
-          await dio.put(path: AppUrls.updateSubSession, data: params);
+      Response response = await dio.put(
+        path: AppUrls.updateSubSession,
+        data: params,
+      );
       var responseData = response.data;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -169,7 +178,9 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
           if (context.mounted) Navigator.pop(context);
           if (mounted) {
             AppToast.success(
-                context: context, msg: "Checked Out Successfully!");
+              context: context,
+              msg: "Checked Out Successfully!",
+            );
           }
         });
       } else {
@@ -177,7 +188,9 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
           isLoading = false;
         });
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -211,7 +224,9 @@ class _SessionCheckOutState extends State<SessionCheckOut> {
           isLoading = false;
         });
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) {

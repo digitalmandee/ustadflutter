@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/dashboard.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Sessions/parent_session.dart';
-import 'package:ustaad/Screens/Chats/chat.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/HomeScreen/dash_board.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/tutor_session.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Dashboard/dashboard.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Sessions/parent_session.dart';
+import 'package:flutterustad/Screens/Chats/chat.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/HomeScreen/dash_board.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/tutor_session.dart';
 
 class BottomNavView extends StatefulWidget {
   final bool tutor;
   final int index;
 
-  const BottomNavView({
-    super.key,
-    required this.tutor,
-    this.index = 0,
-  });
+  const BottomNavView({super.key, required this.tutor, this.index = 0});
 
   @override
   State<BottomNavView> createState() => _BottomNavViewState();
@@ -227,7 +223,11 @@ class CurvedNavPainter extends CustomPainter {
     // Bottom-right corner
     path.lineTo(size.width, size.height - borderRadius);
     path.quadraticBezierTo(
-        size.width, size.height, size.width - borderRadius, size.height);
+      size.width,
+      size.height,
+      size.width - borderRadius,
+      size.height,
+    );
 
     // Bottom-left corner
     path.lineTo(borderRadius, size.height);

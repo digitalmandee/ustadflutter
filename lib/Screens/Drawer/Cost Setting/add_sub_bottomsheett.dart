@@ -4,14 +4,14 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subjects_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
-import 'package:ustaad/Models/Tutor%20Side/subject_cost_model.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subjects_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/subject_cost_provider.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subject_cost_model.dart';
 
 class AddCostSubjectSheet extends StatefulWidget {
   const AddCostSubjectSheet({super.key});
@@ -44,16 +44,21 @@ class _AddCostSubjectSheetState extends State<AddCostSubjectSheet> {
     final response = await rootBundle.loadString('assets/subjects.json');
     final List data = json.decode(response);
 
-    final costProvider =
-        Provider.of<CostSettingProvider>(context, listen: false);
-    final addedSubjectNames =
-        costProvider.subjects.map((e) => e.name.toLowerCase().trim()).toSet();
+    final costProvider = Provider.of<CostSettingProvider>(
+      context,
+      listen: false,
+    );
+    final addedSubjectNames = costProvider.subjects
+        .map((e) => e.name.toLowerCase().trim())
+        .toSet();
 
     setState(() {
       subjects = data
           .map((e) => SubjectsModel.fromJson(e))
-          .where((subject) =>
-              !addedSubjectNames.contains(subject.name.toLowerCase().trim()))
+          .where(
+            (subject) =>
+                !addedSubjectNames.contains(subject.name.toLowerCase().trim()),
+          )
           .toList();
     });
   }
@@ -86,8 +91,9 @@ class _AddCostSubjectSheetState extends State<AddCostSubjectSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -164,10 +170,12 @@ class _AddCostSubjectSheetState extends State<AddCostSubjectSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppText.appText("Toggle",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      textColor: AppTheme.lableText),
+                  AppText.appText(
+                    "Toggle",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    textColor: AppTheme.lableText,
+                  ),
                   Transform.scale(
                     scale: 0.60,
                     child: Switch(
@@ -192,17 +200,19 @@ class _AddCostSubjectSheetState extends State<AddCostSubjectSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppText.appText("Cost:",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      textColor: AppTheme.lableText),
+                  AppText.appText(
+                    "Cost:",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    textColor: AppTheme.lableText,
+                  ),
                   CustomAppTextField(
                     controller: controller,
                     width: 130,
                     texthint: "Rs. 1000",
                     txtType: TextInputType.number,
                     textDirection: TextDirection.ltr,
-                  )
+                  ),
                 ],
               ),
             ),
@@ -254,10 +264,7 @@ class _AddCostSubjectSheetState extends State<AddCostSubjectSheet> {
               value: subject,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  subject.name,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(subject.name, overflow: TextOverflow.ellipsis),
               ),
             );
           }).toList(),

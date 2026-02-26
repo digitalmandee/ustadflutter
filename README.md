@@ -1,4 +1,4 @@
-# ustaad
+# flutterustad
 
 A new Flutter project.
 

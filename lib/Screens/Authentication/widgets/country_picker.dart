@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 
 class CountryPickerField extends StatefulWidget {
   final Function(String) onCountrySelected; // pass callback to parent
@@ -20,10 +20,12 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText.appText("Country",
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            textColor: AppTheme.lableText),
+        AppText.appText(
+          "Country",
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          textColor: AppTheme.lableText,
+        ),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
@@ -48,9 +50,7 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
               children: [
                 Text(_selected.flagEmoji),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text(_selected.name),
-                ),
+                Expanded(child: Text(_selected.name)),
                 const Icon(Icons.arrow_drop_down),
               ],
             ),

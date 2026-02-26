@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class Education {
   final String id;
@@ -48,19 +48,23 @@ class EducationProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         education.clear();
         for (var item in response.data['data']) {
-          _education.add(Education(
-            id: item['id'].toString(),
-            institute: item['institute'] ?? '',
-            startDate: item['startDate'] ?? '',
-            endDate: item['endDate'] ?? '',
-            description: item['description'] ?? '',
-            degree: item['degree'] ?? '',
-          ));
+          _education.add(
+            Education(
+              id: item['id'].toString(),
+              institute: item['institute'] ?? '',
+              startDate: item['startDate'] ?? '',
+              endDate: item['endDate'] ?? '',
+              description: item['description'] ?? '',
+              degree: item['degree'] ?? '',
+            ),
+          );
         }
         notifyListeners();
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -82,8 +86,10 @@ class EducationProvider with ChangeNotifier {
     };
 
     try {
-      Response response =
-          await dio.post(path: AppUrls.addTutorEdu, data: params);
+      Response response = await dio.post(
+        path: AppUrls.addTutorEdu,
+        data: params,
+      );
 
       if (response.statusCode == 201) {
         // ✅ Get the actual ID from the backend

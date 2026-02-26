@@ -1,23 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/SignIn/login_screen.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/sign_up_screen.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/sign_up_screen.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final SignupData signupData;
 
-  const OtpVerificationScreen({
-    super.key,
-    required this.signupData,
-  });
+  const OtpVerificationScreen({super.key, required this.signupData});
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -104,17 +101,22 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Column(
       children: [
         const Image(
-            image: AssetImage("assets/images/otpEmail.png"), height: 48),
+          image: AssetImage("assets/images/otpEmail.png"),
+          height: 48,
+        ),
         const SizedBox(height: 20),
-        AppText.appText("Please check your Email",
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            textColor: Colors.black87),
         AppText.appText(
-            "We've sent a code to ${widget.signupData.emailController.text}",
-            textAlign: TextAlign.center,
-            fontSize: 16,
-            textColor: AppTheme.lighttxtColor),
+          "Please check your Email",
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          textColor: Colors.black87,
+        ),
+        AppText.appText(
+          "We've sent a code to ${widget.signupData.emailController.text}",
+          textAlign: TextAlign.center,
+          fontSize: 16,
+          textColor: AppTheme.lighttxtColor,
+        ),
         const SizedBox(height: 20),
         _otpField(widget.signupData.emailOtpController),
         const SizedBox(height: 10),
@@ -130,16 +132,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Column(
       children: [
         const Image(
-            image: AssetImage("assets/images/otpPhone.png"), height: 48),
+          image: AssetImage("assets/images/otpPhone.png"),
+          height: 48,
+        ),
         const SizedBox(height: 20),
-        AppText.appText("Please check your SMS",
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            textColor: Colors.black87),
         AppText.appText(
-            "We've sent a code to +${widget.signupData.phoneController.text}",
-            fontSize: 16,
-            textColor: AppTheme.lighttxtColor),
+          "Please check your SMS",
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          textColor: Colors.black87,
+        ),
+        AppText.appText(
+          "We've sent a code to +${widget.signupData.phoneController.text}",
+          fontSize: 16,
+          textColor: AppTheme.lighttxtColor,
+        ),
         const SizedBox(height: 20),
         _otpField(widget.signupData.phoneOtpController),
         const SizedBox(height: 10),
@@ -184,14 +191,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 child: const Text(
                   " Resend",
                   style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.teal,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline),
+                    fontSize: 14,
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               )
-            : Text(" Resend in ${seconds}s",
-                style: const TextStyle(fontSize: 14, color: Colors.grey)),
+            : Text(
+                " Resend in ${seconds}s",
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
       ],
     );
   }
@@ -222,8 +232,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void _verifyOtpHandler() {
     if (widget.signupData.emailOtpController.text.isEmpty ||
         widget.signupData.emailOtpController.text.length < 4) {
-      AppToast.error(
-          context: context, msg: "Please enter valid Email OTP");
+      AppToast.error(context: context, msg: "Please enter valid Email OTP");
     } else {
       // if (widget.signupData.phoneOtpController.text.isEmpty ||
       //     widget.signupData.phoneOtpController.text.length < 4) {
@@ -249,8 +258,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       final responseData = response.data;
 
       if (response.statusCode == 200) {
-        AppToast.success(
-            context: context, msg: "${responseData["message"]}");
+        AppToast.success(context: context, msg: "${responseData["message"]}");
         setState(() => isLoading = false);
       } else {
         _handleError(responseData["message"]);
@@ -275,8 +283,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       final responseData = response.data;
 
       if (response.statusCode == 200) {
-        AppToast.success(
-            context: context, msg: "${responseData["message"]}");
+        AppToast.success(context: context, msg: "${responseData["message"]}");
         pushUntil(context, LogInScreen());
       } else {
         _handleError(responseData["errors"][0]["message"]);

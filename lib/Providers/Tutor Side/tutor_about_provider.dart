@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subjects_model.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subjects_model.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class About {
   final String about;
@@ -71,22 +71,26 @@ class AboutProvider with ChangeNotifier {
   }
 
   void toggleSelection<T>(T item, List<T> list) {
-    final exists = list.any((e) =>
-        (e is String
-            ? e.toLowerCase()
-            : (e as SubjectsModel).name.toLowerCase()) ==
-        (item is String
-            ? item.toLowerCase()
-            : (item as SubjectsModel).name.toLowerCase()));
-
-    if (exists) {
-      list.removeWhere((e) =>
+    final exists = list.any(
+      (e) =>
           (e is String
               ? e.toLowerCase()
               : (e as SubjectsModel).name.toLowerCase()) ==
           (item is String
               ? item.toLowerCase()
-              : (item as SubjectsModel).name.toLowerCase()));
+              : (item as SubjectsModel).name.toLowerCase()),
+    );
+
+    if (exists) {
+      list.removeWhere(
+        (e) =>
+            (e is String
+                ? e.toLowerCase()
+                : (e as SubjectsModel).name.toLowerCase()) ==
+            (item is String
+                ? item.toLowerCase()
+                : (item as SubjectsModel).name.toLowerCase()),
+      );
     } else {
       list.add(item);
     }
@@ -110,8 +114,9 @@ class AboutProvider with ChangeNotifier {
             subjects: tutor['subjects'] != null
                 ? List<String>.from(tutor['subjects'])
                 : [],
-            grades:
-                tutor['grade'] != null ? List<String>.from(tutor['grade']) : [],
+            grades: tutor['grade'] != null
+                ? List<String>.from(tutor['grade'])
+                : [],
             curriculum: tutor['curriculum'] != null
                 ? List<String>.from(tutor['curriculum'])
                 : [],
@@ -119,15 +124,18 @@ class AboutProvider with ChangeNotifier {
         } else {
           _aboutData = null;
           AppToast.error(
-              context: context,
-              msg: "${response.data["errors"][0]["message"]}");
+            context: context,
+            msg: "${response.data["errors"][0]["message"]}",
+          );
         }
 
         notifyListeners();
       } else if (response.statusCode == 401 &&
           response.data["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
 
         handleTokenExpiration();
       }
@@ -140,10 +148,7 @@ class AboutProvider with ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     }
   }
 
@@ -162,7 +167,9 @@ class AboutProvider with ChangeNotifier {
         return true;
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Add About Error: $e");
