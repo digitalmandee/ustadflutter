@@ -310,6 +310,8 @@ class _TutorDashBoardScreenState extends State<TutorDashBoardScreen> {
                   }).toList(),
                 ),
               ),
+
+        const SizedBox(height: 16),
       ],
     );
   }

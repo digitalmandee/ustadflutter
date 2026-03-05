@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -103,8 +101,6 @@ class _LogInScreenState extends State<LogInScreen> {
                 );
               },
               onGoogleTap: () async {
-                log("Google Sign-up  tapped");
-
                 setState(() => _isGoogleLoading = true);
                 final userData = await _googleSignInService.signIn(context);
                 if (userData != null) {

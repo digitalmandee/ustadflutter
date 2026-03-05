@@ -27,6 +27,7 @@ class _ParentsReviewsState extends State<ParentsReviews> {
             ),
           )
         : ListView.builder(
+            padding: EdgeInsets.zero,
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: widget.ratingData.length,

@@ -160,7 +160,7 @@ class ContractProvider extends ChangeNotifier {
 
   List getCancelled() {
     return allContracts.where((e) {
-      return ["CANCELLED", "EXPIRED"].contains(e["status"]);
+      return ["CANCELLED", "EXPIRED", "REFUNDED"].contains(e["status"]);
     }).toList();
   }
 

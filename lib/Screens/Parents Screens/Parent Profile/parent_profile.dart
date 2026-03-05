@@ -340,6 +340,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                               ],
                             ),
                             const SizedBox(height: 20),
+
                             Padding(
                               padding: widget.isTutorSide == true
                                   ? const EdgeInsets.symmetric(horizontal: 30.0)

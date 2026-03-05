@@ -417,21 +417,23 @@ class _BankSheetState extends State<BankSheet> {
                         color: AppTheme.primaryCOlor,
                       ),
                       const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText.appText(
-                            provider.bankName,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          SizedBox(height: 5),
-                          AppText.appText(
-                            provider.accountNumber,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText.appText(
+                              provider.bankName,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            SizedBox(height: 5),
+                            AppText.appText(
+                              provider.accountNumber,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

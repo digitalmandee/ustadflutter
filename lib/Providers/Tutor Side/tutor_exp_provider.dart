@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Helpers/utils.dart';
-import 'package:flutterustad/Models/Tutor Side/experience_model.dart';
-import 'package:flutterustad/Providers/Tutor Side/tutor_about_provider.dart';
+import 'package:flutterustad/Models/Tutor%20Side/experience_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
 import 'package:flutterustad/config/dio/dio.dart';
 import 'package:flutterustad/config/keys/urls.dart';
 

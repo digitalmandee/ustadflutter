@@ -25,6 +25,7 @@ class _ContractScreenState extends State<ContractScreen> {
   bool showRunning = true;
   bool showCompleted = false;
   bool showCancelled = false;
+  bool showRefunded = false;
 
   @override
   void initState() {
@@ -81,6 +82,8 @@ class _ContractScreenState extends State<ContractScreen> {
                     itemCount: currentList.length,
                     itemBuilder: (context, index) {
                       final data = currentList[index];
+                      // log("Contract Data: $data");
+                      // log("contract list is ${currentList.toString()}");
                       final childName = data["Offer"]["childName"]
                           .toString()
                           .capitalize();
@@ -125,12 +128,14 @@ class _ContractScreenState extends State<ContractScreen> {
                                               : "Contract with ${capitalizeEachWord(data["parent"]["firstName"])} for ${capitalizeEachWord(childName)}",
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          maxlines: 2,
+                                          maxlines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
+
+                                      SizedBox(width: 10),
                                       widget.isParentSide == true
-                                          ? data["tutorReview"] != null
+                                          ? data["status"] == "COMPLETED"
                                                 ? Row(
                                                     children: [
                                                       Icon(
@@ -147,8 +152,41 @@ class _ContractScreenState extends State<ContractScreen> {
                                                       ),
                                                     ],
                                                   )
+                                                : (data["status"] ==
+                                                          "CANCELLED" ||
+                                                      data["status"] ==
+                                                          "REFUNDED")
+                                                ? Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 5,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          data["isRefunded"] ==
+                                                              false
+                                                          ? Colors.grey
+                                                          : Colors.green,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                    ),
+                                                    child: AppText.appText(
+                                                      data["isRefunded"] ==
+                                                              false
+                                                          ? " Pending"
+                                                          : "Refunded",
+                                                      textColor: AppTheme.white,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  )
                                                 : SizedBox.shrink()
                                           : SizedBox.shrink(),
+
                                       widget.isParentSide == false
                                           ? data["parentReview"] != null
                                                 ? Row(
@@ -377,6 +415,7 @@ class _ContractScreenState extends State<ContractScreen> {
                   showRunning = true;
                   showCompleted = false;
                   showCancelled = false;
+                  showRefunded = false;
                 });
               },
             ),
@@ -388,6 +427,7 @@ class _ContractScreenState extends State<ContractScreen> {
                   showRunning = false;
                   showCompleted = true;
                   showCancelled = false;
+                  showRefunded = false;
                 });
               },
             ),
@@ -399,6 +439,7 @@ class _ContractScreenState extends State<ContractScreen> {
                   showRunning = false;
                   showCompleted = false;
                   showCancelled = true;
+                  showRefunded = true;
                 });
               },
             ),

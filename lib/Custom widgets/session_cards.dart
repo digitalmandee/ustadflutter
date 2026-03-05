@@ -264,6 +264,7 @@ class SessionCard extends StatelessWidget {
           fontWeight: FontWeight.w800,
           fontSize: 12,
         ),
+
         AppText.appText(
           "$startTime",
           textColor: _textColor,

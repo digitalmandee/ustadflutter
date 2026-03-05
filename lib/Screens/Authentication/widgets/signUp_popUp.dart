@@ -52,6 +52,7 @@ void showSignupPopup(
                   const SizedBox(height: 16),
                   loginDivider("OR"),
                   const SizedBox(height: 16),
+
                   AppButton.appButton(
                     isGoogleLoading ? "Signing up..." : "Sign Up with Google",
                     context: context,
