@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Custom%20widgets/app_button.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
@@ -268,20 +269,40 @@ class _TutorDocVerificationScreenState
         "grade": jsonEncode(data.selectedGrades),
         "curriculum": jsonEncode(data.selectedCurriculums),
         "accountNumber": data.accountNumber?.replaceAll(RegExp(r'\D'), ''),
+        // if (data.resumeFile != null)
+        //   "resume": await MultipartFile.fromFile(
+        //     data.resumeFile!.path,
+        //     filename: 'resume.pdf',
+        //   ),
+        // if (data.idFrontFile != null)
+        //   "idFront": await MultipartFile.fromFile(
+        //     data.idFrontFile!.path,
+        //     filename: 'id_front.pdf',
+        //   ),
+        // if (data.idBackFile != null)
+        //   "idBack": await MultipartFile.fromFile(
+        //     data.idBackFile!.path,
+        //     filename: 'id_back.pdf',
+        //   ),
         if (data.resumeFile != null)
           "resume": await MultipartFile.fromFile(
             data.resumeFile!.path,
-            filename: 'resume.pdf',
+            filename: data.resumeFile!.path.split('/').last,
+            contentType: MediaType('application', 'pdf'),
           ),
+
         if (data.idFrontFile != null)
           "idFront": await MultipartFile.fromFile(
             data.idFrontFile!.path,
-            filename: 'id_front.pdf',
+            filename: data.idFrontFile!.path.split('/').last,
+            contentType: MediaType('image', 'jpeg'), // OR detect dynamically
           ),
+
         if (data.idBackFile != null)
           "idBack": await MultipartFile.fromFile(
             data.idBackFile!.path,
-            filename: 'id_back.pdf',
+            filename: data.idBackFile!.path.split('/').last,
+            contentType: MediaType('image', 'jpeg'),
           ),
       });
 

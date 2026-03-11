@@ -54,6 +54,7 @@ dependencies:
   webview_flutter_wkwebview: ^3.23.5
   motion_tab_bar: ^2.0.4
   another_flushbar: ^1.12.32
+  http_parser: ^4.1.2
 
 dev_dependencies:
   flutter_test:

@@ -295,8 +295,10 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // spacing: 25,
           children: [
-            Expanded(
+            SizedBox(
+              width: ScreenSize(context).width * 0.4,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -355,8 +357,9 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
                 ],
               ),
             ),
-            SizedBox(width: 5),
-            Expanded(
+            // Expanded(child: SizedBox()),
+            SizedBox(
+              width: ScreenSize(context).width * 0.4,
               child: customLableField(
                 lable: "Age",
                 textType: TextInputType.numberWithOptions(),
