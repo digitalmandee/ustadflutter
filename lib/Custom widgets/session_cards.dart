@@ -248,9 +248,11 @@ class SessionCard extends StatelessWidget {
       return Center(
         child: AppText.appText(
           "Session in Progress",
-          textColor: _textColor,
+          textColor: (isRunning == true && isCompleted == false)
+              ? AppTheme.appColor
+              : _textColor,
           fontWeight: FontWeight.w800,
-          fontSize: 13,
+          fontSize: 11,
         ),
       );
     }

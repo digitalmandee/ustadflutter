@@ -203,9 +203,31 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
     );
   }
 
+  // Widget _buildTransferredList({context, history}) {
+  //   return ListView.builder(
+  //     shrinkWrap: true,
+  //     itemCount: history.length,
+  //     itemBuilder: (context, index) {
+  //       var data = history[index];
+  //       return _transferItem(context, data);
+  //     },
+  //   );
+  // }
   Widget _buildTransferredList({context, history}) {
+    if (history == null || history.isEmpty) {
+      return const Center(
+        child: Text(
+          "Empty History",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
-      shrinkWrap: true,
       itemCount: history.length,
       itemBuilder: (context, index) {
         var data = history[index];

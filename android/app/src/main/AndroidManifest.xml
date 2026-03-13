@@ -17,7 +17,8 @@
     <application
         android:label="flutterustad"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <!-- ✅ Required for Google Sign-In (Firebase) -->
         <activity
@@ -56,10 +57,24 @@
 
     <!-- Required for text processing -->
     <queries>
+
+        <!-- For text processing -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+
+        <!-- ✅ Required for opening browser links -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+
     </queries>
 
 </manifest>

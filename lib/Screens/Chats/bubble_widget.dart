@@ -35,32 +35,77 @@ class ChatBubble extends StatelessWidget {
     required this.showTime,
   });
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   {
+  //     return Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       mainAxisAlignment: message.isMe
+  //           ? MainAxisAlignment.end
+  //           : MainAxisAlignment.start,
+  //       children: [
+  //         if (!message.isMe) ...[
+  //           if ((showAvatar || showTime) &&
+  //               message.text != 'This message was deleted' &&
+  //               message.text != 'This message was deleted.') ...[
+  //             Padding(padding: const EdgeInsets.only(top: 5), child: _avatar()),
+  //             const SizedBox(width: 8),
+  //           ] else ...[
+  //             const SizedBox(width: 44),
+  //           ],
+  //         ],
+
+  //         Flexible(
+  //           child: Column(
+  //             crossAxisAlignment: message.isMe
+  //                 ? CrossAxisAlignment.end
+  //                 : CrossAxisAlignment.start,
+  //             children: [_buildMessageByType(context)],
+  //           ),
+  //         ),
+  //       ],
+  //     );
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
-    {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: message.isMe
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-        children: [
-          if (showAvatar) ...[
-            _avatar(),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: message.isMe
+          ? MainAxisAlignment.end
+          : MainAxisAlignment.start,
+      children: [
+        if (!message.isMe) ...[
+          if (showAvatar &&
+              !showTime &&
+              message.text != 'This message was deleted' &&
+              message.text != 'This message was deleted.') ...[
+            // Show avatar only when showAvatar is true AND it's not showing time (which indicates first message)
+            Padding(padding: const EdgeInsets.only(top: 5), child: _avatar()),
             const SizedBox(width: 8),
-          ] else if (!message.isMe) ...[
-            const SizedBox(width: 50),
+          ] else if (showAvatar &&
+              showTime &&
+              message.text != 'This message was deleted' &&
+              message.text != 'This message was deleted.') ...[
+            // This is the first message in sequence - show avatar
+            Padding(padding: const EdgeInsets.only(top: 5), child: _avatar()),
+            const SizedBox(width: 8),
+          ] else ...[
+            // For subsequent messages, just add spacing
+            const SizedBox(width: 44),
           ],
-          Flexible(
-            child: Column(
-              crossAxisAlignment: message.isMe
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [_buildMessageByType(context)],
-            ),
-          ),
         ],
-      );
-    }
+        Flexible(
+          child: Column(
+            crossAxisAlignment: message.isMe
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [_buildMessageByType(context)],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildMessageByType(BuildContext context) {
@@ -87,6 +132,7 @@ class ChatBubble extends StatelessWidget {
           time: message.time,
           showStatusIcon: message.isMe,
           isPending: message.isPending,
+          showTime: showTime,
         );
       }
     } else if (message.type == "AUDIO") {
@@ -106,8 +152,9 @@ class ChatBubble extends StatelessWidget {
 
   Widget _avatar() {
     return Container(
-      height: 45,
-      width: 45,
+      height: 36,
+      width: 36,
+      // padding: const EdgeInsets.only(top: 5),
       decoration: BoxDecoration(shape: BoxShape.circle),
       child: image == "" || image.isEmpty
           ? ClipOval(
@@ -393,10 +440,9 @@ class ChatBubble extends StatelessWidget {
           const SizedBox(height: 10),
           _offerRow("Starting Date", message.offer!["startDate"]),
           const SizedBox(height: 10),
-          _offerRow(
-            "Session Time",
-            "${formatTime(message.offer!["startTime"])} - ${formatTime(message.offer!["endTime"])}",
-          ),
+          _offerRow("Start Time", formatTime(message.offer!["startTime"])),
+          const SizedBox(height: 10),
+          _offerRow("End Time", formatTime(message.offer!["endTime"])),
           const SizedBox(height: 10),
           _offerRow("Days of Week", formatDays(message.offer!["daysOfWeek"])),
           const SizedBox(height: 20),
@@ -667,7 +713,7 @@ class ChatBubble extends StatelessWidget {
 
 String formatTime(String time) {
   final parsedTime = DateFormat("HH:mm").parse(time);
-  return DateFormat("HH:mm").format(parsedTime);
+  return DateFormat("hh:mm a").format(parsedTime);
 }
 
 String formatDays(List<dynamic> days) {
@@ -687,6 +733,7 @@ class FileBubble extends StatefulWidget {
   final String time;
   final bool showStatusIcon;
   final bool isPending;
+  final bool showTime;
   const FileBubble({
     super.key,
     required this.url,
@@ -695,6 +742,7 @@ class FileBubble extends StatefulWidget {
     required this.showStatusIcon,
     required this.isPending,
     required this.name,
+    required this.showTime,
   });
 
   @override
@@ -810,8 +858,19 @@ class _FileBubbleState extends State<FileBubble> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Spacer(),
+                  // if (isDownloading)
+                  //   Expanded(child: LinearProgressIndicator(value: progress)),
                   if (isDownloading)
-                    Expanded(child: LinearProgressIndicator(value: progress)),
+                    Expanded(
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppTheme.appColor,
+                        ),
+                        minHeight: 6,
+                      ),
+                    ),
                   if (!isDownloading)
                     Align(
                       alignment: Alignment.center,
@@ -845,10 +904,11 @@ class _FileBubbleState extends State<FileBubble> {
             ],
           ),
         ),
-        Text(
-          widget.time,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
+        if (widget.showTime)
+          Text(
+            widget.time,
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
       ],
     );
   }

@@ -215,6 +215,16 @@ class _ParentRefundingScreenState extends State<ParentRefundingScreen> {
   }
 
   Widget _buildTransferredList({context, history}) {
+    if (history.isEmpty) {
+      return Center(
+        child: AppText.appText(
+          "No transactions yet",
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          textColor: const Color(0xff8A8A8A),
+        ),
+      );
+    }
     return ListView.builder(
       shrinkWrap: true,
       itemCount: history.length,

@@ -174,8 +174,10 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                                 } else {
                                   forgotPass(
                                     context,
-                                    text: phoneController.text,
-                                    isPhone: true,
+                                    text: _emailController.text
+                                        .trim()
+                                        .toLowerCase(),
+                                    isPhone: false,
                                   );
                                 }
                               }
@@ -199,7 +201,7 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
 
     Map<String, dynamic> params = isPhone
         ? {"phone": text.replaceAll("+", "")}
-        : {"email": text};
+        : {"email": text.toString().trim().toLowerCase()};
 
     try {
       Response response = await dio.post(

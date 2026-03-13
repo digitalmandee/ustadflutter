@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -85,11 +84,10 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    log("Firebase initialized successfully.");
     await initializeDateFormatting();
     await setupFlutterNotifications();
   } catch (e) {
-    log("Error during initialization: $e");
+    print("Error during initialization: $e");
   }
 
   if (!kIsWeb && Platform.isAndroid) {
