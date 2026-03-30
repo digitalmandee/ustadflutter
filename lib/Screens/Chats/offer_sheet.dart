@@ -252,6 +252,8 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                                     textColor: AppTheme.hintColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
+                                    maxlines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   items: provider.subjects.map((subject) {
                                     final isSelected = selectedSubjects
@@ -561,6 +563,29 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
     }
     if (selectedEndTime == null) {
       _showError("Please select an end time.");
+      return;
+    }
+    // ✅ Validate Start Time < End Time
+    final now = DateTime.now();
+
+    final startDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedStartTime!.hour,
+      selectedStartTime!.minute,
+    );
+
+    final endDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedEndTime!.hour,
+      selectedEndTime!.minute,
+    );
+
+    if (!startDateTime.isBefore(endDateTime)) {
+      _showError("Start time must be earlier than end time");
       return;
     }
     if (selectedDays.isEmpty) {

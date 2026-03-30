@@ -46,8 +46,8 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                paymentIntentDummy(context);
-                // paymentIntent(context);
+                // paymentIntentDummy(context);
+                paymentIntent(context);
               },
               child: Container(
                 padding: const EdgeInsets.all(16),
