@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
 import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/child_profile.dart';
 import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
@@ -46,7 +47,7 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
                   ),
                   SizedBox(width: 5),
                   stepIndicator(
-                    "Banks",
+                    Staticdata.isActive ? "Next" : "Banks",
                     1,
                     context,
                     controller: _tabController,

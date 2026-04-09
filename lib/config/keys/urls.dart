@@ -9,6 +9,7 @@ class AppUrls {
   static const String onBoard = "tutor/onboarding";
   static const String googleSignIn = "auth/google-login";
   static const String googleSignUp = "auth/google-signup";
+  static const String deleteAccount = "/tutor/delete-account";
   ///////// Tutor Experience //////////////
   static const String getTutorExp = "tutor/experience";
   static const String addTutorExp = "tutor/experience/add";

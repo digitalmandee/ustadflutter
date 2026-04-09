@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterustad/Custom widgets/app_button.dart';
 import 'package:flutterustad/Custom widgets/app_text.dart';
@@ -143,16 +144,17 @@ class _LogInScreenState extends State<LogInScreen> {
                       //     ),
                       //   ],
                       // ),
-                      GestureDetector(
-                        onTap: () =>
-                            push(context, ForgotPassScreen(isEditing: false)),
-                        child: AppText.appText(
-                          "Forgot Password?",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          textColor: AppTheme.appColor,
+                      if (!Staticdata.isActive)
+                        GestureDetector(
+                          onTap: () =>
+                              push(context, ForgotPassScreen(isEditing: false)),
+                          child: AppText.appText(
+                            "Forgot Password?",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            textColor: AppTheme.appColor,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   Padding(

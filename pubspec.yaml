@@ -55,6 +55,8 @@ dependencies:
  
   another_flushbar: ^1.12.32
   http_parser: ^4.1.2
+  rename: ^3.1.0
+  cloud_firestore: ^6.2.0
 
 dev_dependencies:
   flutter_test:

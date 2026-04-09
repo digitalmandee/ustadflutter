@@ -80,18 +80,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     });
   }
 
-  // void _filterSubjects(String query) {
-  //   setState(() {
-  //     if (query.isEmpty) {
-  //       filteredSubjects = subjects;
-  //     } else {
-  //       filteredSubjects = subjects
-  //           .where((s) => s.name.toLowerCase().contains(query.toLowerCase()))
-  //           .toList();
-  //     }
-  //   });
-  // }
-
   void _toggleSelection<T>(T item, List<T> selectedList) {
     setState(() {
       if (selectedList.contains(item)) {

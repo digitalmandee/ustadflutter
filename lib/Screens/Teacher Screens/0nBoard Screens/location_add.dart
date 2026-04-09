@@ -83,19 +83,6 @@ class _OnboardLocationState extends State<OnboardLocation> {
           ),
           Column(
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              //   child: Align(
-              //     alignment: Alignment.centerLeft,
-              //     child: InkWell(
-              //       onTap: () {
-              //         widget.onBackTap.call();
-              //       },
-              //       child:
-              //           Image.asset("assets/images/arrowBack.png", height: 28),
-              //     ),
-              //   ),
-              // ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

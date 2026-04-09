@@ -5,6 +5,7 @@ import 'package:flutterustad/Custom%20widgets/app_bar.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
 import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:flutterustad/Helpers/utils.dart';
 import 'package:flutterustad/Screens/Chats/payfast.dart';
 import 'package:flutterustad/config/dio/app_logger.dart';
@@ -46,8 +47,9 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                // paymentIntentDummy(context);
-                paymentIntent(context);
+                Staticdata.isActive
+                    ? paymentIntentDummy(context)
+                    : paymentIntent(context);
               },
               child: Container(
                 padding: const EdgeInsets.all(16),

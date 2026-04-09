@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Custom%20widgets/app_button.dart';
 import 'package:flutterustad/Custom%20widgets/app_field.dart';
@@ -151,53 +152,59 @@ class _TutorEarningScreenState extends State<TutorEarningScreen> {
             fontWeight: FontWeight.w600,
           ),
           const SizedBox(height: 8),
-          AppText.appText(
-            "You can Withdraw",
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            textColor: const Color(0xff8A8A8A),
-          ),
+          if (!Staticdata.isActive)
+            AppText.appText(
+              "You can Withdraw",
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              textColor: const Color(0xff8A8A8A),
+            ),
           const SizedBox(height: 30),
-          AppButton.appButton(
-            "Withdraw",
-            context: context,
-            onTap: () {
-              showModalBottomSheet(
-                backgroundColor: AppTheme.white,
-                context: context,
-                isScrollControlled: true,
-                isDismissible: false,
-                enableDrag: false,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                builder: (context) => const BankSheet(),
-              );
-            },
-            backgroundColor: AppTheme.primaryCOlor,
-            border: false,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          if (!Staticdata.isActive)
+            AppButton.appButton(
+              "Withdraw",
+              context: context,
+              onTap: () {
+                showModalBottomSheet(
+                  backgroundColor: AppTheme.white,
+                  context: context,
+                  isScrollControlled: true,
+                  isDismissible: false,
+                  enableDrag: false,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (context) => const BankSheet(),
+                );
+              },
+              backgroundColor: AppTheme.primaryCOlor,
+              border: false,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           const SizedBox(height: 20),
-          AppText.appText(
-            "Recent Transactions",
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            textColor: const Color(0xff8A8A8A),
-          ),
+          if (!Staticdata.isActive)
+            AppText.appText(
+              "Recent Transactions",
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              textColor: const Color(0xff8A8A8A),
+            ),
           const SizedBox(height: 20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: provider.tranferredHistory.length >= 3
-                ? 3
-                : provider.tranferredHistory.length,
-            itemBuilder: (context, index) {
-              final data = provider.tranferredHistory[index];
-              return _transferItem(context, data);
-            },
-          ),
+          if (!Staticdata.isActive)
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: provider.tranferredHistory.length >= 3
+                  ? 3
+                  : provider.tranferredHistory.length,
+              itemBuilder: (context, index) {
+                final data = provider.tranferredHistory[index];
+                return _transferItem(context, data);
+              },
+            ),
         ],
       ),
     );

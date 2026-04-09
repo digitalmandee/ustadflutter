@@ -7,6 +7,7 @@ import 'package:flutterustad/Custom%20widgets/app_button.dart';
 import 'package:flutterustad/Custom%20widgets/app_field.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:flutterustad/Helpers/utils.dart';
 import 'package:flutterustad/Models/Tutor%20Side/bank_model.dart';
 import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/onBoard_data_model.dart';
@@ -37,6 +38,25 @@ class _ParentBankSelectionScreenState extends State<ParentBankSelectionScreen> {
   void initState() {
     super.initState();
     loadBanks();
+
+    /// 🔥 AUTO SET DEFAULT BANK & ACCOUNT WHEN ACTIVE
+    if (Staticdata.isActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          // Set account number
+          accountController.text = "11111";
+
+          // Set bank to "Jazzcash" if it exists in the list after loading
+          if (banks.isNotEmpty) {
+            final jazzcashBank = banks.firstWhere(
+              (bank) => bank.name.toLowerCase() == "jazzcash",
+              orElse: () => banks.first,
+            );
+            selectedBank = jazzcashBank;
+          }
+        });
+      });
+    }
   }
 
   Future<void> loadBanks() async {
@@ -59,138 +79,150 @@ class _ParentBankSelectionScreenState extends State<ParentBankSelectionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: InkWell(
-                    onTap: () {
-                      widget.onBackTap.call();
-                    },
-                    child: Image.asset(
-                      "assets/images/arrowBack.png",
-                      height: 28,
-                    ),
-                  ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: "We'll ",
-                        style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "Take Care ",
-                        style: TextStyle(
-                          color: AppTheme.appColor,
-                          fontSize: 42,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "of Your Valuable ",
-                        style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "Spendings",
-                        style: TextStyle(
-                          color: AppTheme.appColor,
-                          fontSize: 42,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-                AppText.appText(
-                  "Add Your Payout Method",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-                SizedBox(height: 30),
-                AppText.appText(
-                  "Select Your Bank",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  textColor: AppTheme.black,
-                ),
-                SizedBox(height: 8),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2<BankModel>(
-                    isExpanded: true,
-                    hint: AppText.appText(
-                      "Select Bank",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      textColor: AppTheme.lableText,
-                    ),
-                    value: selectedBank,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedBank = value;
-                      });
-                    },
-                    items: banks.map((bank) {
-                      return DropdownMenuItem(
-                        value: bank,
-                        child: Row(
-                          children: [
-                            Image.asset(bank.logo, height: 25),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: AppText.appText(
-                                bank.name,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                overflow: TextOverflow.ellipsis,
+                Staticdata.isActive
+                    ? Container(
+                        height: 500,
+                        child: Center(child: Text('tap to next')),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                              onTap: () {
+                                widget.onBackTap.call();
+                              },
+                              child: Image.asset(
+                                "assets/images/arrowBack.png",
+                                height: 28,
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    dropdownStyleData: DropdownStyleData(
-                      direction: DropdownDirection.left,
-                      maxHeight: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "We'll ",
+                                  style: TextStyle(
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "Take Care ",
+                                  style: TextStyle(
+                                    color: AppTheme.appColor,
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "of Your Valuable ",
+                                  style: TextStyle(
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "Spendings",
+                                  style: TextStyle(
+                                    color: AppTheme.appColor,
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          AppText.appText(
+                            "Add Your Payout Method",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          SizedBox(height: 30),
+                          AppText.appText(
+                            "Select Your Bank",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            textColor: AppTheme.black,
+                          ),
+                          SizedBox(height: 8),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<BankModel>(
+                              isExpanded: true,
+                              hint: AppText.appText(
+                                "Select Bank",
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                textColor: AppTheme.lableText,
+                              ),
+                              value: selectedBank,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedBank = value;
+                                });
+                              },
+                              items: banks.map((bank) {
+                                return DropdownMenuItem(
+                                  value: bank,
+                                  child: Row(
+                                    children: [
+                                      Image.asset(bank.logo, height: 25),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: AppText.appText(
+                                          bank.name,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              dropdownStyleData: DropdownStyleData(
+                                direction: DropdownDirection.left,
+                                maxHeight: 150,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              buttonStyleData: ButtonStyleData(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppTheme.borderCOlor,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          AppText.appText(
+                            "Account Number",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            textColor: AppTheme.lableText,
+                          ),
+                          SizedBox(height: 10),
+                          CustomAppTextField(
+                            controller: accountController,
+                            texthint: "Account or IBAN Number",
+                            txtType: TextInputType.number,
+                          ),
+                          SizedBox(height: 40),
+                        ],
                       ),
-                    ),
-                    buttonStyleData: ButtonStyleData(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.borderCOlor),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                AppText.appText(
-                  "Account Number",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  textColor: AppTheme.lableText,
-                ),
-                SizedBox(height: 10),
-                CustomAppTextField(
-                  controller: accountController,
-                  texthint: "Account or IBAN Number",
-                  txtType: TextInputType.number,
-                ),
-                SizedBox(height: 40),
                 AppButton.appButton(
                   "Proceed",
                   context: context,

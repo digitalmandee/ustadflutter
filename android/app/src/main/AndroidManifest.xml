@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.dm.ustaad">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -15,17 +16,10 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <application
-        android:label="flutterustad"
+        android:label="Ustaad"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:networkSecurityConfig="@xml/network_security_config">
-
-        <!-- ✅ Required for Google Sign-In (Firebase) -->
-        <activity
-            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            tools:replace="android:theme" />
 
         <!-- Main Flutter Activity -->
         <activity
@@ -55,16 +49,14 @@
 
     </application>
 
-    <!-- Required for text processing -->
+    <!-- Queries -->
     <queries>
 
-        <!-- For text processing -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
 
-        <!-- ✅ Required for opening browser links -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />

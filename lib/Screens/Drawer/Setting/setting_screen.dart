@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Custom%20widgets/app_bar.dart';
@@ -289,6 +291,21 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                       ],
                     ),
+
+                  if (Staticdata.isActive) const SizedBox(height: 30),
+                  if (Staticdata.isActive)
+                    AppButton.appButton(
+                      onTap: () {
+                        showDeleteAccountDialog(context);
+                      },
+                      textColor: AppTheme.white,
+                      border: false,
+                      height: 52,
+                      backgroundColor: Colors.red,
+                      "Delete Account",
+                      context: context,
+                    ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -363,6 +380,64 @@ class _SettingScreenState extends State<SettingScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  void showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text(
+            "Delete Account",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "Are you sure you want to delete your account? "
+            "This action is permanent and will remove all your data, "
+            "including profile information, images, and settings. "
+            "You will not be able to recover your account once deleted.",
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Dismiss dialog
+              },
+            ),
+            TextButton(
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(); // Dismiss dialog first
+
+                // Call your delete account API here
+                final provider = Provider.of<TutorEditProfileProvider>(
+                  context,
+                  listen: false,
+                );
+                bool success = await provider.deleteAccount(context);
+
+                if (success) {
+                  // // Navigate user to login or welcome screen after deletion
+                  // Navigator.of(context).pushAndRemoveUntil(
+                  //   MaterialPageRoute(builder: (_) => LogInScreen()),
+                  //   (Route<dynamic> route) => false,
+                  // );
+                } else {
+                  // Show error message
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Failed to delete account. Try again."),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

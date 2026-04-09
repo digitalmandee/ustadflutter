@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
 
 class SignupStepper extends StatelessWidget {
@@ -16,7 +17,12 @@ class SignupStepper extends StatelessWidget {
           SizedBox(width: 5),
           stepIndicator("Add. Details", 1, context, controller: tabController),
           SizedBox(width: 5),
-          stepIndicator("OTP", 2, context, controller: tabController),
+          stepIndicator(
+            Staticdata.isActive ? "Next" : "OTP",
+            2,
+            context,
+            controller: tabController,
+          ),
         ],
       ),
     );

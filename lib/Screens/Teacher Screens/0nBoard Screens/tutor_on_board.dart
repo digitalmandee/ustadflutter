@@ -5,6 +5,7 @@ import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/data_mo
 import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/doc_verification.dart';
 import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/location_add.dart';
 import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/subject_screen.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 
 class TutorOnboardScreen extends StatefulWidget {
   const TutorOnboardScreen({super.key});
@@ -44,7 +45,7 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
                   ),
                   SizedBox(width: 5),
                   stepIndicator(
-                    "Banks",
+                    Staticdata.isActive ? "Next" : "Banks",
                     1,
                     context,
                     controller: _tabController,

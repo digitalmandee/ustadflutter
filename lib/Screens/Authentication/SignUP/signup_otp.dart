@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutterustad/Custom%20widgets/app_button.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
@@ -43,6 +44,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     startEmailTimer();
     startSmsTimer();
     getOtp(context);
+
+    /// 🔥 AUTO SET OTP WHEN ACTIVE
+    if (Staticdata.isActive) {
+      widget.signupData.emailOtpController.text = "1111";
+      widget.signupData.phoneOtpController.text = "1111";
+    }
   }
 
   @override
@@ -85,10 +92,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            _emailOtpWidget(),
-            const SizedBox(height: 40),
-            _phoneOtpWidget(),
-            const SizedBox(height: 40),
+            Staticdata.isActive
+                ? Container(
+                    height: 300,
+                    child: Center(child: Text('tap to create button')),
+                  )
+                : Column(
+                    children: [
+                      _emailOtpWidget(),
+                      const SizedBox(height: 40),
+                      _phoneOtpWidget(),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+
             _otpActions(),
             const SizedBox(height: 20),
           ],
@@ -219,7 +236,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           textColor: AppTheme.black,
         ),
         AppButton.appButton(
-          "Verify",
+          Staticdata.isActive ? "Create Account" : "Verify",
           context: context,
           width: ScreenSize(context).width * 0.4,
           backgroundColor: AppTheme.primaryCOlor,

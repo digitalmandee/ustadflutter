@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterustad/Helpers/utils.dart';
 import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
 import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
 import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    fetchGlobalPaywallStatus();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -57,6 +62,39 @@ class _SplashScreenState extends State<SplashScreen>
         pushReplacement(context, const LogInScreen());
       }
     });
+  }
+
+  /// Fetch global paywall status from Firestore
+  Future<void> fetchGlobalPaywallStatus() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('is_active')
+          .doc('GegLUC5O7c0mgm6bARgc')
+          .get();
+
+      final data = snapshot.data();
+      log('here is before fetch status: ${Staticdata.isActive} ');
+      if (data != null) {
+        final isactiveapp = data['app_active'] as bool? ?? false;
+        log('here is firebase status: $isactiveapp');
+
+        Staticdata.isActive = isactiveapp;
+
+        if (isactiveapp) {
+          log("is active data set to  ${Staticdata.isActive}");
+        } else {
+          // 🔑 Paywall disabled → unlock premium for everyone
+          Staticdata.isActive = false;
+          log("is active data set to false ${Staticdata.isActive}");
+        }
+
+        log("final active data value set  = ${Staticdata.isActive}");
+      } else {
+        log("⚠️ No document found, defaulting to paywall enabled");
+      }
+    } catch (e) {
+      log("❌ Failed to fetch firestore flag: $e");
+    }
   }
 
   @override

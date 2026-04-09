@@ -66,7 +66,6 @@ Widget loginFooter(context) {
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
                 push(context, PoliciesScreen(isPrivacy: false));
-
                 //   final url =
                 //       Uri.parse("https://ustaad.online/terms-and-conditions/");
                 //   if (await canLaunchUrl(url)) {

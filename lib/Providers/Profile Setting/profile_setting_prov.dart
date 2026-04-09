@@ -317,4 +317,39 @@ class TutorEditProfileProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<bool> deleteAccount(BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await dio.delete(path: AppUrls.deleteAccount);
+
+      if (response.statusCode == 200) {
+        AppToast.success(
+          context: context,
+          msg: "Your account has been deleted successfully.",
+        );
+
+        /// 🔥 Only call logout handler
+        handleLogOut(context);
+
+        return true;
+      } else {
+        AppToast.error(
+          context: context,
+          msg:
+              response.data["errors"]?[0]?["message"] ??
+              "Failed to delete account",
+        );
+        return false;
+      }
+    } catch (e) {
+      AppToast.error(context: context, msg: "Something went wrong: $e");
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

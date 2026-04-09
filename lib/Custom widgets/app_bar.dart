@@ -176,31 +176,37 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const ProfileAvatar(),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText.appText(
-                          globalUserFirstName == null
-                              ? "Usama Shoaib"
-                              : capitalizeEachWord(
-                                  "$globalUserFirstName $globalUserLastName",
-                                ),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Row(
+                    children: [
+                      const ProfileAvatar(),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText.appText(
+                              globalUserFirstName == null
+                                  ? "Usama Shoaib"
+                                  : capitalizeEachWord(
+                                      "$globalUserFirstName $globalUserLastName",
+                                    ),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              maxlines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            AppText.appText(
+                              "$taskSummary tasks for Today",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              textColor: AppTheme.grey,
+                            ),
+                          ],
                         ),
-                        AppText.appText(
-                          "$taskSummary tasks for Today",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          textColor: AppTheme.grey,
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
                 Row(
                   children: [
