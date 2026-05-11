@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterustad/config/keys/global.dart';
-
 import 'package:flutterustad/config/keys/pref_keys.dart';
 import 'package:flutterustad/Helpers/utils.dart';
 import 'package:flutterustad/config/dio/dio.dart';

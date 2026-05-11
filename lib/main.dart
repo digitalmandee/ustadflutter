@@ -208,6 +208,18 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         title: 'Ustaad',
+
+        // ✅ ADD THIS PART
+        builder: (context, child) {
+          return SafeArea(
+            top: false,
+            bottom: true,
+            left: true,
+            right: true,
+            child: child!,
+          );
+        },
+
         home: const SplashScreen(),
       ),
     );

@@ -73,24 +73,34 @@ class _SplashScreenState extends State<SplashScreen>
           .get();
 
       final data = snapshot.data();
-      log('here is before fetch status: ${Staticdata.isActive} ');
+
+      log(
+        'before fetch → isActive: ${Staticdata.isActive}, showPayment: ${Staticdata.showPayment}',
+      );
+
       if (data != null) {
+        // ✅ Fetch app_active
         final isactiveapp = data['app_active'] as bool? ?? false;
-        log('here is firebase status: $isactiveapp');
 
+        // ✅ Fetch showpayment
+        final showPayment = data['showpayment'] as bool? ?? false;
+
+        log('firebase → app_active: $isactiveapp, showpayment: $showPayment');
+
+        // ✅ Assign values
         Staticdata.isActive = isactiveapp;
+        Staticdata.showPayment = showPayment;
 
-        if (isactiveapp) {
-          log("is active data set to  ${Staticdata.isActive}");
-        } else {
-          // 🔑 Paywall disabled → unlock premium for everyone
+        // Optional logic (if needed)
+        if (!isactiveapp) {
           Staticdata.isActive = false;
-          log("is active data set to false ${Staticdata.isActive}");
         }
 
-        log("final active data value set  = ${Staticdata.isActive}");
+        log(
+          "final values → isActive: ${Staticdata.isActive}, showPayment: ${Staticdata.showPayment}",
+        );
       } else {
-        log("⚠️ No document found, defaulting to paywall enabled");
+        log("⚠️ No document found");
       }
     } catch (e) {
       log("❌ Failed to fetch firestore flag: $e");

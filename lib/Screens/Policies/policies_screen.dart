@@ -32,7 +32,7 @@ class PoliciesScreen extends StatelessWidget {
               "Ustaad connects students and parents with verified tutors for academic learning and mentorship. All users agree to use the platform responsibly and ethically.",
             ],
             "Accounts": [
-              "Tutors can register free of charge during the first year. Users must maintain confidentiality of their login credentials and provide accurate personal information.",
+              "Tutors can register without any cost during the first year. Users must maintain confidentiality of their login credentials and provide accurate personal information.",
             ],
             "Payments": [
               "All payments are processed securely through our approved payment gateway. Parents/students are eligible for a 100% refund if not satisfied after the first session (see Refund Policy).",

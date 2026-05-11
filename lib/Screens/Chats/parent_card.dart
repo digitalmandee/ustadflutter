@@ -39,7 +39,10 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: "Payment Methods", backArrow: true),
+      appBar: CustomAppBar1(
+        title: Staticdata.isActive ? "Accept Offer" : "Payment Methods",
+        backArrow: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -47,35 +50,52 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                Staticdata.isActive
+                Staticdata.showPayment
                     ? paymentIntentDummy(context)
                     : paymentIntent(context);
               },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.credit_card, color: AppTheme.appColor),
-                    SizedBox(width: 12),
-                    AppText.appText(
-                      "Add New Card",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+              child: Staticdata.isActive
+                  ? Container(
+                      height: 60,
+                      color: Colors.green,
+                      width: double.infinity,
+                      child: Center(
+                        child: AppText.appText(
+                          "Tap to accept",
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          textColor: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.credit_card, color: AppTheme.appColor),
+                          SizedBox(width: 12),
+                          AppText.appText(
+                            "Add New Card",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          Spacer(),
+                          Icon(
+                            Icons.add_circle_outline,
+                            color: AppTheme.appColor,
+                          ),
+                        ],
+                      ),
                     ),
-                    Spacer(),
-                    Icon(Icons.add_circle_outline, color: AppTheme.appColor),
-                  ],
-                ),
-              ),
             ),
             SizedBox(height: 20),
             AppText.appText(
-              "Payment Methods",
+              Staticdata.isActive ? "Accept Offer" : "Payment Methods",
               fontSize: 18,
               fontWeight: FontWeight.w500,
               textColor: AppTheme.lableText,

@@ -25,7 +25,7 @@ class FileProvider with ChangeNotifier {
       allowedExtensions = ["jpg", "jpeg", "png"];
     }
 
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: allowedType,
       allowedExtensions: allowedExtensions,
     );

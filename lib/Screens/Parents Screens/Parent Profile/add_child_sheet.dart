@@ -593,7 +593,10 @@ class _AddChildBottomSheetState extends State<AddChildBottomSheet> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      requestFullMetadata: false,
+    );
     if (pickedFile != null) {
       setState(() {
         selectedImage = pickedFile;

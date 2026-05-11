@@ -323,7 +323,10 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future<void> _pickImage(context) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      requestFullMetadata: false,
+    );
     if (pickedFile != null) {
       setState(() {
         selectedImage = pickedFile;

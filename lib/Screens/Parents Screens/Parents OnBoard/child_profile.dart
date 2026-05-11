@@ -407,7 +407,10 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
   }
 
   Future<void> _pickImage(int index) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      requestFullMetadata: false,
+    );
     if (pickedFile != null) {
       setState(() => childList[index].selectedImage = File(pickedFile.path));
     }

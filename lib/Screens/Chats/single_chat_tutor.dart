@@ -1017,7 +1017,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'txt', 'doc', 'docx'],
     );
@@ -1042,6 +1042,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   Future<void> _pickImageFromGallery() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
+      requestFullMetadata: false,
     );
     if (pickedFile != null) {
       setState(() {
