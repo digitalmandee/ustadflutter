@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterustad/Helpers/static_data.dart';
@@ -24,7 +25,8 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    fetchGlobalPaywallStatus();
+    Platform.isAndroid?
+    fetchGlobalPaywallStatus():fetchGlobalPaywallStatusIOS();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -98,6 +100,49 @@ class _SplashScreenState extends State<SplashScreen>
 
         log(
           "final values → isActive: ${Staticdata.isActive}, showPayment: ${Staticdata.showPayment}",
+        );
+      } else {
+        log("⚠️ No document found");
+      }
+    } catch (e) {
+      log("❌ Failed to fetch firestore flag: $e");
+    }
+  }
+
+
+  Future<void> fetchGlobalPaywallStatusIOS() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('is_active')
+          .doc('GegLUC5O7c0mgm6bARgc')
+          .get();
+
+      final data = snapshot.data();
+
+      log(
+        'before fetch → ios_isActive: ${Staticdata.isActive}, ios_showPayment: ${Staticdata.showPayment}',
+      );
+
+      if (data != null) {
+        // ✅ Fetch ios_app_active
+        final ios_isactiveapp = data['ios_app_active'] as bool? ?? false;
+
+        // ✅ Fetch ios_showpayment
+        final ios_showPayment = data['ios_showpayment'] as bool? ?? false;
+
+        log('firebase → ios_app_active: $ios_isactiveapp, ios_showpayment: $ios_showPayment');
+
+        // ✅ Assign values
+        Staticdata.isActive = ios_isactiveapp;
+        Staticdata.showPayment = ios_showPayment;
+
+        // Optional logic (if needed)
+        if (!ios_isactiveapp) {
+          Staticdata.isActive = false;
+        }
+
+        log(
+          "final values → ios_isActive: ${Staticdata.isActive}, ios_showPayment: ${Staticdata.showPayment}",
         );
       } else {
         log("⚠️ No document found");

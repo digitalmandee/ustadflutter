@@ -32,7 +32,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.dm.ustaad"
+        applicationId = "com.dm.ustaad
+"
 
         // ✅ Important for Google Sign-In
         minSdk = flutter.minSdkVersion
