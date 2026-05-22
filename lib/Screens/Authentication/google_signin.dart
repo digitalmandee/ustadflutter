@@ -14,6 +14,9 @@ class GoogleSignInService {
     await _googleSignIn.initialize(
       serverClientId:
           "1022247289156-m8el3dk5mqb3jrj1smdrmuvk2fqk9n9e.apps.googleusercontent.com",
+
+      clientId:
+          "1022247289156-3c1g398qovpn8o3ei9dv6not6m5lcn4d.apps.googleusercontent.com",
     );
   }
 
@@ -43,13 +46,6 @@ class GoogleSignInService {
       if (kDebugMode) {
         print("object$userData");
       }
-      // if (context.mounted) {
-      //   // ScaffoldMessenger.of(context).showSnackBar(
-      //   //   SnackBar(
-      //   //     content: Text("Signed in as ${account.displayName ?? 'User'}"),
-      //   //   ),
-      //   // );
-      // }
 
       return userData;
     } on SocketException {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -89,7 +91,25 @@ void handleLogOut(context, {bool isLogout = false}) async {
   Provider.of<NotificationProvider>(context, listen: false).clear();
 
   print("🗑 Global session cleared");
-  await FirebaseMessaging.instance.deleteToken();
+  // await FirebaseMessaging.instance.deleteToken();
+
+  try {
+  if (Platform.isIOS) {
+    final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+
+    if (apnsToken != null) {
+      await FirebaseMessaging.instance.deleteToken();
+      print("✅ iOS FCM token deleted");
+    } else {
+      print("⚠️ APNS token not ready");
+    }
+  } else {
+    await FirebaseMessaging.instance.deleteToken();
+    print("✅ Android FCM token deleted");
+  }
+} catch (e) {
+  print("❌ deleteToken error: $e");
+}
   SocketService().dispose();
   print("🧹 Socket disposed on logout");
 

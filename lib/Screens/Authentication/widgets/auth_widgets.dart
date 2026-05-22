@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterustad/Custom%20widgets/app_field.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
@@ -33,7 +34,7 @@ Widget customLableField({
       CustomAppTextField(
         readOnly: readOnly,
         maxLines: maxLines,
-        txtType: textType,
+        txtType: textType ?? TextInputType.emailAddress,
         height: height,
         width: width,
         texthint: hintText ?? "$lable",
@@ -124,8 +125,10 @@ Widget loginDivider(String txt) {
   );
 }
 
+// Widget authHeader({ context, bool? isSignInScreen, bool? isPass, bool? isEdit, bool? isEditPhone, bool? isFromSetting, Function()? onEmailTap, Future<void> Function()? onGoogleTap, }) { return Container( width: ScreenSize(context).width, height: isPass == true ? 221 : isSignInScreen == true ? 275 : 241, decoration: BoxDecoration( image: DecorationImage( image: AssetImage("assets/images/Head.png"), fit: BoxFit.fill, ), ), child: Padding( padding: const EdgeInsets.all(20.0), child: Column( crossAxisAlignment: CrossAxisAlignment.start, children: [ const SizedBox(height: 40), Image.asset('assets/images/logo1.png', height: 50), const SizedBox(height: 30), if (isSignInScreen == true) Text.rich( TextSpan( text: 'Sign in to your ', style: TextStyle( fontSize: 28, color: Colors.white, fontWeight: FontWeight.w600, ), children: [ TextSpan( text: 'Ustaad', style: TextStyle( color: AppTheme.appColor, fontWeight: FontWeight.bold, ), ), TextSpan(text: ' Account'), ], ), ), if (isSignInScreen == false) AppText.appText( "Sign Up", fontSize: 32, fontWeight: FontWeight.w600, textColor: AppTheme.white, ), if (isPass == true) AppText.appText( isEdit == true ? "Change Passsword" : "Forgot Password", fontSize: 32, fontWeight: FontWeight.w600, textColor: AppTheme.white, ), if (isFromSetting == true) AppText.appText( isEditPhone == true ? "Change Phone" : "Change Email", fontSize: 32, fontWeight: FontWeight.w600, textColor: AppTheme.white, ), const SizedBox(height: 15), if (isPass != true && isFromSetting != true) Row( children: [ AppText.appText( isSignInScreen == true ? "Don't have an account? " : "Have an account? ", textColor: Colors.white70, ), GestureDetector( onTap: () { if (isSignInScreen == true) { showSignupPopup( context, onEmailTap: onEmailTap ?? () {}, onGoogleTap: onGoogleTap ?? () async {}, ); } else { pushReplacement(context, LogInScreen()); } }, child: AppText.appText( isSignInScreen == true ? "Sign Up" : "Sign In", underLine: true, textColor: AppTheme.appColor, ), ), ], ), ], ), ), ); }
+
 Widget authHeader({
-  context,
+  required BuildContext context,
   bool? isSignInScreen,
   bool? isPass,
   bool? isEdit,
@@ -133,34 +136,38 @@ Widget authHeader({
   bool? isFromSetting,
   Function()? onEmailTap,
   Future<void> Function()? onGoogleTap,
+  Future<void> Function()? onAppleTap,
 }) {
   return Container(
-    width: ScreenSize(context).width,
+    width: 1.sw,
     height: isPass == true
-        ? 221
+        ? 221.h
         : isSignInScreen == true
-        ? 275
-        : 241,
-    decoration: BoxDecoration(
+        ? 275.h
+        : 241.h,
+    decoration: const BoxDecoration(
       image: DecorationImage(
         image: AssetImage("assets/images/Head.png"),
         fit: BoxFit.fill,
       ),
     ),
     child: Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 40),
-          Image.asset('assets/images/logo1.png', height: 50),
-          const SizedBox(height: 30),
+          SizedBox(height: 40.h),
+
+          Image.asset('assets/images/logo1.png', height: 40.h),
+
+          SizedBox(height: 10.h),
+
           if (isSignInScreen == true)
             Text.rich(
               TextSpan(
                 text: 'Sign in to your ',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 28.sp,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
@@ -172,32 +179,37 @@ Widget authHeader({
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TextSpan(text: ' Account'),
+                  const TextSpan(text: ' Account'),
                 ],
               ),
             ),
+
           if (isSignInScreen == false)
             AppText.appText(
               "Sign Up",
-              fontSize: 32,
+              fontSize: 32.sp,
               fontWeight: FontWeight.w600,
               textColor: AppTheme.white,
             ),
+
           if (isPass == true)
             AppText.appText(
-              isEdit == true ? "Change Passsword" : "Forgot Password",
-              fontSize: 32,
+              isEdit == true ? "Change Password" : "Forgot Password",
+              fontSize: 32.sp,
               fontWeight: FontWeight.w600,
               textColor: AppTheme.white,
             ),
+
           if (isFromSetting == true)
             AppText.appText(
               isEditPhone == true ? "Change Phone" : "Change Email",
-              fontSize: 32,
+              fontSize: 32.sp,
               fontWeight: FontWeight.w600,
               textColor: AppTheme.white,
             ),
-          const SizedBox(height: 15),
+
+          SizedBox(height: 10.h),
+
           if (isPass != true && isFromSetting != true)
             Row(
               children: [
@@ -207,6 +219,7 @@ Widget authHeader({
                       : "Have an account? ",
                   textColor: Colors.white70,
                 ),
+
                 GestureDetector(
                   onTap: () {
                     if (isSignInScreen == true) {
@@ -214,6 +227,7 @@ Widget authHeader({
                         context,
                         onEmailTap: onEmailTap ?? () {},
                         onGoogleTap: onGoogleTap ?? () async {},
+                        onAppleTap: onAppleTap ?? () async {},
                       );
                     } else {
                       pushReplacement(context, LogInScreen());

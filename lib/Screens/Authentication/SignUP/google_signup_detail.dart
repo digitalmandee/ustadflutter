@@ -250,6 +250,36 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
   Future<void> _googleSignUp(context) async {
     try {
       final name = splitName(widget.userData["displayName"] ?? "");
+      final provider = widget.userData["provider"] ?? "google";
+      final isApple = provider == "apple";
+
+      // final response = await dio.post(
+      //   path: AppUrls.googleSignUp,
+      //   data: {
+      //     "email": (widget.userData["email"] ?? "")
+      //         .toString()
+      //         .trim()
+      //         .toLowerCase(),
+
+      //     if (isApple)
+      //       "appleId": widget.userData["appleId"] ?? widget.userData["id"]
+      //     else
+      //       "googleId": widget.userData["id"],
+
+      //     "firstName": name["firstName"],
+      //     "lastName": name["lastName"],
+      //     "image": widget.userData["photoUrl"] ?? "",
+      //     "accessToken": widget.userData["idToken"] ?? "",
+      //     "provider": provider,
+
+      //     "role": selectedRole.toUpperCase(),
+      //     "address": addressController.text,
+      //     "city": cityController.text,
+      //     "country": selectedCountry,
+      //     "phone": phoneController.text.trim(),
+      //     "gender": selectedGender.toLowerCase(),
+      //   },
+      // );
       final response = await dio.post(
         path: AppUrls.googleSignUp,
         data: {

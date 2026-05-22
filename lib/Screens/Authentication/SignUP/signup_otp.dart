@@ -44,11 +44,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     startEmailTimer();
     startSmsTimer();
     getOtp(context);
+    widget.signupData.phoneOtpController.text = "1111";
 
     /// 🔥 AUTO SET OTP WHEN ACTIVE
     if (Staticdata.isActive) {
       widget.signupData.emailOtpController.text = "1111";
-      widget.signupData.phoneOtpController.text = "1111";
     }
   }
 
@@ -101,8 +101,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     children: [
                       _emailOtpWidget(),
                       const SizedBox(height: 40),
-                      _phoneOtpWidget(),
-                      const SizedBox(height: 40),
+                      // _phoneOtpWidget(),
+                      // const SizedBox(height: 40),
                     ],
                   ),
 

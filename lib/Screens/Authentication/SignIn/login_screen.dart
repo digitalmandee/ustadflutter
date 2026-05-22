@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterustad/Helpers/static_data.dart';
+import 'package:flutterustad/Screens/Authentication/apple_signIn_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterustad/Custom widgets/app_button.dart';
 import 'package:flutterustad/Custom widgets/app_text.dart';
@@ -44,6 +48,9 @@ class _LogInScreenState extends State<LogInScreen> {
   late GoogleSignInService _googleSignInService;
   final AppLogger logger = AppLogger();
 
+  bool _isAppleLoading = false;
+  late AppleSignInService _appleSignInService;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +64,8 @@ class _LogInScreenState extends State<LogInScreen> {
     isTokenRefresh();
     _googleSignInService = GoogleSignInService.instance;
     _googleSignInService.init();
+    _appleSignInService = AppleSignInService.instance;
+    _appleSignInService.init();
     logger.init();
   }
 
@@ -111,12 +120,19 @@ class _LogInScreenState extends State<LogInScreen> {
                   setState(() => _isGoogleLoading = false);
                 }
               },
+              onAppleTap: () async {
+                setState(() => _isAppleLoading = true);
+                final userData = await _appleSignInService.signIn(context);
+                if (userData != null) {
+                  push(context, GoogleSignupDetail(userData: userData));
+                }
+                if (mounted) {
+                  setState(() => _isAppleLoading = false);
+                }
+              },
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 30,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
               child: Column(
                 children: [
                   customLableField(
@@ -171,6 +187,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   ),
                   loginDivider("Or login with"),
                   const SizedBox(height: 30),
+
                   _isGoogleLoading
                       ? const GifLoader()
                       : AppButton.appButton(
@@ -194,6 +211,40 @@ class _LogInScreenState extends State<LogInScreen> {
                           backgroundColor: AppTheme.white,
                           image: "assets/images/google.png",
                         ),
+
+                  Platform.isAndroid
+                      ? const SizedBox.shrink()
+                      : const SizedBox(height: 16),
+                  Platform.isAndroid
+                      ? const SizedBox.shrink()
+                      : _isAppleLoading
+                      ? const GifLoader()
+                      : AppButton.appButton(
+                          "Apple",
+                          context: context,
+                          onTap: () async {
+                            setState(() => _isAppleLoading = true);
+
+                            final userData = await _appleSignInService.signIn(
+                              context,
+                            );
+
+                            if (userData != null) {
+                              await _appleSignIn(context, userData);
+                            }
+
+                            if (mounted) {
+                              setState(() => _isAppleLoading = false);
+                            }
+                          },
+                          fontWeight: FontWeight.w600,
+                          textColor: AppTheme.lableText,
+                          borderColor: AppTheme.borderCOlor,
+                          backgroundColor: AppTheme.white,
+                          image: "assets/images/apple.png",
+                        ),
+
+                  const SizedBox(height: 40),
                   const SizedBox(height: 40),
                   loginFooter(context),
                 ],
@@ -343,7 +394,8 @@ class _LogInScreenState extends State<LogInScreen> {
     globalToken = data["token"];
     globalUserPic = data["image"] ?? '';
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
-    globalGoogleId = data["googleId"] ?? "";
+    // globalGoogleId = data["googleId"] ?? "";
+    globalGoogleId = data["googleId"] ?? data["appleId"] ?? "";
 
     if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
       push(
@@ -386,6 +438,52 @@ class _LogInScreenState extends State<LogInScreen> {
       pushReplacement(context, BottomNavView(tutor: true));
     } else if (data["role"] == "PARENT") {
       pushReplacement(context, BottomNavView(tutor: false));
+    }
+  }
+
+  Future<void> _appleSignIn(context, Map<String, dynamic> userData) async {
+    try {
+      final name = splitName(userData["displayName"] ?? "");
+
+      final response = await dio.post(
+        path: AppUrls.googleSignIn,
+        data: {
+          "email": (userData["email"] ?? "").toString().trim().toLowerCase(),
+
+          // Because your backend is using the same API for Google and Apple
+          "googleId": userData["appleId"] ?? userData["id"],
+
+          // Keep this also if backend supports appleId
+          "appleId": userData["appleId"] ?? userData["id"],
+
+          "firstName": userData["firstName"] ?? name["firstName"],
+          "lastName": userData["lastName"] ?? name["lastName"],
+          "image": userData["photoUrl"] ?? "",
+          "accessToken": userData["idToken"] ?? userData["identityToken"] ?? "",
+          "identityToken": userData["identityToken"] ?? "",
+          "authorizationCode": userData["authorizationCode"] ?? "",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await _handleLoginSuccess(context, response.data);
+      } else {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      if (kDebugMode) {
+        print("Apple Sign-In API Error: $e");
+      }
+
+      AppToast.error(
+        context: context,
+        msg: "Something went wrong. Please try again.",
+      );
     }
   }
 }

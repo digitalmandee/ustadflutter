@@ -109,32 +109,32 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                           ],
                         ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
-                      AppText.appText(
-                        isEmail == true
-                            ? "Use your phone number instead  "
-                            : "Use your email instead  ",
-                        fontSize: 12,
-                        textColor: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isEmail = !isEmail;
-                          });
-                        },
-                        child: AppText.appText(
-                          isEmail == true ? "Phone Number." : "Email.",
-                          fontSize: 12,
-                          underLine: true,
-                          textColor: AppTheme.appColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     AppText.appText(
+                  //       isEmail == true
+                  //           ? "Use your phone number instead  "
+                  //           : "Use your email instead  ",
+                  //       fontSize: 12,
+                  //       textColor: Colors.black,
+                  //       fontWeight: FontWeight.w400,
+                  //     ),
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         setState(() {
+                  //           isEmail = !isEmail;
+                  //         });
+                  //       },
+                  //       child: AppText.appText(
+                  //         isEmail == true ? "Phone Number." : "Email.",
+                  //         fontSize: 12,
+                  //         underLine: true,
+                  //         textColor: AppTheme.appColor,
+                  //         fontWeight: FontWeight.w400,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   Spacer(),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30.0),

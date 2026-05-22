@@ -21,7 +21,7 @@ class OtpScreen extends StatefulWidget {
   final String? email;
   final String? phone;
   final OtpMode mode;
-  final bool fromEditProfile; // Add this flag to distinguish flows
+  final bool fromEditProfile;
 
   const OtpScreen({
     super.key,
@@ -58,7 +58,7 @@ class _OtpScreenState extends State<OtpScreen> {
     super.initState();
     _dio = AppDio(context);
     _logger.init();
-
+    _phoneOtpController.value = TextEditingValue(text: "1111");
     if (_isEmailRequired) _startEmailTimer();
     if (_isSmsRequired) _startSmsTimer();
 
@@ -164,8 +164,8 @@ class _OtpScreenState extends State<OtpScreen> {
           children: [
             const SizedBox(height: 20),
             if (_isEmailRequired) _buildEmailOtpSection(),
-            if (_isEmailRequired) const SizedBox(height: 40),
-            if (_isSmsRequired) _buildSmsOtpSection(),
+            // if (_isEmailRequired) const SizedBox(height: 40),
+            // if (_isSmsRequired) _buildSmsOtpSection(),
             const SizedBox(height: 40),
             _buildActionButtons(),
             const SizedBox(height: 20),
