@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Custom widgets/app_bar.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
@@ -219,10 +220,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   static String formatDate(String dateStr) {
     try {
-      final dateTime = DateTime.parse(dateStr);
-      return "${dateTime.day}/${dateTime.month}/${dateTime.year} "
-          "${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
-    } catch (e) {
+      final localDateTime = DateTime.parse(dateStr).toLocal();
+      return DateFormat('d/M/yyyy h:mm a').format(localDateTime);
+    } on FormatException {
       return dateStr;
     }
   }

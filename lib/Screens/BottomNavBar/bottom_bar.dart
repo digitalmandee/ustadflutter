@@ -7,12 +7,20 @@ import 'package:flutterustad/Screens/Chats/chat.dart';
 import 'package:flutterustad/Screens/Teacher%20Screens/HomeScreen/dash_board.dart';
 import 'package:flutterustad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
 import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/tutor_session.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/guest_helper.dart';
 
 class BottomNavView extends StatefulWidget {
   final bool tutor;
   final int index;
+  final String? snackbarMessage;
 
-  const BottomNavView({super.key, required this.tutor, this.index = 0});
+  const BottomNavView({
+    super.key,
+    required this.tutor,
+    this.index = 0,
+    this.snackbarMessage,
+  });
 
   @override
   State<BottomNavView> createState() => _BottomNavViewState();
@@ -47,18 +55,25 @@ class _BottomNavViewState extends State<BottomNavView> {
   void initState() {
     super.initState();
     _currentIndex = widget.index;
+    if (widget.snackbarMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(widget.snackbarMessage!)));
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewPadding.bottom;
-    return WillPopScope(
-      onWillPop: () async {
-        if (_currentIndex != 0) {
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _currentIndex != 0) {
           setState(() => _currentIndex = 0);
-          return false;
         }
-        return true;
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -102,7 +117,11 @@ class _BottomNavViewState extends State<BottomNavView> {
                 return Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() => _currentIndex = index);
+                      if (isGuest && index != 0) {
+                        showLoginRequiredDialog(context, _titles[index]);
+                      } else {
+                        setState(() => _currentIndex = index);
+                      }
                     },
                     child: Container(
                       color: Colors.transparent,

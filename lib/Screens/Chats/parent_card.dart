@@ -159,9 +159,10 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
 
   Future<void> paymentIntent(context) async {
     try {
+      final requestData = {"offerId": widget.offerId};
       final response = await dio.post(
         path: AppUrls.paymentIntent,
-        data: {"offerId": widget.offerId},
+        data: requestData,
       );
 
       if (response.statusCode == 200) {
@@ -169,6 +170,15 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
         final Map<String, String> formFields = Map<String, dynamic>.from(
           response.data["data"]["formFields"],
         ).map((key, value) => MapEntry(key, value.toString()));
+
+        logger.i({
+          "event": "opening_payfast_webview_from_parent_card",
+          "paymentIntentPath": AppUrls.paymentIntent,
+          "requestData": requestData,
+          "payfastUrl": payfastUrl,
+          "formFields": formFields,
+          "responseData": response.data["data"],
+        });
 
         final result = await Navigator.push(
           context,

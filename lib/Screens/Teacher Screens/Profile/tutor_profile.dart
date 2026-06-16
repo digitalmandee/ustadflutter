@@ -9,6 +9,7 @@ import 'package:flutterustad/Helpers/base_image.dart';
 import 'package:flutterustad/Helpers/capitalize.dart';
 import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
 import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/guest_helper.dart';
 
 import 'package:flutterustad/Helpers/loader.dart';
 import 'package:flutterustad/config/keys/pref_keys.dart';
@@ -173,7 +174,11 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                               "Contact",
                               height: 36.0,
                               onTap: () {
-                                createConverstion(context);
+                                if (isGuest) {
+                                  showLoginRequiredDialog(context, "Chat Tutor");
+                                } else {
+                                  createConverstion(context);
+                                }
                               },
                             ),
                           ),
@@ -429,17 +434,20 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
           listen: false,
         ).fetchChats(context);
         final conversationId = response.data["data"]["id"];
-        push(
+        Navigator.push(
           context,
-          SingleChatScreen(
-            conversationId: conversationId,
-            userId: globalUserId!,
-            recieverId: tutorData!["id"],
-            image: tutorData!["image"] ?? "",
-            recieverName:
-                "${tutorData!["firstName"]} ${tutorData!["lastName"]}",
+          MaterialPageRoute(
+            builder: (context) => SingleChatScreen(
+              conversationId: conversationId,
+              userId: globalUserId!,
+              recieverId: tutorData!["id"],
+              image: tutorData!["image"] ?? "",
+              recieverName:
+                  "${tutorData!["firstName"]} ${tutorData!["lastName"]}",
+            ),
           ),
         );
+
         setState(() {
           isLoading = false;
         });

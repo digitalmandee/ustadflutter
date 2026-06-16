@@ -10,7 +10,7 @@ class LocationModel {
   final String address;
   final double latitude;
   final double longitude;
-  double? distanceFromUser; // miles
+  double? distanceFromUser; // kilometers
 
   LocationModel({
     required this.id,
@@ -42,13 +42,13 @@ class LocationProvider extends ChangeNotifier {
   LocationProvider(BuildContext context) : dio = AppDio(context);
 
   // ===================== Distance Calculation =====================
-  double calculateDistanceMiles(
+  double calculateDistanceKilometers(
     double lat1,
     double lon1,
     double lat2,
     double lon2,
   ) {
-    const double earthRadius = 3958.8; // miles
+    const double earthRadius = 6371.0088; // kilometers
     final double dLat = _deg2rad(lat2 - lat1);
     final double dLon = _deg2rad(lon2 - lon1);
 
@@ -71,7 +71,7 @@ class LocationProvider extends ChangeNotifier {
 
     // Update all existing locations distance
     for (var loc in _locations) {
-      loc.distanceFromUser = calculateDistanceMiles(
+      loc.distanceFromUser = calculateDistanceKilometers(
         lat,
         lon,
         loc.latitude,
@@ -94,7 +94,7 @@ class LocationProvider extends ChangeNotifier {
       // calculate distance if user location known
       if (userLatitude != null && userLongitude != null) {
         for (var loc in _locations) {
-          loc.distanceFromUser = calculateDistanceMiles(
+          loc.distanceFromUser = calculateDistanceKilometers(
             userLatitude!,
             userLongitude!,
             loc.latitude,
@@ -131,7 +131,7 @@ class LocationProvider extends ChangeNotifier {
 
       // calculate distance
       if (userLatitude != null && userLongitude != null) {
-        newLoc.distanceFromUser = calculateDistanceMiles(
+        newLoc.distanceFromUser = calculateDistanceKilometers(
           userLatitude!,
           userLongitude!,
           lat,

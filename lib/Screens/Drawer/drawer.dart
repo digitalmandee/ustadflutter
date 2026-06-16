@@ -10,6 +10,10 @@ import 'package:flutterustad/Screens/Drawer/Earnings/tutor_earning_dashboard.dar
 import 'package:flutterustad/Screens/Drawer/location_screen.dart';
 import 'package:flutterustad/Screens/Drawer/Setting/setting_screen.dart';
 import 'package:flutterustad/Screens/Drawer/logout.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/guest_helper.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SideMenuDrawer extends StatefulWidget {
   final VoidCallback? crossOnTap;
@@ -136,7 +140,11 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         children: [
                           menuItem(
                             onTap: () {
-                              push(context, ParentRefundingScreen());
+                              if (isGuest) {
+                                showLoginRequiredDialog(context, 'Refunding Dashboard');
+                              } else {
+                                push(context, ParentRefundingScreen());
+                              }
                             },
                             'Refunding Dashboard',
                             "assets/images/earningDashBoard.png",
@@ -144,7 +152,11 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           ),
                           menuItem(
                             onTap: () {
-                              push(context, ContractScreen(isParentSide: true));
+                              if (isGuest) {
+                                showLoginRequiredDialog(context, 'Contracts');
+                              } else {
+                                push(context, ContractScreen(isParentSide: true));
+                              }
                             },
                             'Contracts',
                             "assets/images/documentVerify.png",
@@ -157,7 +169,11 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           //     "Check payment history, upcoming payments, and manage billing securely in one place."),
                           menuItem(
                             onTap: () {
-                              push(context, SettingScreen());
+                              if (isGuest) {
+                                showLoginRequiredDialog(context, 'Settings');
+                              } else {
+                                push(context, SettingScreen());
+                              }
                             },
                             'Settings',
                             "assets/images/setting.png",
@@ -181,11 +197,24 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           ),
                           menuItem(
                             onTap: () async {
-                              await AuthService.logout(context);
+                              if (isGuest) {
+                                final prefs = await SharedPreferences.getInstance();
+                                await prefs.setBool('is_guest', false);
+                                isGuest = false;
+                                await clearAppSession();
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(builder: (context) => const LogInScreen()),
+                                  (route) => false,
+                                );
+                              } else {
+                                await AuthService.logout(context);
+                              }
                             },
-                            'Log Out',
+                            isGuest ? 'Sign In' : 'Log Out',
                             "assets/images/logout.png",
-                            "Sign out of your account safely to keep your information secure.",
+                            isGuest
+                                ? "Sign in to your account to unlock all features."
+                                : "Sign out of your account safely to keep your information secure.",
                           ),
                         ],
                       ),

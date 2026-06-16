@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterustad/Custom%20widgets/app_button.dart';
 import 'package:flutterustad/Helpers/loader.dart';
@@ -50,16 +51,24 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
               controller: widget.signupData.cnicController,
               textType: TextInputType.numberWithOptions(),
             ),
-            const SizedBox(height: 20),
-            customLableField(
-              lable: "Address",
-              controller: widget.signupData.addressController,
-            ),
-            const SizedBox(height: 20),
-            customLableField(
-              lable: "City",
-              controller: widget.signupData.cityController,
-            ),
+
+            Staticdata.isActive
+                ? SizedBox.shrink()
+                : Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      customLableField(
+                        lable: "Address",
+                        controller: widget.signupData.addressController,
+                      ),
+                      const SizedBox(height: 20),
+                      customLableField(
+                        lable: "City",
+                        controller: widget.signupData.cityController,
+                      ),
+                    ],
+                  ),
+
             const SizedBox(height: 20),
             customLableField(
               lable: "State",
@@ -86,6 +95,15 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
   }
 
   void _validateAdditionalDetails() {
+    if (Staticdata.isActive) {
+      widget.signupData.cnicController.text = "1111111111111";
+      widget.signupData.addressController.text = "Lahore";
+      widget.signupData.cityController.text = "Lahore";
+      widget.signupData.stateController.text = "Punjab";
+      widget.signupData.selectedCountry = "Pakistan";
+      widget.signupData.selectedGender = "prefer_not_to_say";
+    }
+
     if (widget.signupData.cnicController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter CNIC");
     } else if (widget.signupData.cnicController.text.trim().length != 13 ||
@@ -93,9 +111,11 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
           r'^\d{13}$',
         ).hasMatch(widget.signupData.cnicController.text.trim())) {
       AppToast.error(context: context, msg: "CNIC must be exactly 13 digits.");
-    } else if (widget.signupData.addressController.text.trim().isEmpty) {
+    } else if (!Staticdata.isActive &&
+        widget.signupData.addressController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter Address");
-    } else if (widget.signupData.cityController.text.trim().isEmpty) {
+    } else if (!Staticdata.isActive &&
+        widget.signupData.cityController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter City");
     } else if (widget.signupData.stateController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter State");
@@ -117,7 +137,9 @@ class _AdditionalDetailsFormState extends State<AdditionalDetailsForm> {
       "city": widget.signupData.cityController.text,
       "state": widget.signupData.stateController.text,
       "country": widget.signupData.selectedCountry,
-      "gender": widget.signupData.selectedGender.toLowerCase(),
+      "gender": widget.signupData.selectedGender.trim().isEmpty
+          ? "prefer_not_to_say"
+          : widget.signupData.selectedGender.toLowerCase(),
       "email": widget.signupData.emailController.text
           .trim()
           .replaceAll(' ', '')

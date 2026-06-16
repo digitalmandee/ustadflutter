@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterustad/Helpers/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Custom widgets/app_field.dart';
 import 'package:flutterustad/Custom widgets/app_text.dart';
@@ -41,34 +42,56 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
   void initState() {
     super.initState();
     logger.init();
-    Future.microtask(() async {
-      final position = await getCurrentLocation();
-      globalParentLatitutde = position!.latitude;
-      globalParentLongitude = position.longitude;
-      if (mounted) {
-        Provider.of<ParentProfileProvider>(
-          context,
-          listen: false,
-        ).getParentProfile(context);
-      }
-      if (mounted) {
-        Provider.of<GetTutorsProvider>(context, listen: false).fetchTutors(
-          latitude: position.latitude,
-          longitude: position.longitude,
-        );
-      }
-      if (mounted) {
-        Provider.of<ParentDashboardProvider>(
-          context,
-          listen: false,
-        ).getMonthlySpending(context);
-      }
-    });
+
+    _loadDashboardData();
+
     loadSubjects();
+  }
+
+  Future<void> _loadDashboardData() async {
+    final position = await getCurrentLocation();
+
+    if (!mounted) return;
+
+    if (!isGuest) {
+      Provider.of<ParentProfileProvider>(
+        context,
+        listen: false,
+      ).getParentProfile(context);
+
+      Provider.of<ParentDashboardProvider>(
+        context,
+        listen: false,
+      ).getMonthlySpending(context);
+    }
+
+    if (position == null) {
+      debugPrint("Location permission denied. Loading all tutors.");
+
+      Provider.of<GetTutorsProvider>(context, listen: false).fetchTutors();
+
+      return;
+    }
+
+    globalParentLatitutde = position.latitude;
+    globalParentLongitude = position.longitude;
+
+    Provider.of<GetTutorsProvider>(
+      context,
+      listen: false,
+    ).fetchTutors(latitude: position.latitude, longitude: position.longitude);
   }
 
   void _hitNearbyTutorApi() {
     if (!mounted) return;
+
+    if (globalParentLatitutde == null || globalParentLongitude == null) {
+      AppToast.error(
+        context: context,
+        msg: "Please allow location permission to find nearby tutors.",
+      );
+      return;
+    }
 
     Provider.of<GetTutorsProvider>(context, listen: false).fetchTutors(
       latitude: globalParentLatitutde,
@@ -118,7 +141,9 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
                     vertical: 10,
                   ),
                   child: AppText.appText(
-                    "Trending Tutors in Your Area",
+                    globalParentLatitutde == null
+                        ? "Trending Tutors"
+                        : "Trending Tutors in Your Area",
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -157,30 +182,6 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          // Text.rich(
-          //   TextSpan(
-          //     text: 'Next Payment of ',
-          //     style: const TextStyle(
-          //       fontSize: 16,
-          //       color: Color(0xff15112E),
-          //       fontWeight: FontWeight.w400,
-          //     ),
-          //     children: [
-          //       TextSpan(
-          //         text: 'Rs. 25000',
-          //         style: TextStyle(
-          //           color: AppTheme.appColor,
-          //           fontWeight: FontWeight.w600,
-          //           fontSize: 16,
-          //           decorationColor: AppTheme.appColor,
-          //           decoration: TextDecoration.underline,
-          //         ),
-          //       ),
-          //       const TextSpan(text: ' due on 01-Mar-25 '),
-          //     ],
-          //   ),
-          // ),
-          // const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

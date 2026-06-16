@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "1022247289156-2cb0s6ium0ak7pcu7mnqsc7q4h3emedj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dm.ustaad",
+            "certificate_hash": "5102644d6ab88ea257e8a693f839b4f0a73c4c63"
+          }
+        },
+        {
           "client_id": "1022247289156-clnm5bhbp7ck9a2hu2ods7fr0dj410sh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.dm.ustaad",
             "certificate_hash": "144b87178bb82a78b5ef09e0c5b1d717e7d3d68a"
+          }
+        },
+        {
+          "client_id": "1022247289156-mhh9619taahf2ll7ff1dr4ldpfi163fu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dm.ustaad",
+            "certificate_hash": "aa4703072bd8bb03739368a0e3b40ab095cdd4d8"
           }
         },
         {
@@ -39,10 +55,10 @@
               "client_type": 3
             },
             {
-              "client_id": "1022247289156-m36gtn4uanp9568av7si09m1ib5s8q10.apps.googleusercontent.com",
+              "client_id": "1022247289156-3c1g398qovpn8o3ei9dv6not6m5lcn4d.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.ustaad"
+                "bundle_id": "com.example.flutterustad"
               }
             }
           ]

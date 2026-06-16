@@ -149,21 +149,19 @@ class _LogInScreenState extends State<LogInScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // Row(
-                      //   children: [
-                      //     Checkbox(value: false, onChanged: (_) {}),
-                      //     AppText.appText(
-                      //       "Remember me",
-                      //       fontSize: 14,
-                      //       fontWeight: FontWeight.w400,
-                      //       textColor: AppTheme.grey,
-                      //     ),
-                      //   ],
-                      // ),
                       if (!Staticdata.isActive)
                         GestureDetector(
-                          onTap: () =>
-                              push(context, ForgotPassScreen(isEditing: false)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ForgotPassScreen(isEditing: false),
+                              ),
+                            );
+                          },
+                          // =>
+                          //     push(context, ForgotPassScreen(isEditing: false)),
                           child: AppText.appText(
                             "Forgot Password?",
                             fontSize: 14,
@@ -185,6 +183,23 @@ class _LogInScreenState extends State<LogInScreen> {
                             backgroundColor: AppTheme.primaryCOlor,
                           ),
                   ),
+                  if (Staticdata.guestmood) ...[
+                    GestureDetector(
+                      onTap: () => _guestSignIn(context),
+                      child: Center(
+                        child: Text(
+                          "Continue as Parent Guest",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.primaryCOlor,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                   loginDivider("Or login with"),
                   const SizedBox(height: 30),
 
@@ -333,6 +348,25 @@ class _LogInScreenState extends State<LogInScreen> {
     };
   }
 
+  Future<void> _guestSignIn(BuildContext context) async {
+    try {
+      final response = await dio.postJson(path: AppUrls.guestLogin, data: {});
+
+      if (!context.mounted) return;
+      if (response.statusCode == 200) {
+        await _handleLoginSuccess(context, response.data, isGuestLogin: true);
+      } else {
+        AppToast.error(
+          context: context,
+          msg: response.data?["message"] ?? "Guest login failed",
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      AppToast.error(context: context, msg: "Guest login failed");
+    }
+  }
+
   Future<void> _googleSignIn(context, Map<String, dynamic> userData) async {
     try {
       // final role = await _selectUserRole(context);
@@ -372,22 +406,24 @@ class _LogInScreenState extends State<LogInScreen> {
   }
 
   Future<void> _handleLoginSuccess(
-    context,
-    Map<String, dynamic> responseData,
-  ) async {
+    BuildContext context,
+    Map<String, dynamic> responseData, {
+    bool isGuestLogin = false,
+  }) async {
     final data = responseData["data"];
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setString(PrefKey.authorization, data["token"] ?? '');
-    await prefs.setString(PrefKey.id, data["id"]);
-    await prefs.setString(PrefKey.userRole, data["role"]);
-    await prefs.setString(PrefKey.userFirstName, data["firstName"]);
-    await prefs.setString(PrefKey.userLastName, data["lastName"]);
+    await prefs.setString(PrefKey.id, "${data["id"] ?? ''}");
+    await prefs.setString(PrefKey.userRole, data["role"] ?? '');
+    await prefs.setString(PrefKey.userFirstName, data["firstName"] ?? '');
+    await prefs.setString(PrefKey.userLastName, data["lastName"] ?? '');
     await prefs.setString(PrefKey.userPic, data["image"] ?? '');
     await prefs.setString(PrefKey.onBoard, data["isOnBoard"] ?? '');
     await prefs.setString(PrefKey.isGoogleId, data["googleId"] ?? '');
+    await prefs.setBool('is_guest', isGuestLogin);
 
-    globalUserId = data["id"];
+    globalUserId = "${data["id"] ?? ''}";
     globalUserFirstName = data["firstName"];
     globalUserLastName = data["lastName"];
     globalUserRole = data["role"];
@@ -396,47 +432,26 @@ class _LogInScreenState extends State<LogInScreen> {
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
     // globalGoogleId = data["googleId"] ?? "";
     globalGoogleId = data["googleId"] ?? data["appleId"] ?? "";
+    isGuest = isGuestLogin;
 
-    if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
+    if (!context.mounted) return;
+
+    if (data["isEmailVerified"] == false) {
       push(
         context,
         OtpScreen(
-          mode: OtpMode.both,
-          userId: "${data["id"]}",
-          email: data["email"],
-          phone: "${data["phone"]}",
-          fromEditProfile: false,
-        ),
-      );
-    } else if (data["isEmailVerified"] == false) {
-      push(
-        context,
-        OtpScreen(
-          mode: OtpMode.email,
           userId: "${data["id"]}",
           fromEditProfile: false,
           email: data["email"],
         ),
       );
-    }
-    // else if (data["isPhoneVerified"] == false) {
-    //   push(
-    //     context,
-    //     OtpScreen(
-    //       mode: OtpMode.phone,
-    //       userId: "${data["id"]}",
-    //       fromEditProfile: false,
-    //       phone: "${data["phone"]}",
-    //     ),
-    //   );
-    // }
-    else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {
+    } else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {
       push(context, TutorOnboardScreen());
     } else if (data["isOnBoard"] == "required" && data["role"] == "PARENT") {
       push(context, ParentsOnboardScreen());
     } else if (data["role"] == "TUTOR") {
       pushReplacement(context, BottomNavView(tutor: true));
-    } else if (data["role"] == "PARENT") {
+    } else if (data["role"] == "PARENT" || data["role"] == "GUEST") {
       pushReplacement(context, BottomNavView(tutor: false));
     }
   }

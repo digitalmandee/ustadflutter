@@ -212,7 +212,7 @@ class _OnboardLocationState extends State<OnboardLocation> {
                                               //   textColor: Colors.grey,
                                               // ),
                                               AppText.appText(
-                                                "${loc.distanceFromUser?.toStringAsFixed(2) ?? '0.0'} miles away",
+                                                "${loc.distanceFromUser?.toStringAsFixed(2) ?? '0.0'} km away",
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                                 textColor: Colors.grey,
@@ -274,9 +274,9 @@ class _OnboardLocationState extends State<OnboardLocation> {
   Widget _buildHeader() {
     return Text.rich(
       TextSpan(
-        text: 'Let Us know ',
+        text: 'Let Us know your ',
         style: TextStyle(
-          fontSize: 43,
+          fontSize: 35,
           color: AppTheme.black,
           fontWeight: FontWeight.w400,
         ),
@@ -286,18 +286,18 @@ class _OnboardLocationState extends State<OnboardLocation> {
             style: TextStyle(
               color: AppTheme.appColor,
               fontWeight: FontWeight.w600,
-              fontSize: 44,
+              fontSize: 35,
             ),
           ),
-          TextSpan(text: ' For Your '),
-          TextSpan(
-            text: 'Tutoring',
-            style: TextStyle(
-              color: AppTheme.appColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 44,
-            ),
-          ),
+          // TextSpan(text: ' For Your '),
+          // TextSpan(
+          //   text: 'Tutoring',
+          //   style: TextStyle(
+          //     color: AppTheme.appColor,
+          //     fontWeight: FontWeight.w600,
+          //     fontSize: 35,
+          //   ),
+          // ),
         ],
       ),
       textAlign: TextAlign.start,

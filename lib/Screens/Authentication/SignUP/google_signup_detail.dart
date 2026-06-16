@@ -343,14 +343,12 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
     globalGoogleId = data["googleId"] ?? "";
 
-    if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
+    if (data["isEmailVerified"] == false) {
       push(
         context,
         OtpScreen(
-          mode: OtpMode.both,
           userId: "${data["id"]}",
           email: data["email"].toString().trim().toLowerCase(),
-          phone: "${data["phone"]}",
         ),
       );
     } else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {

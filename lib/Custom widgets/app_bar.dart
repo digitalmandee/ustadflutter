@@ -10,6 +10,7 @@ import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.da
 import 'package:flutterustad/Screens/Drawer/Setting/setting_screen.dart';
 import 'package:flutterustad/Screens/Notifications/notification_screen.dart';
 import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/guest_helper.dart';
 
 class CircleIconButton extends StatelessWidget {
   final String assetPath;
@@ -82,7 +83,11 @@ class ProfileAvatar extends StatelessWidget {
             padding: const EdgeInsets.all(2.0),
             child: InkWell(
               onTap: () {
-                push(context, SettingScreen());
+                if (isGuest) {
+                  showLoginRequiredDialog(context, "Settings");
+                } else {
+                  push(context, SettingScreen());
+                }
               },
               child: Container(
                 height: size,
@@ -186,7 +191,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText.appText(
-                              globalUserFirstName == null
+                              isGuest
+                                  ? "Guest"
+                                  : globalUserFirstName == null
                                   ? "Usama Shoaib"
                                   : capitalizeEachWord(
                                       "$globalUserFirstName $globalUserLastName",
@@ -197,7 +204,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             AppText.appText(
-                              "$taskSummary tasks for Today",
+                              isGuest
+                                  ? "Welcome to Ustaad"
+                                  : "$taskSummary tasks for Today",
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               textColor: AppTheme.grey,
@@ -212,7 +221,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        push(context, NotificationScreen());
+                        if (isGuest) {
+                          showLoginRequiredDialog(context, "Notifications");
+                        } else {
+                          push(context, NotificationScreen());
+                        }
                       },
                       child: SizedBox(
                         height: 32,
@@ -278,11 +291,11 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 40),
+      padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 40),
       child: Column(
         children: [
           Image.asset("assets/images/ustaad.png", height: 28, width: 78),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

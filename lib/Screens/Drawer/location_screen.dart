@@ -207,7 +207,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                               //   textColor: Colors.grey,
                                               // ),
                                               AppText.appText(
-                                                "${loc.distanceFromUser?.toStringAsFixed(2) ?? '0.0'} miles away",
+                                                "${loc.distanceFromUser?.toStringAsFixed(2) ?? '0.0'} km away",
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                                 textColor: Colors.grey,

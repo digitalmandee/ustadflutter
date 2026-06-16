@@ -17,16 +17,8 @@ import 'package:flutterustad/config/keys/urls.dart';
 
 class ConfirmPassScreen extends StatefulWidget {
   final String? email;
-  final String? phone;
   final String? userId;
-  final bool isEmail;
-  const ConfirmPassScreen({
-    super.key,
-    this.email,
-    this.userId,
-    required this.isEmail,
-    this.phone,
-  });
+  const ConfirmPassScreen({super.key, this.email, this.userId});
 
   @override
   State<ConfirmPassScreen> createState() => _ConfirmPassScreenState();
@@ -232,7 +224,7 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
         Image(image: AssetImage("assets/images/otpEmail.png"), height: 48),
         SizedBox(height: 20),
         AppText.appText(
-          widget.isEmail ? "Please check your Email" : "Please check your SMS",
+          "Please check your Email",
           fontSize: 16,
           fontWeight: FontWeight.w600,
           textColor: Colors.black87,
@@ -240,9 +232,7 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
         ),
         SizedBox(height: 5),
         AppText.appText(
-          widget.isEmail
-              ? "We've sent a code to ${widget.email}"
-              : "We've sent a code to +${widget.phone}",
+          "We've sent a code to ${widget.email}",
           fontSize: 16,
           textColor: AppTheme.lighttxtColor,
           textAlign: TextAlign.center,

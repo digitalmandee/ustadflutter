@@ -98,7 +98,14 @@ class GetTutorsProvider extends ChangeNotifier {
         },
       );
 
-      final List data = res.data['data'];
+      final responseData = res.data['data'];
+      if (res.statusCode != 200 || responseData is! List) {
+        _tutors = [];
+        _filteredTutors = [];
+        return;
+      }
+
+      final List data = responseData;
       _tutors = data.map((e) => TutorModel.fromJson(e)).toList();
       _filteredTutors = List.from(_tutors);
     } catch (e) {

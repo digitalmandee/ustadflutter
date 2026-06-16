@@ -14,7 +14,7 @@ import 'package:flutterustad/config/dio/dio.dart';
 import 'package:flutterustad/config/keys/global.dart';
 import 'package:flutterustad/config/keys/urls.dart';
 
-enum OtpMode { both, email, phone }
+enum OtpMode { email, phone }
 
 class OtpScreen extends StatefulWidget {
   final String? userId;
@@ -28,7 +28,7 @@ class OtpScreen extends StatefulWidget {
     this.userId,
     this.email,
     this.phone,
-    required this.mode,
+    this.mode = OtpMode.email,
     this.fromEditProfile = false, // default false for SignIn
   });
 
@@ -38,50 +38,32 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _emailOtpController = TextEditingController();
-  final TextEditingController _phoneOtpController = TextEditingController();
 
   late Timer _emailTimer;
-  late Timer _smsTimer;
 
   int _emailCountdown = 120;
-  int _smsCountdown = 120;
 
   bool _isEmailResendEnabled = false;
-  bool _isSmsResendEnabled = false;
   bool isLoading = false;
 
   late AppDio _dio;
   final AppLogger _logger = AppLogger();
+
+  bool get _isPhoneOtp => widget.mode == OtpMode.phone;
 
   @override
   void initState() {
     super.initState();
     _dio = AppDio(context);
     _logger.init();
-    _phoneOtpController.value = TextEditingValue(text: "1111");
-    if (_isEmailRequired) _startEmailTimer();
-    if (_isSmsRequired) _startSmsTimer();
-
-    // Request OTP automatically on open
-    if (widget.fromEditProfile) {
-      if (_isEmailRequired) _requestOtp(context, true);
-      if (_isSmsRequired) _requestOtp(context, false);
-    } else {
-      if (_isEmailRequired) _requestOtp(context, true);
-      if (_isSmsRequired) _requestOtp(context, false);
-    }
+    _startEmailTimer();
+    _requestOtp(context);
   }
-
-  bool get _isEmailRequired =>
-      widget.mode == OtpMode.email || widget.mode == OtpMode.both;
-
-  bool get _isSmsRequired =>
-      widget.mode == OtpMode.phone || widget.mode == OtpMode.both;
 
   @override
   void dispose() {
-    if (_isEmailRequired) _emailTimer.cancel();
-    if (_isSmsRequired) _smsTimer.cancel();
+    _emailTimer.cancel();
+    _emailOtpController.dispose();
     super.dispose();
   }
 
@@ -99,23 +81,8 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
-  void _startSmsTimer() {
-    _isSmsResendEnabled = false;
-    _smsCountdown = 120;
-    _smsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_smsCountdown == 0) {
-        _isSmsResendEnabled = true;
-        timer.cancel();
-      } else {
-        _smsCountdown--;
-      }
-      setState(() {});
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    print("${widget.phone} here is the phone num");
     return Scaffold(
       body: Column(
         children: [
@@ -163,9 +130,7 @@ class _OtpScreenState extends State<OtpScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            if (_isEmailRequired) _buildEmailOtpSection(),
-            // if (_isEmailRequired) const SizedBox(height: 40),
-            // if (_isSmsRequired) _buildSmsOtpSection(),
+            _buildEmailOtpSection(),
             const SizedBox(height: 40),
             _buildActionButtons(),
             const SizedBox(height: 20),
@@ -177,33 +142,19 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Widget _buildEmailOtpSection() {
     return _buildOtpSection(
-      iconPath: "assets/images/otpEmail.png",
-      title: "Please check your Email",
-      subtitle: "We've sent a code to ${widget.email}",
+      iconPath: _isPhoneOtp
+          ? "assets/images/otpPhone.png"
+          : "assets/images/otpEmail.png",
+      title: _isPhoneOtp ? "Please check your SMS" : "Please check your Email",
+      subtitle:
+          "We've sent a code to ${_isPhoneOtp ? '+${widget.phone}' : widget.email}",
       controller: _emailOtpController,
       onResend: () {
-        _requestOtp(context, true);
+        _requestOtp(context);
         _startEmailTimer();
       },
       isResendEnabled: _isEmailResendEnabled,
       countdown: _emailCountdown,
-    );
-  }
-
-  Widget _buildSmsOtpSection() {
-    return _buildOtpSection(
-      iconPath: "assets/images/otpPhone.png",
-      title: "Please check your SMS",
-      subtitle: widget.fromEditProfile == true
-          ? "We've sent a code to ${widget.phone}"
-          : "We've sent a code to +${widget.phone}",
-      controller: _phoneOtpController,
-      onResend: () {
-        _requestOtp(context, false);
-        _startSmsTimer();
-      },
-      isResendEnabled: _isSmsResendEnabled,
-      countdown: _smsCountdown,
     );
   }
 
@@ -309,19 +260,21 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   /// OTP request
-  Future<void> _requestOtp(context, bool isEmail) async {
+  Future<void> _requestOtp(context) async {
     setState(() => isLoading = true);
 
     final params = <String, dynamic>{
       "userId": widget.userId,
-      "type": isEmail ? "email" : "phone",
-      "purpose": isEmail ? "email_verification" : "phone_verification",
+      "type": _isPhoneOtp ? "phone" : "email",
+      "purpose": _isPhoneOtp ? "phone_verification" : "email_verification",
     };
 
-    // Only send email/phone if coming from EditProfile
     if (widget.fromEditProfile) {
-      if (isEmail && widget.email != null) params["email"] = widget.email;
-      if (!isEmail && widget.phone != null) params["phone"] = widget.phone;
+      if (_isPhoneOtp && widget.phone != null) {
+        params["phone"] = widget.phone;
+      } else if (widget.email != null) {
+        params["email"] = widget.email;
+      }
     }
 
     try {
@@ -337,15 +290,13 @@ class _OtpScreenState extends State<OtpScreen> {
       if (kDebugMode) print("OTP request failed: $e");
       AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
   /// OTP verification
   Future<void> _verifyOtp(context) async {
-    final otp = _isEmailRequired
-        ? _emailOtpController.text
-        : _phoneOtpController.text;
+    final otp = _emailOtpController.text;
 
     if (otp.isEmpty || otp.length < 4) {
       return AppToast.error(context: context, msg: "Please enter a valid OTP");
@@ -356,8 +307,8 @@ class _OtpScreenState extends State<OtpScreen> {
     final verifyParams = {
       "userId": widget.userId,
       "otp": otp,
-      "type": _isEmailRequired ? "email" : "phone",
-      "purpose": _isEmailRequired ? "email_verification" : "phone_verification",
+      "type": _isPhoneOtp ? "phone" : "email",
+      "purpose": _isPhoneOtp ? "phone_verification" : "email_verification",
     };
 
     try {
@@ -371,9 +322,8 @@ class _OtpScreenState extends State<OtpScreen> {
         AppToast.success(context: context, msg: verifyData["message"]);
         if (widget.fromEditProfile) {
           final updateParams = <String, dynamic>{
-            if (_isEmailRequired && widget.email != null) "email": widget.email,
-            if (_isSmsRequired && widget.phone != null)
-              "phone": widget.phone!.replaceAll("+", ""),
+            if (_isPhoneOtp && widget.phone != null) "phone": widget.phone,
+            if (!_isPhoneOtp && widget.email != null) "email": widget.email,
           };
           final updateResponse = await _dio.post(
             path: globalUserRole == "TUTOR"
@@ -384,16 +334,20 @@ class _OtpScreenState extends State<OtpScreen> {
           final updateData = updateResponse.data;
 
           if (updateResponse.statusCode == 200) {
-            AppToast.success(context: context, msg: updateData["message"]);
             final provider = Provider.of<TutorEditProfileProvider>(
               context,
               listen: false,
             );
             provider.updateEmailAndPhone(
-              newEmail: _isEmailRequired ? widget.email : null,
-              newPhone: _isSmsRequired ? widget.phone : null,
+              newEmail: _isPhoneOtp ? null : widget.email,
+              newPhone: _isPhoneOtp ? '+${widget.phone}' : null,
             );
-            handleLogOut(context);
+            if (_isPhoneOtp) {
+              Navigator.pop(context, true);
+            } else {
+              AppToast.success(context: context, msg: updateData["message"]);
+              handleLogOut(context);
+            }
           } else {
             AppToast.error(
               context: context,
@@ -416,7 +370,7 @@ class _OtpScreenState extends State<OtpScreen> {
     } catch (e) {
       AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) setState(() => isLoading = false);
     }
   }
 }

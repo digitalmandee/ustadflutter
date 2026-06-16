@@ -26,12 +26,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final AppLogger logger = AppLogger();
 
   late Timer emailTimer;
-  late Timer smsTimer;
 
   int emailSeconds = 120;
-  int smsSeconds = 120;
   bool emailResendEnabled = false;
-  bool smsResendEnabled = false;
 
   bool isLoading = false;
 
@@ -42,9 +39,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     logger.init();
 
     startEmailTimer();
-    startSmsTimer();
     getOtp(context);
-    widget.signupData.phoneOtpController.text = "1111";
 
     /// 🔥 AUTO SET OTP WHEN ACTIVE
     if (Staticdata.isActive) {
@@ -55,7 +50,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   @override
   void dispose() {
     emailTimer.cancel();
-    smsTimer.cancel();
     super.dispose();
   }
 
@@ -72,19 +66,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     });
   }
 
-  void startSmsTimer() {
-    smsResendEnabled = false;
-    smsSeconds = 120;
-    smsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (smsSeconds == 0) {
-        setState(() => smsResendEnabled = true);
-        timer.cancel();
-      } else {
-        setState(() => smsSeconds--);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -97,14 +78,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     height: 300,
                     child: Center(child: Text('tap to create button')),
                   )
-                : Column(
-                    children: [
-                      _emailOtpWidget(),
-                      const SizedBox(height: 40),
-                      // _phoneOtpWidget(),
-                      // const SizedBox(height: 40),
-                    ],
-                  ),
+                : Column(children: [_emailOtpWidget()]),
 
             _otpActions(),
             const SizedBox(height: 20),
@@ -140,36 +114,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         _resendWidget(emailResendEnabled, emailSeconds, () {
           getOtp(context);
           startEmailTimer();
-        }),
-      ],
-    );
-  }
-
-  Widget _phoneOtpWidget() {
-    return Column(
-      children: [
-        const Image(
-          image: AssetImage("assets/images/otpPhone.png"),
-          height: 48,
-        ),
-        const SizedBox(height: 20),
-        AppText.appText(
-          "Please check your SMS",
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          textColor: Colors.black87,
-        ),
-        AppText.appText(
-          "We've sent a code to +${widget.signupData.phoneController.text}",
-          fontSize: 16,
-          textColor: AppTheme.lighttxtColor,
-        ),
-        const SizedBox(height: 20),
-        _otpField(widget.signupData.phoneOtpController),
-        const SizedBox(height: 10),
-        _resendWidget(smsResendEnabled, smsSeconds, () {
-          // Implement SMS resend functionality
-          startSmsTimer();
         }),
       ],
     );
@@ -251,13 +195,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         widget.signupData.emailOtpController.text.length < 4) {
       AppToast.error(context: context, msg: "Please enter valid Email OTP");
     } else {
-      // if (widget.signupData.phoneOtpController.text.isEmpty ||
-      //     widget.signupData.phoneOtpController.text.length < 4) {
-      //   AppToast.error(
-      //       context: context, msg: "Please enter valid Phone OTP");
-      // } else {
       verifyOtp(context);
-      // }
     }
   }
 

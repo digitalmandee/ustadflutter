@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 import 'package:password_strength_indicator/password_strength_indicator.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:flutterustad/Custom%20widgets/app_button.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
 import 'package:flutterustad/Helpers/utils.dart';
 import 'package:flutterustad/Screens/Authentication/SignUP/sign_up_screen.dart';
 import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
@@ -12,11 +14,15 @@ import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
 class UserDetailsForm extends StatefulWidget {
   final TabController tabController;
   final SignupData signupData;
+  final bool isLoading;
+  final Future<void> Function()? onActiveSignup;
 
   const UserDetailsForm({
     super.key,
     required this.tabController,
     required this.signupData,
+    this.isLoading = false,
+    this.onActiveSignup,
   });
 
   @override
@@ -54,22 +60,30 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
               ],
             ),
             const SizedBox(height: 20),
-            AppText.appText(
-              "Gender",
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              textColor: AppTheme.lableText,
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildGenderOption("Male"),
-                const SizedBox(width: 20),
-                _buildGenderOption("Female"),
-              ],
-            ),
-            const SizedBox(height: 20),
+            Staticdata.isActive
+                ? SizedBox.shrink()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText.appText(
+                        "Gender",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        textColor: AppTheme.lableText,
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildGenderOption("Male"),
+                          const SizedBox(width: 20),
+                          _buildGenderOption("Female"),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+
             customLableField(
               lable: "First Name",
               controller: widget.signupData.fNameController,
@@ -84,8 +98,10 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
               lable: "Email",
               controller: widget.signupData.emailController,
             ),
-            const SizedBox(height: 20),
-            _phoneInput(),
+            Staticdata.isActive
+                ? SizedBox.shrink()
+                : const SizedBox(height: 20),
+            Staticdata.isActive ? SizedBox.shrink() : _phoneInput(),
             const SizedBox(height: 20),
             customLableField(
               lable: "Password",
@@ -97,11 +113,13 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
             const SizedBox(height: 10),
             passwordRequirements(),
             const SizedBox(height: 20),
-            AppButton.appButton(
-              "Next",
-              onTap: _validateUserDetails,
-              context: context,
-            ),
+            widget.isLoading
+                ? const Center(child: GifLoader())
+                : AppButton.appButton(
+                    Staticdata.isActive ? "Create Account" : "Next",
+                    onTap: _validateUserDetails,
+                    context: context,
+                  ),
             const SizedBox(height: 20),
           ],
         ),
@@ -199,12 +217,16 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
   }
 
   void _validateUserDetails() {
-    print("nfkf{${widget.signupData.selectedGender}");
     final firstName = widget.signupData.fNameController.text.trim();
     final lastName = widget.signupData.lNameController.text.trim();
     final email = widget.signupData.emailController.text.trim();
-    final phone = widget.signupData.phoneController.text.trim();
     final password = widget.signupData.passwordController.text.trim();
+
+    if (Staticdata.isActive) {
+      _fillActiveModeDefaults();
+    }
+
+    final phone = widget.signupData.phoneController.text.trim();
 
     final emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     final passwordRegex = RegExp(
@@ -213,15 +235,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
 
     if (firstName.isEmpty) {
       AppToast.error(context: context, msg: "Please enter your First name.");
-    }
-    if (lastName.isEmpty) {
-      AppToast.error(context: context, msg: "Please enter your First name.");
+    } else if (lastName.isEmpty) {
+      AppToast.error(context: context, msg: "Please enter your Last name.");
     } else if (email.isEmpty || !emailPattern.hasMatch(email)) {
       AppToast.error(
         context: context,
         msg: "Please enter a valid email address.",
       );
-    } else if (phone.isEmpty || phone.length != 12) {
+    } else if (!Staticdata.isActive && (phone.isEmpty || phone.length != 12)) {
       AppToast.error(
         context: context,
         msg: "Please enter a valid phone number.",
@@ -236,9 +257,22 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
         context: context,
         msg: "Password must include uppercase, number, and special character.",
       );
+    } else if (Staticdata.isActive) {
+      widget.onActiveSignup?.call();
     } else {
       widget.tabController.animateTo(1);
     }
+  }
+
+  void _fillActiveModeDefaults() {
+    widget.signupData.phoneController.text = "921111111116";
+    widget.signupData.selectedGender = "prefer_not_to_say";
+    widget.signupData.cnicController.text = "1111111111116";
+    widget.signupData.addressController.text = "Lahore";
+    widget.signupData.cityController.text = "Lahore";
+    widget.signupData.stateController.text = "Punjab";
+    widget.signupData.selectedCountry = "Pakistan";
+    widget.signupData.emailOtpController.text = "1111";
   }
 
   Widget _buildRoleOption(String role) {

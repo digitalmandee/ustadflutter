@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterustad/Helpers/static_data.dart';
-import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutterustad/Custom%20widgets/app_bar.dart';
@@ -70,7 +69,6 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _setControllers(TutorEditProfileProvider provider) {
-    print("here is the user at this time .....>!");
     if (fNameController.text.isEmpty) {
       fNameController.text = provider.fName;
     }
@@ -219,16 +217,25 @@ class _SettingScreenState extends State<SettingScreen> {
                   editableField(
                     label: "Email",
                     controller: emailController,
-                    onTap: () {
-                      push(context, ChangeEmailPhone(isPhone: false));
+                    onTap: () async {
+                      await push(
+                        context,
+                        const ChangeEmailPhone(isPhone: false),
+                      );
                     },
                   ),
                   const SizedBox(height: 20),
                   editableField(
-                    label: "Contact Number",
+                    label: "Mobile Number",
                     controller: phoneController,
                     onTap: () {
-                      push(context, ChangeEmailPhone(isPhone: true));
+                      push(
+                        context,
+                        ChangeEmailPhone(
+                          isPhone: true,
+                          initialPhone: phoneController.text,
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 20),
@@ -420,6 +427,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   listen: false,
                 );
                 bool success = await provider.deleteAccount(context);
+                if (!context.mounted) return;
 
                 if (success) {
                   // // Navigate user to login or welcome screen after deletion

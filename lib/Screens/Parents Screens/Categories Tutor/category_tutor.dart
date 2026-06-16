@@ -7,7 +7,6 @@ import 'package:flutterustad/Helpers/app_theme.dart';
 import 'package:flutterustad/Helpers/base_image.dart';
 import 'package:flutterustad/Helpers/loader.dart';
 import 'package:flutterustad/Helpers/subjets_format.dart';
-import 'package:flutterustad/Helpers/utils.dart';
 import 'package:flutterustad/Providers/Parent%20Side/get_tutors_provider.dart';
 import 'package:flutterustad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
 
@@ -76,13 +75,16 @@ class _TutorCategoriesScreenState extends State<TutorCategoriesScreen> {
 
                           return InkWell(
                             onTap: () {
-                              push(
+                              Navigator.push(
                                 context,
-                                TutorProfileScreen(
-                                  isParentSide: true,
-                                  name: "${tutor.firstName} ${tutor.lastName}",
-                                  tutorId: tutor.tutorId,
-                                  experience: tutor.experience,
+                                MaterialPageRoute(
+                                  builder: (context) => TutorProfileScreen(
+                                    isParentSide: true,
+                                    name:
+                                        "${tutor.firstName} ${tutor.lastName}",
+                                    tutorId: tutor.tutorId,
+                                    experience: tutor.experience,
+                                  ),
                                 ),
                               );
                             },

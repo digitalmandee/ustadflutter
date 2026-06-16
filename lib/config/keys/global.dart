@@ -35,6 +35,7 @@ String? globalNotiCount;
 double? globalParentLongitude;
 String? globalUserOnBoardStatus;
 String? globalGoogleId;
+bool isGuest = false;
 
 Future<void> getPrefData() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -48,6 +49,7 @@ Future<void> getPrefData() async {
   globalGoogleId = prefs.getString(PrefKey.isGoogleId) ?? '';
   globalUserOnBoardStatus = prefs.getString(PrefKey.onBoard) ?? '';
   globalNotiCount = prefs.getString(PrefKey.notiCount) ?? '0';
+  isGuest = prefs.getBool('is_guest') ?? false;
 }
 
 void handleTokenExpiration() async {
@@ -61,6 +63,7 @@ void handleTokenExpiration() async {
   globalToken = null;
   globalUserPic = null;
   globalGoogleId = null;
+  isGuest = false;
 
   globalParentLatitutde = null;
   globalParentLongitude = null;
@@ -131,6 +134,7 @@ Future<void> clearAppSession() async {
   globalParentLatitutde = null;
   globalParentLongitude = null;
   globalUserOnBoardStatus = null;
+  isGuest = false;
 
   final prefs = await SharedPreferences.getInstance();
   await prefs.clear();

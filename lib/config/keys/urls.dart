@@ -6,6 +6,7 @@ class AppUrls {
   static const String verifyOtp = "auth/verify-otp";
   static const String signUp = "auth/user-signup";
   static const String logIn = "auth/user-signin";
+  static const String guestLogin = "auth/guest-login";
   static const String onBoard = "tutor/onboarding";
   static const String googleSignIn = "auth/google-login";
   static const String googleSignUp = "auth/google-signup";
@@ -63,7 +64,7 @@ class AppUrls {
 
   ///////////////  offers ////////////////
   static const String offerStatus = "parent/offer/";
-  static const String paymentIntent = "parent/payfast/subscription/initiate";
+  static const String paymentIntent = "/parent/payfast/subscription/initiate";
   static const String paymentIntentDummy = "parent/payment/intent-bypass";
 
   ///////////////  Settions ////////////////

@@ -30,36 +30,6 @@ class ParentSessionScreen extends StatefulWidget {
 }
 
 class _ParentSessionScreenState extends State<ParentSessionScreen> {
-  final completedSessions = [
-    SessionCard(
-      title: "Class at Mir Ahmed's House",
-      toDate: '3 December 2024',
-      fee: 'Rs. 17000/mo',
-      fromDate: "26 June 2024",
-      time: const Text("01:00:00"),
-      isCompleted: true,
-      rating: "4.5",
-    ),
-    SessionCard(
-      title: "Class at Mir Ahmed's House",
-      toDate: '3 December 2024',
-      fee: 'Rs. 17000/mo',
-      fromDate: "26 June 2024",
-      time: const Text("01:00:00"),
-      isCompleted: true,
-      rating: "4.5",
-    ),
-    SessionCard(
-      title: "Class at Mir Ahmed's House",
-      toDate: '3 December 2024',
-      fee: 'Rs. 17000/mo',
-      fromDate: "26 June 2024",
-      time: const Text("01:00:00"),
-      isCompleted: true,
-      rating: "4.5",
-    ),
-  ];
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showUpcoming = true;
   bool isLoading = false;

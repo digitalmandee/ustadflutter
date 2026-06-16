@@ -68,6 +68,37 @@ class TutorEditProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> updatePhoneNumber(BuildContext context, String newPhone) async {
+    try {
+      final response = await dio.post(
+        path: globalUserRole == "TUTOR"
+            ? AppUrls.editTutorProfile
+            : AppUrls.editParentProfile,
+        data: {"phone": newPhone},
+      );
+      if (!context.mounted) return false;
+
+      if (response.statusCode == 200) {
+        phone = '+$newPhone';
+        notifyListeners();
+        return true;
+      }
+
+      AppToast.error(
+        context: context,
+        msg:
+            response.data["errors"]?[0]?["message"] ??
+            "Failed to update mobile number",
+      );
+    } catch (e) {
+      if (context.mounted) {
+        AppToast.error(context: context, msg: "Something went wrong: $e");
+      }
+    }
+
+    return false;
+  }
+
   void cancelPasswordEdit(TextEditingController controller) {
     controller.text = phone;
     isPasswordEdit = false;
@@ -323,6 +354,7 @@ class TutorEditProfileProvider extends ChangeNotifier {
 
     try {
       final response = await dio.delete(path: AppUrls.deleteAccount);
+      if (!context.mounted) return false;
 
       if (response.statusCode == 200) {
         AppToast.success(
@@ -344,7 +376,9 @@ class TutorEditProfileProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      AppToast.error(context: context, msg: "Something went wrong: $e");
+      if (context.mounted) {
+        AppToast.error(context: context, msg: "Something went wrong: $e");
+      }
       return false;
     } finally {
       isLoading = false;
