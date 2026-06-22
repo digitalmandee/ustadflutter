@@ -14,8 +14,13 @@ import 'package:flutterustad/config/keys/urls.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final SignupData signupData;
+  final VoidCallback? onCancel;
 
-  const OtpVerificationScreen({super.key, required this.signupData});
+  const OtpVerificationScreen({
+    super.key,
+    required this.signupData,
+    this.onCancel,
+  });
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -174,7 +179,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         AppButton.appButton(
           "Cancel",
           context: context,
-          onTap: () => Navigator.pop(context),
+          onTap: widget.onCancel ?? () => Navigator.pop(context),
           width: ScreenSize(context).width * 0.4,
           backgroundColor: AppTheme.button2ndCOlor,
           textColor: AppTheme.black,

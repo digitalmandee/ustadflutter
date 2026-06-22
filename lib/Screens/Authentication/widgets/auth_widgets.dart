@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterustad/Custom%20widgets/app_field.dart';
 import 'package:flutterustad/Custom%20widgets/app_text.dart';
@@ -20,6 +21,7 @@ Widget customLableField({
   readOnly = false,
   maxLines,
   width,
+  List<TextInputFormatter>? inputFormatters,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,6 +42,7 @@ Widget customLableField({
         texthint: hintText ?? "$lable",
         controller: controller,
         isPasswordField: isPassword,
+        inputFormatters: inputFormatters,
       ),
     ],
   );

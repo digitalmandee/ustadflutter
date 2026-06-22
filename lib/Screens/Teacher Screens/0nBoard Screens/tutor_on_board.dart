@@ -28,8 +28,20 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return PopScope(
+      canPop: _tabController.index == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _goToPreviousStep();
+        }
+      },
       child: Scaffold(
         body: Column(
           children: [
@@ -52,7 +64,7 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
                   ),
                   SizedBox(width: 5),
                   stepIndicator(
-                    "Verifications",
+                    "Verify",
                     2,
                     context,
                     controller: _tabController,
@@ -74,57 +86,19 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
                 children: [
                   SubjectSelectionScreen(
                     onboardData: onboardData,
-                    onTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
+                    onTap: _goToNextStep,
                   ),
                   BankSelectionScreen(
                     onboardData: onboardData,
-                    onTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
-                    onBackTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
+                    onTap: _goToNextStep,
+                    onBackTap: _goToPreviousStep,
                   ),
                   TutorDocVerificationScreen(
                     onboardData: onboardData,
-                    onBackTap: () {
-                      if (_tabController.index < 3) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
-                    onTap: () {
-                      if (_tabController.index < 3) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
+                    onBackTap: _goToPreviousStep,
+                    onTap: _goToNextStep,
                   ),
-                  OnboardLocation(
-                    onBackTap: () {
-                      if (_tabController.index < 3) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
-                  ),
+                  OnboardLocation(onBackTap: _goToPreviousStep),
                 ],
               ),
             ),
@@ -132,5 +106,19 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
         ),
       ),
     );
+  }
+
+  void _goToPreviousStep() {
+    if (_tabController.index == 0) return;
+    setState(() {
+      _tabController.animateTo(_tabController.index - 1);
+    });
+  }
+
+  void _goToNextStep() {
+    if (_tabController.index == _tabController.length - 1) return;
+    setState(() {
+      _tabController.animateTo(_tabController.index + 1);
+    });
   }
 }

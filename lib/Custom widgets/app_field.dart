@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterustad/Helpers/app_theme.dart';
 
 class CustomAppTextField extends StatefulWidget {
@@ -22,6 +23,7 @@ class CustomAppTextField extends StatefulWidget {
   final bool? readOnly;
   final TextDirection? textDirection;
   final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
   final VoidCallback? onTap;
   const CustomAppTextField({
     super.key,
@@ -46,6 +48,7 @@ class CustomAppTextField extends StatefulWidget {
     this.textDirection,
     this.onTap,
     this.fillColor,
+    this.inputFormatters,
   });
 
   @override
@@ -96,6 +99,7 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
         obscureText: _obscureText,
         textCapitalization: TextCapitalization.sentences,
         keyboardType: widget.txtType ?? TextInputType.name,
+        inputFormatters: widget.inputFormatters,
         cursorColor: widget.cursorColor ?? AppTheme.appColor,
         onChanged: widget.onChanged,
         style: TextStyle(color: widget.textColor),

@@ -291,7 +291,7 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 40),
+      padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 15),
       child: Column(
         children: [
           Image.asset("assets/images/ustaad.png", height: 28, width: 78),

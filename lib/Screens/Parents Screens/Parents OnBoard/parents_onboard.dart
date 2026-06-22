@@ -29,93 +29,88 @@ class _ParentsOnboardScreenState extends State<ParentsOnboardScreen>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppTheme.white,
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  stepIndicator(
-                    "Profile",
-                    0,
-                    context,
-                    controller: _tabController,
-                  ),
-                  SizedBox(width: 5),
-                  stepIndicator(
-                    Staticdata.isActive ? "Next" : "Banks",
-                    1,
-                    context,
-                    controller: _tabController,
-                  ),
-                  SizedBox(width: 5),
-                  stepIndicator(
-                    "Verifications",
-                    2,
-                    context,
-                    controller: _tabController,
-                  ),
-                ],
+    return PopScope(
+      canPop: _tabController.index == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _goToPreviousStep();
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: AppTheme.white,
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    stepIndicator(
+                      "Profile",
+                      0,
+                      context,
+                      controller: _tabController,
+                    ),
+                    SizedBox(width: 5),
+                    stepIndicator(
+                      Staticdata.isActive ? "Next" : "Banks",
+                      1,
+                      context,
+                      controller: _tabController,
+                    ),
+                    SizedBox(width: 5),
+                    stepIndicator(
+                      "Verifications",
+                      2,
+                      context,
+                      controller: _tabController,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  ParentChildProfile(
-                    onTap: () {
-                      if (_tabController.index < 1) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
-                    // onBackTap: () {
-                    //   if (_tabController.index < 1) {
-                    //     setState(() {
-                    //       _tabController.animateTo(_tabController.index - 1);
-                    //     });
-                    //   }
-                    // },
-                  ),
-                  ParentBankSelectionScreen(
-                    onTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
-                    onBackTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
-                    parentOnboardData: parentOnboardData,
-                  ),
-                  ParentsVerificationScreen(
-                    parentOnboardData: parentOnboardData,
-                    onBackTap: () {
-                      if (_tabController.index < 3) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
-                  ),
-                ],
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    ParentChildProfile(onTap: _goToNextStep),
+                    ParentBankSelectionScreen(
+                      onTap: _goToNextStep,
+                      onBackTap: _goToPreviousStep,
+                      parentOnboardData: parentOnboardData,
+                    ),
+                    ParentsVerificationScreen(
+                      parentOnboardData: parentOnboardData,
+                      onBackTap: _goToPreviousStep,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _goToPreviousStep() {
+    if (_tabController.index == 0) return;
+    setState(() {
+      _tabController.animateTo(_tabController.index - 1);
+    });
+  }
+
+  void _goToNextStep() {
+    if (_tabController.index == _tabController.length - 1) return;
+    setState(() {
+      _tabController.animateTo(_tabController.index + 1);
+    });
   }
 }

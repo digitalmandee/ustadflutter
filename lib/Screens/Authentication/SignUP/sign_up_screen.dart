@@ -49,38 +49,55 @@ class _SignupScreenState extends State<SignupScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          authHeader(context: context, isSignInScreen: false),
-          if (!Staticdata.isActive) SignupStepper(tabController: tabController),
-          Expanded(
-            child: Staticdata.isActive
-                ? UserDetailsForm(
-                    tabController: tabController,
-                    signupData: signupData,
-                    isLoading: isLoading,
-                    onActiveSignup: _activeSignup,
-                  )
-                : TabBarView(
-                    controller: tabController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      UserDetailsForm(
-                        tabController: tabController,
-                        signupData: signupData,
-                      ),
-                      AdditionalDetailsForm(
-                        tabController: tabController,
-                        signupData: signupData,
-                      ),
-                      OtpVerificationScreen(signupData: signupData),
-                    ],
-                  ),
-          ),
-        ],
+    return PopScope(
+      canPop: Staticdata.isActive || tabController.index == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _goToPreviousStep();
+        }
+      },
+      child: Scaffold(
+        body: Column(
+          children: [
+            authHeader(context: context, isSignInScreen: false),
+            if (!Staticdata.isActive)
+              SignupStepper(tabController: tabController),
+            Expanded(
+              child: Staticdata.isActive
+                  ? UserDetailsForm(
+                      tabController: tabController,
+                      signupData: signupData,
+                      isLoading: isLoading,
+                      onActiveSignup: _activeSignup,
+                    )
+                  : TabBarView(
+                      controller: tabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        UserDetailsForm(
+                          tabController: tabController,
+                          signupData: signupData,
+                        ),
+                        AdditionalDetailsForm(
+                          tabController: tabController,
+                          signupData: signupData,
+                        ),
+                        OtpVerificationScreen(
+                          signupData: signupData,
+                          onCancel: _goToPreviousStep,
+                        ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _goToPreviousStep() {
+    if (tabController.index == 0) return;
+    tabController.animateTo(tabController.index - 1);
   }
 
   Future<void> _activeSignup() async {

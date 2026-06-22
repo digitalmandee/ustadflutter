@@ -92,6 +92,17 @@ class _OnboardLocationState extends State<OnboardLocation> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: widget.onBackTap,
+                          child: Image.asset(
+                            "assets/images/arrowBack.png",
+                            height: 28,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
                       _buildHeader(),
                       SizedBox(height: 20),
                       CustomAppTextField(

@@ -84,6 +84,25 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
   final AppLogger logger = AppLogger();
   List<SubjectModel> selectedSubjects = [];
 
+  bool _isSubjectSelected(SubjectModel subject) {
+    return selectedSubjects.any(
+      (selected) =>
+          selected.name.trim().toLowerCase() ==
+          subject.name.trim().toLowerCase(),
+    );
+  }
+
+  String _selectedSubjectsLabel() {
+    return selectedSubjects
+        .map((subject) => capitalizeEachWord(subject.name))
+        .join(", ");
+  }
+
+  SubjectModel? _selectedDropdownSubject(List<SubjectModel> subjects) {
+    final selected = subjects.where(_isSubjectSelected);
+    return selected.isEmpty ? null : selected.first;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -247,6 +266,9 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                               builder: (context, provider, _) {
                                 return DropdownButton2<SubjectModel>(
                                   isExpanded: true,
+                                  value: _selectedDropdownSubject(
+                                    provider.subjects,
+                                  ),
                                   hint: AppText.appText(
                                     "Select Subject(s)",
                                     textColor: AppTheme.hintColor,
@@ -256,8 +278,9 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   items: provider.subjects.map((subject) {
-                                    final isSelected = selectedSubjects
-                                        .contains(subject);
+                                    final isSelected = _isSubjectSelected(
+                                      subject,
+                                    );
                                     return DropdownMenuItem<SubjectModel>(
                                       value: subject,
                                       child: Text(
@@ -273,9 +296,26 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                                       ),
                                     );
                                   }).toList(),
+                                  selectedItemBuilder: (context) {
+                                    return provider.subjects.map((subject) {
+                                      return Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          _selectedSubjectsLabel(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
                                   onChanged: (value) {
                                     if (value != null &&
-                                        !selectedSubjects.contains(value)) {
+                                        !_isSubjectSelected(value)) {
                                       setState(() {
                                         selectedSubjects.add(value);
                                       });

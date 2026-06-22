@@ -5,7 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 import 'package:flutterustad/Providers/Chat/all_chat_provider.dart';
 import 'package:flutterustad/Providers/Contracts/contract_provider.dart';
 import 'package:flutterustad/Providers/Parent%20Side/dashboard_provider.dart';
@@ -31,6 +33,20 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: SystemUiOverlay.values,
+  );
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: AppTheme.primaryCOlor,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
 
   dev.log("MAIN LOG: main() started");
 
@@ -199,12 +215,24 @@ class _MyAppState extends State<MyApp> {
         ),
         title: 'Ustaad',
         builder: (context, child) {
-          return SafeArea(
-            top: false,
-            bottom: Platform.isAndroid,
-            left: true,
-            right: true,
-            child: child!,
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: AppTheme.black,
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+              systemNavigationBarColor: Colors.white,
+              systemNavigationBarIconBrightness: Brightness.dark,
+            ),
+            child: ColoredBox(
+              color: AppTheme.primaryCOlor,
+              child: SafeArea(
+                top: true,
+                bottom: Platform.isAndroid,
+                left: true,
+                right: true,
+                child: child!,
+              ),
+            ),
           );
         },
         home: const SplashScreen(),

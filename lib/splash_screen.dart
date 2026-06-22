@@ -173,9 +173,9 @@ class _SplashScreenState extends State<SplashScreen>
       final data = snapshot.data();
 
       if (data != null) {
-        final iosIsActiveApp = data['ios_app_active'] as bool? ?? false;
+        final iosIsActiveApp = data['2ios_app_active'] as bool? ?? false;
 
-        final iosShowPayment = data['ios_showpayment'] as bool? ?? false;
+        final iosShowPayment = data['2ios_showpayment'] as bool? ?? false;
 
         // NEW
         final iosGuestMode = data['guestmoodios'] as bool? ?? false;
