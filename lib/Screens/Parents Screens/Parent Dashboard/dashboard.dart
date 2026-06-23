@@ -118,42 +118,58 @@ class _ParentsDashBoardScreenState extends State<ParentsDashBoardScreen> {
         crossOnTap: () => _scaffoldKey.currentState?.closeEndDrawer(),
         isTutor: false,
       ),
-      appBar: CustomAppBar(
-        onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
-        taskSummary: provider.tasks,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(
-          bottom: 90, // ✅ MUST
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 15),
-            _buildHeader(context),
-            _buildFeaturedSubjects(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 10,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
+            ),
+          ),
+          Column(
+            children: [
+              CustomAppBar(
+                onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
+                taskSummary: provider.tasks,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    bottom: 90, // ✅ MUST
                   ),
-                  child: AppText.appText(
-                    globalParentLatitutde == null
-                        ? "Trending Tutors"
-                        : "Trending Tutors in Your Area",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 15),
+                      _buildHeader(context),
+                      _buildFeaturedSubjects(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                              vertical: 10,
+                            ),
+                            child: AppText.appText(
+                              globalParentLatitutde == null
+                                  ? "Trending Tutors"
+                                  : "Trending Tutors in Your Area",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          _buildTrendingTutors(),
+                        ],
+                      ),
+                      _buildMonthlySpendingChart(),
+                    ],
                   ),
                 ),
-                _buildTrendingTutors(),
-              ],
-            ),
-            _buildMonthlySpendingChart(),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

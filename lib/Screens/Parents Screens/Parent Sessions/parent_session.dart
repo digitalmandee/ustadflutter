@@ -58,85 +58,101 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
         crossOnTap: () => _scaffoldKey.currentState?.closeEndDrawer(),
         isTutor: false,
       ),
-      appBar: CustomAppBar(
-        onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
-        taskSummary: provider.tasks,
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 10),
-          Container(
-            height: 40,
-            width: 220,
-            decoration: BoxDecoration(
-              color: Color(0xffECEEF3),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        showUpcoming = true;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 108,
-                      decoration: BoxDecoration(
-                        color: showUpcoming
-                            ? AppTheme.appColor
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: AppText.appText(
-                          "Upcoming",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          textColor: showUpcoming
-                              ? AppTheme.white
-                              : AppTheme.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        showUpcoming = false;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 108,
-                      decoration: BoxDecoration(
-                        color: !showUpcoming
-                            ? AppTheme.appColor
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: AppText.appText(
-                          "Completed",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          textColor: !showUpcoming
-                              ? AppTheme.white
-                              : AppTheme.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
             ),
           ),
-          const SizedBox(height: 10),
-          _buildSessionsContent(),
+          Column(
+            children: [
+              CustomAppBar(
+                onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
+                taskSummary: provider.tasks,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      height: 40,
+                      width: 220,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffECEEF3),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showUpcoming = true;
+                                });
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 108,
+                                decoration: BoxDecoration(
+                                  color: showUpcoming
+                                      ? AppTheme.appColor
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: AppText.appText(
+                                    "Upcoming",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    textColor: showUpcoming
+                                        ? AppTheme.white
+                                        : AppTheme.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showUpcoming = false;
+                                });
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 108,
+                                decoration: BoxDecoration(
+                                  color: !showUpcoming
+                                      ? AppTheme.appColor
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: AppText.appText(
+                                    "Completed",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    textColor: !showUpcoming
+                                        ? AppTheme.white
+                                        : AppTheme.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildSessionsContent(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -226,6 +242,7 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
                     ),
                   ),
                 ).then((_) {
+                  if (!context.mounted) return;
                   getParentSessions(context);
                 });
               },

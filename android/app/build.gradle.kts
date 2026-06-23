@@ -37,8 +37,8 @@ android {
         // ✅ Important for Google Sign-In
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 17
-        versionName = "1.1.7"
+        versionCode = 18
+        versionName = "1.1.8"
     }
 
     buildTypes {

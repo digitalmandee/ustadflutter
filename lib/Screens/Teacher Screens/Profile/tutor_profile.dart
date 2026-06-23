@@ -8,6 +8,8 @@ import 'package:flutterustad/Helpers/app_theme.dart';
 import 'package:flutterustad/Helpers/base_image.dart';
 import 'package:flutterustad/Helpers/capitalize.dart';
 import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
 import 'package:flutterustad/config/keys/global.dart';
 import 'package:flutterustad/Helpers/guest_helper.dart';
 
@@ -57,6 +59,7 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
 
   String? name = "";
   String? userPic = "";
+  bool _profileCompletionChecked = false;
 
   @override
   void initState() {
@@ -71,6 +74,7 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
             context,
             listen: false,
           ).fetchAboutData(context);
+          _loadProfileCompletionData();
         });
       }
     }
@@ -87,6 +91,22 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
       name = "${firstName!} ${lastName!}";
       userPic = pref.getString(PrefKey.userPic);
     });
+  }
+
+  Future<void> _loadProfileCompletionData() async {
+    await Future.wait([
+      Provider.of<EducationProvider>(
+        context,
+        listen: false,
+      ).fetchEducation(context),
+      Provider.of<ExperienceProvider>(
+        context,
+        listen: false,
+      ).fetchExperiences(context),
+    ]);
+
+    if (!mounted) return;
+    setState(() => _profileCompletionChecked = true);
   }
 
   @override
@@ -175,7 +195,10 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                               height: 36.0,
                               onTap: () {
                                 if (isGuest) {
-                                  showLoginRequiredDialog(context, "Chat Tutor");
+                                  showLoginRequiredDialog(
+                                    context,
+                                    "Chat Tutor",
+                                  );
                                 } else {
                                   createConverstion(context);
                                 }
@@ -293,6 +316,40 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                           ],
                         ),
                         const SizedBox(height: 20),
+                        if (widget.isParentSide == false)
+                          Consumer2<EducationProvider, ExperienceProvider>(
+                            builder:
+                                (
+                                  context,
+                                  educationProvider,
+                                  experienceProvider,
+                                  _,
+                                ) {
+                                  final hasNoEducation =
+                                      educationProvider.education.isEmpty;
+                                  final hasNoExperience =
+                                      experienceProvider.experiences.isEmpty;
+
+                                  if (!_profileCompletionChecked ||
+                                      (!hasNoEducation && !hasNoExperience)) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  final missingItems = [
+                                    if (hasNoEducation) "education",
+                                    if (hasNoExperience) "experience",
+                                  ].join(" and ");
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 16.0,
+                                    ),
+                                    child: _buildIncompleteProfileBanner(
+                                      "Incomplete profile: add $missingItems.",
+                                    ),
+                                  );
+                                },
+                          ),
                         ValueListenableBuilder<int>(
                           valueListenable: selectedTab,
                           builder: (context, currentTab, _) {
@@ -309,41 +366,105 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                                       horizontal: 2.0,
                                       vertical: 2.0,
                                     ),
-                                    child: Row(
-                                      children: List.generate(
-                                        tabTitles.length,
-                                        (index) {
-                                          return Expanded(
-                                            child: GestureDetector(
-                                              onTap: () =>
-                                                  selectedTab.value = index,
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 5,
+                                    child: Consumer2<EducationProvider, ExperienceProvider>(
+                                      builder:
+                                          (
+                                            context,
+                                            educationProvider,
+                                            experienceProvider,
+                                            _,
+                                          ) {
+                                            return Row(
+                                              children: List.generate(tabTitles.length, (
+                                                index,
+                                              ) {
+                                                final showMissingDot =
+                                                    widget.isParentSide ==
+                                                        false &&
+                                                    _profileCompletionChecked &&
+                                                    ((index == 1 &&
+                                                            educationProvider
+                                                                .education
+                                                                .isEmpty) ||
+                                                        (index == 2 &&
+                                                            experienceProvider
+                                                                .experiences
+                                                                .isEmpty));
+
+                                                return Expanded(
+                                                  child: GestureDetector(
+                                                    onTap: () =>
+                                                        selectedTab.value =
+                                                            index,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            vertical: 5,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            currentTab == index
+                                                            ? AppTheme.appColor
+                                                            : Colors
+                                                                  .transparent,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              tabTitles[index],
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                color:
+                                                                    currentTab ==
+                                                                        index
+                                                                    ? Colors
+                                                                          .white
+                                                                    : Colors
+                                                                          .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          if (showMissingDot) ...[
+                                                            const SizedBox(
+                                                              width: 4,
+                                                            ),
+                                                            Container(
+                                                              height: 7,
+                                                              width: 7,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                            ),
+                                                          ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                decoration: BoxDecoration(
-                                                  color: currentTab == index
-                                                      ? AppTheme.appColor
-                                                      : Colors.transparent,
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  tabTitles[index],
-                                                  style: TextStyle(
-                                                    color: currentTab == index
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                    fontWeight: FontWeight.w500,
                                                   ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                                );
+                                              }),
+                                            );
+                                          },
                                     ),
                                   ),
                                 ),
@@ -359,6 +480,32 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIncompleteProfileBanner(String message) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xffFDECEC),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xffE53935)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline, color: Color(0xffE53935), size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: AppText.appText(
+              message,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              textColor: const Color(0xffC62828),
             ),
           ),
         ],

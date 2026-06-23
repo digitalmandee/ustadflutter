@@ -140,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen>
       final data = snapshot.data();
 
       if (data != null) {
-        final isactiveapp = data['3appactive'] as bool? ?? false;
+        final isactiveapp = data['4appactive'] as bool? ?? false;
         final showPayment = data['2showpayment'] as bool? ?? false;
 
         // NEW
