@@ -3,15 +3,15 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subjects_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_about_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subjects_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
 
 class AddAboutBottomSheet extends StatefulWidget {
   final bool isEdit;
@@ -56,17 +56,15 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
         padding: EdgeInsets.only(top: 20),
         height: ScreenSize(context).height * 0.80,
         decoration: BoxDecoration(
-            color: AppTheme.white, borderRadius: BorderRadius.circular(20)),
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            bottom: 30,
-          ),
+          padding: const EdgeInsets.only(bottom: 30),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -78,20 +76,24 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                           height: 120,
                           width: 120,
                           decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image:
-                                      AssetImage("assets/images/radial.png"))),
+                            image: DecorationImage(
+                              image: AssetImage("assets/images/radial.png"),
+                            ),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(widget.isEdit
-                                ? "assets/images/editBottom.png"
-                                : "assets/images/addPlus.png"),
+                            child: Image.asset(
+                              widget.isEdit
+                                  ? "assets/images/editBottom.png"
+                                  : "assets/images/addPlus.png",
+                            ),
                           ),
                         ),
                         IconButton(
                           onPressed: () {
                             Navigator.pop(
-                                context); // 👈 only this closes the sheet
+                              context,
+                            ); // 👈 only this closes the sheet
                           },
                           icon: Icon(Icons.close),
                         ),
@@ -104,12 +106,13 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                     ),
                     const SizedBox(height: 10),
                     AppText.appText(
-                        widget.isEdit
-                            ? "Edit your about"
-                            : "Add relevant about to your profile",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        textColor: Color(0xff4D5874)),
+                      widget.isEdit
+                          ? "Edit your about"
+                          : "Add relevant about to your profile",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      textColor: Color(0xff4D5874),
+                    ),
                   ],
                 ),
               ),
@@ -144,8 +147,8 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    final provider =
-                                        context.read<AboutProvider>();
+                                    final provider = context
+                                        .read<AboutProvider>();
                                     provider
                                         .initTempSelections(); // ensure temp* set ho jaye
 
@@ -156,15 +159,17 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                                       isDismissible: false,
                                       shape: const RoundedRectangleBorder(
                                         borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20)),
+                                          top: Radius.circular(20),
+                                        ),
                                       ),
                                       builder: (_) =>
                                           EditTeachingPrefsBottomSheet(
-                                        initialSubjects: provider.tempSubjects,
-                                        initialGrades: provider.tempGrades,
-                                        initialCurriculums:
-                                            provider.tempCurriculums,
-                                      ),
+                                            initialSubjects:
+                                                provider.tempSubjects,
+                                            initialGrades: provider.tempGrades,
+                                            initialCurriculums:
+                                                provider.tempCurriculums,
+                                          ),
                                     );
                                   },
                                   child: Image.asset(
@@ -180,17 +185,13 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
                               fontWeight: FontWeight.w600,
                             ),
                             _chips(provider.tempSubjects),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            SizedBox(height: 10),
                             AppText.appText(
                               "Grades",
                               fontWeight: FontWeight.w600,
                             ),
                             _chips(provider.tempGrades),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            SizedBox(height: 10),
                             AppText.appText(
                               "Curriculums",
                               fontWeight: FontWeight.w600,
@@ -228,31 +229,50 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
 
                           if (widget.isEdit) {
                             success = await provider.updateAboutData(
-                                aboutText, context);
+                              aboutText,
+                              context,
+                            );
                           } else {
-                            success =
-                                await provider.addAboutData(aboutText, context);
+                            success = await provider.addAboutData(
+                              aboutText,
+                              context,
+                            );
                           }
 
-                          if (success) Navigator.pop(context);
+                          if (success) {
+                            print("here is the sucess $success");
+                            Navigator.pop(context);
+
+                            AppToast.success(
+                              context: context,
+                              msg: widget.isEdit
+                                  ? "About Updated successfully"
+                                  : "About Added successfully",
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryCOlor,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 12),
+                            horizontal: 32,
+                            vertical: 12,
+                          ),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         child: Text(
                           widget.isEdit ? "Update" : "Add",
                           style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w600),
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -268,9 +288,12 @@ class _AddAboutBottomSheetState extends State<AddAboutBottomSheet> {
         spacing: 8,
         runSpacing: 8,
         children: items
-            .map((e) => Chip(
+            .map(
+              (e) => Chip(
                 backgroundColor: AppTheme.white,
-                label: Text(capitalizeEachWord(e))))
+                label: Text(capitalizeEachWord(e)),
+              ),
+            )
             .toList(),
       ),
     );
@@ -314,7 +337,7 @@ class _EditTeachingPrefsBottomSheetState
     "Matriculation",
     "Intermediate",
     "O Level",
-    "A Level"
+    "A Level",
   ];
 
   final List<String> allCurriculums = [
@@ -324,7 +347,7 @@ class _EditTeachingPrefsBottomSheetState
     "IB",
     "Punjab Board",
     "Sindh Board",
-    "Local"
+    "Local",
   ];
 
   @override
@@ -352,7 +375,9 @@ class _EditTeachingPrefsBottomSheetState
       child: Container(
         height: ScreenSize(context).height * 0.77,
         decoration: BoxDecoration(
-            color: AppTheme.white, borderRadius: BorderRadius.circular(20)),
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
           child: Column(
@@ -366,8 +391,9 @@ class _EditTeachingPrefsBottomSheetState
                     fontWeight: FontWeight.w600,
                   ),
                   IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context)),
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
@@ -381,18 +407,23 @@ class _EditTeachingPrefsBottomSheetState
                               title: "Subjects",
                               items: subjects,
                               selectedItems: provider.tempSubjects
-                                  .map((name) => subjects.firstWhere(
+                                  .map(
+                                    (name) => subjects.firstWhere(
                                       (s) =>
                                           s.name.toLowerCase() ==
                                           name.toLowerCase(),
                                       orElse: () =>
-                                          SubjectsModel(name: name, logo: '')))
+                                          SubjectsModel(name: name, logo: ''),
+                                    ),
+                                  )
                                   .toList(),
                               itemLabel: (s) => s.name,
                               onSelect: (s) {
-                                final name = (s as SubjectsModel).name;
+                                final name = (s).name;
                                 provider.toggleSelection(
-                                    name, provider.tempSubjects);
+                                  name,
+                                  provider.tempSubjects,
+                                );
                                 setState(() {}); // ✅ update dropdown UI
                               },
                             ),
@@ -404,7 +435,9 @@ class _EditTeachingPrefsBottomSheetState
                               itemLabel: (s) => s,
                               onSelect: (s) {
                                 provider.toggleSelection(
-                                    s, provider.tempGrades);
+                                  s,
+                                  provider.tempGrades,
+                                );
                                 setState(() {});
                               },
                             ),
@@ -416,7 +449,9 @@ class _EditTeachingPrefsBottomSheetState
                               itemLabel: (s) => s,
                               onSelect: (s) {
                                 provider.toggleSelection(
-                                    s, provider.tempCurriculums);
+                                  s,
+                                  provider.tempCurriculums,
+                                );
                                 setState(() {});
                               },
                             ),
@@ -461,70 +496,75 @@ class MultiSelectDropdown<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// HEADING
-        AppText.appText(title,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            textColor: AppTheme.lableText),
+        AppText.appText(
+          title,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          textColor: AppTheme.lableText,
+        ),
         const SizedBox(height: 12),
 
         DropdownButtonHideUnderline(
-            child: DropdownButton2<T>(
-          isExpanded: true,
-          hint: AppText.appText("Select", textColor: const Color(0xffA6ADBF)),
-          items: items.map((item) {
-            final isSelected = selectedItems.any((e) =>
-                (e is String
-                    ? e.toLowerCase()
-                    : (e as SubjectsModel).name.toLowerCase()) ==
-                (item is String
-                    ? item.toLowerCase()
-                    : (item as SubjectsModel).name.toLowerCase()));
-            return DropdownMenuItem<T>(
-              value: item,
-              enabled: false,
-              child: InkWell(
-                onTap: () {
-                  onSelect(item);
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppTheme.appColor.withOpacity(.2)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(itemLabel(item))),
-                      if (isSelected)
-                        Icon(Icons.check, color: AppTheme.appColor),
-                    ],
+          child: DropdownButton2<T>(
+            isExpanded: true,
+            hint: AppText.appText("Select", textColor: const Color(0xffA6ADBF)),
+            items: items.map((item) {
+              final isSelected = selectedItems.any(
+                (e) =>
+                    (e is String
+                        ? e.toLowerCase()
+                        : (e as SubjectsModel).name.toLowerCase()) ==
+                    (item is String
+                        ? item.toLowerCase()
+                        : (item as SubjectsModel).name.toLowerCase()),
+              );
+              return DropdownMenuItem<T>(
+                value: item,
+                enabled: false,
+                child: InkWell(
+                  onTap: () {
+                    onSelect(item);
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppTheme.appColor.withOpacity(.2)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(itemLabel(item))),
+                        if (isSelected)
+                          Icon(Icons.check, color: AppTheme.appColor),
+                      ],
+                    ),
                   ),
                 ),
+              );
+            }).toList(),
+            onChanged: (_) {},
+            buttonStyleData: ButtonStyleData(
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.primaryCOlor),
               ),
-            );
-          }).toList(),
-          onChanged: (_) {},
-          buttonStyleData: ButtonStyleData(
-            height: 42,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.primaryCOlor),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 150,
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              offset: const Offset(-5, -5),
             ),
           ),
-          dropdownStyleData: DropdownStyleData(
-            maxHeight: 150,
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            offset: const Offset(-5, -5),
-          ),
-        )),
+        ),
 
         /// SELECTED CHIPS
         if (selectedItems.isNotEmpty)
@@ -535,8 +575,10 @@ class MultiSelectDropdown<T> extends StatelessWidget {
               runSpacing: 6,
               children: selectedItems.map((e) {
                 return Chip(
-                  label: AppText.appText(itemLabel(e),
-                      textColor: AppTheme.lableText),
+                  label: AppText.appText(
+                    capitalizeEachWord(itemLabel(e)),
+                    textColor: AppTheme.lableText,
+                  ),
                   backgroundColor: AppTheme.white,
                   labelStyle: const TextStyle(color: Colors.black),
                 );

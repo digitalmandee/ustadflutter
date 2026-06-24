@@ -6,9 +6,11 @@ class AppUrls {
   static const String verifyOtp = "auth/verify-otp";
   static const String signUp = "auth/user-signup";
   static const String logIn = "auth/user-signin";
+  static const String guestLogin = "auth/guest-login";
   static const String onBoard = "tutor/onboarding";
   static const String googleSignIn = "auth/google-login";
   static const String googleSignUp = "auth/google-signup";
+  static const String deleteAccount = "/tutor/delete-account";
   ///////// Tutor Experience //////////////
   static const String getTutorExp = "tutor/experience";
   static const String addTutorExp = "tutor/experience/add";
@@ -62,7 +64,7 @@ class AppUrls {
 
   ///////////////  offers ////////////////
   static const String offerStatus = "parent/offer/";
-  static const String paymentIntent = "parent/payfast/subscription/initiate";
+  static const String paymentIntent = "/parent/payfast/subscription/initiate";
   static const String paymentIntentDummy = "parent/payment/intent-bypass";
 
   ///////////////  Settions ////////////////
@@ -91,8 +93,11 @@ class AppUrls {
 
   ////////////////////  PAYMENTS ///////////////////////
   static const String withdrawAmount = "tutor/payment-request";
+  static const String parentWithdrawAmount = "parent/payment-request";
+  static const String parentUpdateBank = "parent/bank-details";
   static const String getPaymentRequests = "tutor/payment-request";
   static const String getParentCards = "parent/payfast/instruments";
+  static const String getParentPaymentRequests = "parent/payment-request";
 
   ////////////////////  CONTRACTS ///////////////////////
   static const String getTutorContracts = "tutor/contracts";

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_exp_provider.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/experience/add_exp_sheet.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/experience/add_exp_sheet.dart';
 
 class TutorExperience extends StatefulWidget {
   final bool isParentSide;
@@ -21,8 +21,10 @@ class _TutorExperienceState extends State<TutorExperience> {
   void initState() {
     super.initState();
     if (!widget.isParentSide) {
-      Provider.of<ExperienceProvider>(context, listen: false)
-          .fetchExperiences(context);
+      Provider.of<ExperienceProvider>(
+        context,
+        listen: false,
+      ).fetchExperiences(context);
     }
   }
 
@@ -85,8 +87,9 @@ class _TutorExperienceState extends State<TutorExperience> {
   Widget customExpListView({experience}) {
     final parentExperience = widget.data?["TutorExperiences"];
     final isParent = widget.isParentSide;
-    final itemCount =
-        isParent ? (parentExperience?.length ?? 0) : (experience?.length ?? 0);
+    final itemCount = isParent
+        ? (parentExperience?.length ?? 0)
+        : (experience?.length ?? 0);
 
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
@@ -122,20 +125,20 @@ class _TutorExperienceState extends State<TutorExperience> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AppText.appText(
-                            isParent
-                                ? capitalizeEachWord(expData["company"])
-                                : capitalizeEachWord(exp.company),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500),
+                          isParent
+                              ? capitalizeEachWord(expData["company"])
+                              : capitalizeEachWord(exp.company),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                         AppText.appText(
-                            isParent
-                                ? expData["dasignation"]
-                                    .toString()
-                                    .toUpperCase()
-                                : exp.designation.toString().toUpperCase(),
-                            fontSize: 12,
-                            textColor: const Color(0xff2A2A2A),
-                            fontWeight: FontWeight.w400),
+                          isParent
+                              ? expData["dasignation"].toString().toUpperCase()
+                              : exp.designation.toString().toUpperCase(),
+                          fontSize: 12,
+                          textColor: const Color(0xff2A2A2A),
+                          fontWeight: FontWeight.w400,
+                        ),
                         AppText.appText(
                           isParent
                               ? '${DateTime.parse(expData["startDate"]).year} — ${expData["endDate"].toLowerCase() == "present" ? "Present" : DateTime.parse(expData["endDate"]).year}'
@@ -147,14 +150,13 @@ class _TutorExperienceState extends State<TutorExperience> {
                       ],
                     ),
                   ),
-                  if (!isParent) ...[
-                    _buildEditButton(context, exp),
-                  ]
+                  if (!isParent) ...[_buildEditButton(context, exp)],
                 ],
               ),
               const SizedBox(height: 10),
               _buildBulletPoint(
-                  text: isParent ? expData["description"] : exp.description),
+                text: isParent ? expData["description"] : exp.description,
+              ),
             ],
           ),
         );

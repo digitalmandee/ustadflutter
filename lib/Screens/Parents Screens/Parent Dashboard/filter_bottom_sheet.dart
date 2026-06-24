@@ -1,21 +1,22 @@
 import 'dart:convert';
-
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subjects_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/subject_screen.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subjects_model.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/subject_screen.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   final List<String> selectedFilters;
   final Function(List<String>) onApply;
 
-  const FilterBottomSheet(
-      {super.key, required this.selectedFilters, required this.onApply});
+  const FilterBottomSheet({
+    super.key,
+    required this.selectedFilters,
+    required this.onApply,
+  });
 
   @override
   State<FilterBottomSheet> createState() => FilterBottomSheetState();
@@ -45,7 +46,7 @@ class FilterBottomSheetState extends State<FilterBottomSheet> {
     "Matriculation",
     "Intermediate",
     "O Level",
-    "A Level"
+    "A Level",
   ];
   final List<String> allCurriculums = [
     "Cambridge",
@@ -55,7 +56,7 @@ class FilterBottomSheetState extends State<FilterBottomSheet> {
     "Punjab Board",
     "Sindh Board",
     "Local",
-    "Others"
+    "Others",
   ];
   @override
   void initState() {
@@ -156,8 +157,9 @@ class FilterBottomSheetState extends State<FilterBottomSheet> {
         children: [
           AppText.appText("Filters", fontSize: 18, fontWeight: FontWeight.w600),
           IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.cancel)),
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.cancel),
+          ),
         ],
       ),
     );
@@ -167,62 +169,18 @@ class FilterBottomSheetState extends State<FilterBottomSheet> {
     return Container(height: 1, color: AppTheme.borderCOlor);
   }
 
-  Widget _buildSubjectDropdown() {
-    return Container(
-      height: 44,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xffD4D8E2)),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<SubjectsModel>(
-          value: selectedSubject,
-          hint: const Text("Select Subject"),
-          items: subjects
-              .map((subject) => DropdownMenuItem(
-                  value: subject,
-                  child: AppText.appText(
-                    subject.name,
-                    textColor: subject == selectedSubject
-                        ? AppTheme.appColor
-                        : Colors.black,
-                  )))
-              .toList(),
-          selectedItemBuilder: (context) {
-            return subjects.map((subject) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: AppText.appText(
-                  subject.name,
-                  fontWeight: FontWeight.w400,
-                ),
-              );
-            }).toList();
-          },
-          onChanged: (value) => setState(() => selectedSubject = value),
-          dropdownStyleData: DropdownStyleData(
-            maxHeight: 150,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5), color: Colors.white),
-            offset: const Offset(0, -10),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFilterSection(String title, List<String> options) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppText.appText(title,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              textColor: AppTheme.lableText),
+          AppText.appText(
+            title,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            textColor: AppTheme.lableText,
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -272,26 +230,18 @@ class FilterBottomSheetState extends State<FilterBottomSheet> {
 
   void _syncMultiSelectFilters() {
     tempSelected.removeWhere(
-      (e) => subjects.any(
-        (s) => s.name.toLowerCase() == e.toLowerCase(),
-      ),
+      (e) => subjects.any((s) => s.name.toLowerCase() == e.toLowerCase()),
     );
 
     tempSelected.removeWhere(
-      (e) => allGrades.any(
-        (g) => g.toLowerCase() == e.toLowerCase(),
-      ),
+      (e) => allGrades.any((g) => g.toLowerCase() == e.toLowerCase()),
     );
 
     tempSelected.removeWhere(
-      (e) => allCurriculums.any(
-        (c) => c.toLowerCase() == e.toLowerCase(),
-      ),
+      (e) => allCurriculums.any((c) => c.toLowerCase() == e.toLowerCase()),
     );
 
-    tempSelected.addAll(
-      selectedSubjects.map((s) => s.name),
-    );
+    tempSelected.addAll(selectedSubjects.map((s) => s.name));
 
     tempSelected.addAll(selectedGrades);
 

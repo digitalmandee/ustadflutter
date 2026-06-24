@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutter/services.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 
 class CustomAppTextField extends StatefulWidget {
   final String? texthint;
@@ -22,6 +23,7 @@ class CustomAppTextField extends StatefulWidget {
   final bool? readOnly;
   final TextDirection? textDirection;
   final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
   final VoidCallback? onTap;
   const CustomAppTextField({
     super.key,
@@ -46,6 +48,7 @@ class CustomAppTextField extends StatefulWidget {
     this.textDirection,
     this.onTap,
     this.fillColor,
+    this.inputFormatters,
   });
 
   @override
@@ -96,6 +99,7 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
         obscureText: _obscureText,
         textCapitalization: TextCapitalization.sentences,
         keyboardType: widget.txtType ?? TextInputType.name,
+        inputFormatters: widget.inputFormatters,
         cursorColor: widget.cursorColor ?? AppTheme.appColor,
         onChanged: widget.onChanged,
         style: TextStyle(color: widget.textColor),
@@ -108,7 +112,8 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
               ? const EdgeInsets.all(15)
               : const EdgeInsets.all(9),
           hintText: widget.texthint,
-          hintStyle: widget.hintStyle ??
+          hintStyle:
+              widget.hintStyle ??
               TextStyle(
                 color: AppTheme.hintColor,
                 fontSize: 14,
@@ -116,7 +121,8 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
                 fontFamily: "InstrumentSans",
               ),
           prefixIcon: widget.prefixIcon,
-          suffixIcon: widget.suffix ??
+          suffixIcon:
+              widget.suffix ??
               (widget.isPasswordField
                   ? InkWell(
                       onTap: () {
@@ -138,8 +144,12 @@ class _CustomAppTextFieldState extends State<CustomAppTextField> {
   }
 }
 
-Widget parentHomeSearchField(context, controller,
-    {ValueChanged<String>? onChanged, required String hintText}) {
+Widget parentHomeSearchField(
+  context,
+  controller, {
+  ValueChanged<String>? onChanged,
+  required String hintText,
+}) {
   return Container(
     height: 44,
     width: MediaQuery.of(context).size.width,

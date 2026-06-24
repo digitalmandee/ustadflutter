@@ -1,31 +1,37 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
+import 'package:flutterustad/Screens/Authentication/apple_signIn_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Custom widgets/app_button.dart';
-import 'package:ustaad/Custom widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/google_signup_detail.dart';
-import 'package:ustaad/Screens/Authentication/SignUP/sign_up_screen.dart';
-import 'package:ustaad/Screens/Authentication/google_signin.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Authentication/Forgot Pass/forgot_pass.dart';
-import 'package:ustaad/Screens/Authentication/otp.dart';
-import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
-import 'package:ustaad/Screens/Parents Screens/Parents OnBoard/parents_onboard.dart';
-import 'package:ustaad/Screens/Teacher Screens/0nBoard Screens/tutor_on_board.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom widgets/app_button.dart';
+import 'package:flutterustad/Custom widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/google_signup_detail.dart';
+import 'package:flutterustad/Screens/Authentication/SignUP/sign_up_screen.dart';
+import 'package:flutterustad/Screens/Authentication/google_signin.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/Forgot Pass/forgot_pass.dart';
+import 'package:flutterustad/Screens/Authentication/otp.dart';
+import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
+import 'package:flutterustad/Screens/Parents Screens/Parents OnBoard/parents_onboard.dart';
+import 'package:flutterustad/Screens/Teacher Screens/0nBoard Screens/tutor_on_board.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class LogInScreen extends StatefulWidget {
-  const LogInScreen({super.key});
+  final bool showLogoutMessage;
+  const LogInScreen({super.key, this.showLogoutMessage = false});
 
   @override
   State<LogInScreen> createState() => _LogInScreenState();
@@ -42,14 +48,24 @@ class _LogInScreenState extends State<LogInScreen> {
   late GoogleSignInService _googleSignInService;
   final AppLogger logger = AppLogger();
 
+  bool _isAppleLoading = false;
+  late AppleSignInService _appleSignInService;
+
   @override
   void initState() {
     super.initState();
     dio = AppDio(context);
+    if (widget.showLogoutMessage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppToast.success(context: context, msg: "Logged out successfully");
+      });
+    }
     getDeviceToken();
     isTokenRefresh();
     _googleSignInService = GoogleSignInService.instance;
     _googleSignInService.init();
+    _appleSignInService = AppleSignInService.instance;
+    _appleSignInService.init();
     logger.init();
   }
 
@@ -98,20 +114,25 @@ class _LogInScreenState extends State<LogInScreen> {
                 setState(() => _isGoogleLoading = true);
                 final userData = await _googleSignInService.signIn(context);
                 if (userData != null) {
-                  push(
-                      context,
-                      GoogleSignupDetail(
-                        userData: userData,
-                      ));
+                  push(context, GoogleSignupDetail(userData: userData));
                 }
                 if (mounted) {
                   setState(() => _isGoogleLoading = false);
                 }
               },
+              onAppleTap: () async {
+                setState(() => _isAppleLoading = true);
+                final userData = await _appleSignInService.signIn(context);
+                if (userData != null) {
+                  push(context, GoogleSignupDetail(userData: userData));
+                }
+                if (mounted) {
+                  setState(() => _isAppleLoading = false);
+                }
+              },
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
               child: Column(
                 children: [
                   customLableField(
@@ -128,30 +149,26 @@ class _LogInScreenState extends State<LogInScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // Row(
-                      //   children: [
-                      //     Checkbox(value: false, onChanged: (_) {}),
-                      //     AppText.appText(
-                      //       "Remember me",
-                      //       fontSize: 14,
-                      //       fontWeight: FontWeight.w400,
-                      //       textColor: AppTheme.grey,
-                      //     ),
-                      //   ],
-                      // ),
-                      GestureDetector(
-                        onTap: () => push(
-                            context,
-                            ForgotPassScreen(
-                              isEditing: false,
-                            )),
-                        child: AppText.appText(
-                          "Forgot Password?",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          textColor: AppTheme.appColor,
+                      if (!Staticdata.isActive)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ForgotPassScreen(isEditing: false),
+                              ),
+                            );
+                          },
+                          // =>
+                          //     push(context, ForgotPassScreen(isEditing: false)),
+                          child: AppText.appText(
+                            "Forgot Password?",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            textColor: AppTheme.appColor,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   Padding(
@@ -166,8 +183,26 @@ class _LogInScreenState extends State<LogInScreen> {
                             backgroundColor: AppTheme.primaryCOlor,
                           ),
                   ),
+                  if (Staticdata.guestmood) ...[
+                    GestureDetector(
+                      onTap: () => _guestSignIn(context),
+                      child: Center(
+                        child: Text(
+                          "Continue as Parent Guest",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.primaryCOlor,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                   loginDivider("Or login with"),
                   const SizedBox(height: 30),
+
                   _isGoogleLoading
                       ? const GifLoader()
                       : AppButton.appButton(
@@ -175,8 +210,9 @@ class _LogInScreenState extends State<LogInScreen> {
                           context: context,
                           onTap: () async {
                             setState(() => _isGoogleLoading = true);
-                            final userData =
-                                await _googleSignInService.signIn(context);
+                            final userData = await _googleSignInService.signIn(
+                              context,
+                            );
                             if (userData != null) {
                               await _googleSignIn(context, userData);
                             }
@@ -190,11 +226,45 @@ class _LogInScreenState extends State<LogInScreen> {
                           backgroundColor: AppTheme.white,
                           image: "assets/images/google.png",
                         ),
+
+                  Platform.isAndroid
+                      ? const SizedBox.shrink()
+                      : const SizedBox(height: 16),
+                  Platform.isAndroid
+                      ? const SizedBox.shrink()
+                      : _isAppleLoading
+                      ? const GifLoader()
+                      : AppButton.appButton(
+                          "Apple",
+                          context: context,
+                          onTap: () async {
+                            setState(() => _isAppleLoading = true);
+
+                            final userData = await _appleSignInService.signIn(
+                              context,
+                            );
+
+                            if (userData != null) {
+                              await _appleSignIn(context, userData);
+                            }
+
+                            if (mounted) {
+                              setState(() => _isAppleLoading = false);
+                            }
+                          },
+                          fontWeight: FontWeight.w600,
+                          textColor: AppTheme.lableText,
+                          borderColor: AppTheme.borderCOlor,
+                          backgroundColor: AppTheme.white,
+                          image: "assets/images/apple.png",
+                        ),
+
                   const SizedBox(height: 40),
-                  loginFooter(),
+                  const SizedBox(height: 40),
+                  loginFooter(context),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -210,7 +280,9 @@ class _LogInScreenState extends State<LogInScreen> {
     final emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (email.isEmpty || !emailPattern.hasMatch(email)) {
       AppToast.error(
-          context: context, msg: "Please enter a valid email address.");
+        context: context,
+        msg: "Please enter a valid email address.",
+      );
       setState(() => isLoading = false);
       return;
     }
@@ -222,7 +294,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      final fcm_tokenGEt = prefs.getString('fcm_token');
+      final fcmTokenget = prefs.getString('fcm_token');
 
       final response = await dio.post(
         path: AppUrls.logIn,
@@ -230,8 +302,7 @@ class _LogInScreenState extends State<LogInScreen> {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "deviceId":
-                fcm_tokenGEt ?? "", // Use FCM token instead of device-id
+            "deviceId": fcmTokenget ?? "", // Use FCM token instead of device-id
           },
         ),
       );
@@ -255,10 +326,7 @@ class _LogInScreenState extends State<LogInScreen> {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -280,12 +348,31 @@ class _LogInScreenState extends State<LogInScreen> {
     };
   }
 
+  Future<void> _guestSignIn(BuildContext context) async {
+    try {
+      final response = await dio.postJson(path: AppUrls.guestLogin, data: {});
+
+      if (!context.mounted) return;
+      if (response.statusCode == 200) {
+        await _handleLoginSuccess(context, response.data, isGuestLogin: true);
+      } else {
+        AppToast.error(
+          context: context,
+          msg: response.data?["message"] ?? "Guest login failed",
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      AppToast.error(context: context, msg: "Guest login failed");
+    }
+  }
+
   Future<void> _googleSignIn(context, Map<String, dynamic> userData) async {
     try {
-      final role = await _selectUserRole(context);
+      // final role = await _selectUserRole(context);
       final name = splitName(userData["displayName"] ?? "");
 
-      if (role == null) return;
+      // if (role == null) return;
 
       final response = await dio.post(
         path: AppUrls.googleSignIn,
@@ -296,7 +383,7 @@ class _LogInScreenState extends State<LogInScreen> {
           "lastName": name["lastName"],
           "image": userData["photoUrl"] ?? "",
           "accessToken": userData["idToken"] ?? "",
-          "role": role.toUpperCase(),
+          // "role": role.toUpperCase(),
         },
       );
 
@@ -318,214 +405,100 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  Future<String?> _selectUserRole(BuildContext context) {
-    String? selectedRole;
-
-    return showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              titlePadding: const EdgeInsets.only(top: 20),
-              title: Center(
-                child: Text(
-                  "Select Your Role",
-                  style: TextStyle(
-                    color: AppTheme.appColor,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              content: SizedBox(
-                width: 320,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildRoleCard(
-                          context,
-                          label: "Parent",
-                          selected: selectedRole == "Parent",
-                          onSelect: () =>
-                              setState(() => selectedRole = "Parent"),
-                        ),
-                        _buildRoleCard(
-                          context,
-                          label: "Tutor",
-                          selected: selectedRole == "Tutor",
-                          onSelect: () =>
-                              setState(() => selectedRole = "Tutor"),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.pop(context, null),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey.shade300,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.black87),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: selectedRole != null
-                                ? () => Navigator.pop(context, selectedRole)
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.appColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              "Continue",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /// ✅ Reusable role card widget
-  Widget _buildRoleCard(
-    BuildContext context, {
-    required String label,
-    required bool selected,
-    required VoidCallback onSelect,
-  }) {
-    return GestureDetector(
-      onTap: onSelect,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 100,
-        width: ScreenSize(context).width * 0.3,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? AppTheme.appColor : AppTheme.borderCOlor,
-            width: 2,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Radio<String>(
-              value: label,
-              groupValue: selected ? label : null,
-              activeColor: AppTheme.appColor,
-              onChanged: (_) => onSelect(),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: selected ? AppTheme.appColor : AppTheme.lighttxtColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _handleLoginSuccess(
-      context, Map<String, dynamic> responseData) async {
+    BuildContext context,
+    Map<String, dynamic> responseData, {
+    bool isGuestLogin = false,
+  }) async {
     final data = responseData["data"];
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setString(PrefKey.authorization, data["token"] ?? '');
-    await prefs.setString(PrefKey.id, data["id"]);
-    await prefs.setString(PrefKey.userRole, data["role"]);
-    await prefs.setString(PrefKey.userFirstName, data["firstName"]);
-    await prefs.setString(PrefKey.userLastName, data["lastName"]);
+    await prefs.setString(PrefKey.id, "${data["id"] ?? ''}");
+    await prefs.setString(PrefKey.userRole, data["role"] ?? '');
+    await prefs.setString(PrefKey.userFirstName, data["firstName"] ?? '');
+    await prefs.setString(PrefKey.userLastName, data["lastName"] ?? '');
     await prefs.setString(PrefKey.userPic, data["image"] ?? '');
     await prefs.setString(PrefKey.onBoard, data["isOnBoard"] ?? '');
+    await prefs.setString(PrefKey.isGoogleId, data["googleId"] ?? '');
+    await prefs.setBool('is_guest', isGuestLogin);
 
-    globalUserId = data["id"];
+    globalUserId = "${data["id"] ?? ''}";
     globalUserFirstName = data["firstName"];
     globalUserLastName = data["lastName"];
     globalUserRole = data["role"];
     globalToken = data["token"];
     globalUserPic = data["image"] ?? '';
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
+    // globalGoogleId = data["googleId"] ?? "";
+    globalGoogleId = data["googleId"] ?? data["appleId"] ?? "";
+    isGuest = isGuestLogin;
 
-    if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
+    if (!context.mounted) return;
+
+    if (data["isEmailVerified"] == false) {
       push(
         context,
         OtpScreen(
-          mode: OtpMode.both,
-          userId: "${data["id"]}",
-          email: data["email"],
-          phone: "${data["phone"]}",
-          fromEditProfile: false,
-        ),
-      );
-    } else if (data["isEmailVerified"] == false) {
-      push(
-        context,
-        OtpScreen(
-          mode: OtpMode.email,
           userId: "${data["id"]}",
           fromEditProfile: false,
           email: data["email"],
         ),
       );
-    }
-    // else if (data["isPhoneVerified"] == false) {
-    //   push(
-    //     context,
-    //     OtpScreen(
-    //       mode: OtpMode.phone,
-    //       userId: "${data["id"]}",
-    //       fromEditProfile: false,
-    //       phone: "${data["phone"]}",
-    //     ),
-    //   );
-    // }
-    else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {
+    } else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {
       push(context, TutorOnboardScreen());
     } else if (data["isOnBoard"] == "required" && data["role"] == "PARENT") {
-      pushReplacement(context, ParentsOnboardScreen());
+      push(context, ParentsOnboardScreen());
     } else if (data["role"] == "TUTOR") {
       pushReplacement(context, BottomNavView(tutor: true));
-    } else if (data["role"] == "PARENT") {
+    } else if (data["role"] == "PARENT" || data["role"] == "GUEST") {
       pushReplacement(context, BottomNavView(tutor: false));
+    }
+  }
+
+  Future<void> _appleSignIn(context, Map<String, dynamic> userData) async {
+    try {
+      final name = splitName(userData["displayName"] ?? "");
+
+      final response = await dio.post(
+        path: AppUrls.googleSignIn,
+        data: {
+          "email": (userData["email"] ?? "").toString().trim().toLowerCase(),
+
+          // Because your backend is using the same API for Google and Apple
+          "googleId": userData["appleId"] ?? userData["id"],
+
+          // Keep this also if backend supports appleId
+          "appleId": userData["appleId"] ?? userData["id"],
+
+          "firstName": userData["firstName"] ?? name["firstName"],
+          "lastName": userData["lastName"] ?? name["lastName"],
+          "image": userData["photoUrl"] ?? "",
+          "accessToken": userData["idToken"] ?? userData["identityToken"] ?? "",
+          "identityToken": userData["identityToken"] ?? "",
+          "authorizationCode": userData["authorizationCode"] ?? "",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await _handleLoginSuccess(context, response.data);
+      } else {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      if (kDebugMode) {
+        print("Apple Sign-In API Error: $e");
+      }
+
+      AppToast.error(
+        context: context,
+        msg: "Something went wrong. Please try again.",
+      );
     }
   }
 }

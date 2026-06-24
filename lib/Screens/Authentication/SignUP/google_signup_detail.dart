@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/otp.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Authentication/widgets/country_picker.dart';
-import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parents%20OnBoard/parents_onboard.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/tutor_on_board.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/otp.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/country_picker.dart';
+import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parents%20OnBoard/parents_onboard.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/tutor_on_board.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class GoogleSignupDetail extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -28,6 +29,7 @@ class GoogleSignupDetail extends StatefulWidget {
 class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   String selectedRole = "Tutor";
   String selectedCountry = "Pakistan";
   String selectedGender = "Male";
@@ -52,59 +54,107 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
         children: [
           authHeader(context: context, isSignInScreen: false),
           Expanded(
-              child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText.appText("Sign Up As:",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      textColor: AppTheme.lighttxtColor),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildRoleOption("Tutor"),
-                      const SizedBox(width: 20),
-                      _buildRoleOption("Parent"),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  AppText.appText("Gender",
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText.appText(
+                      "Sign Up As:",
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      textColor: AppTheme.lableText),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildGenderOption("Male"),
-                      const SizedBox(width: 20),
-                      _buildGenderOption("Female"),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  customLableField(
-                      lable: "Address", controller: addressController),
-                  const SizedBox(height: 20),
-                  customLableField(lable: "City", controller: cityController),
-                  const SizedBox(height: 20),
-                  CountryPickerField(
-                      onCountrySelected: (country) =>
-                          selectedCountry = country),
-                  const SizedBox(height: 20),
-                  AppButton.appButton("Sign Up",
-                      onTap: _validateAdditionalDetails, context: context),
-                ],
+                      textColor: AppTheme.lableText,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildRoleOption("Tutor"),
+                        const SizedBox(width: 20),
+                        _buildRoleOption("Parent"),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    AppText.appText(
+                      "Gender",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      textColor: AppTheme.lableText,
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildGenderOption("Male"),
+                        const SizedBox(width: 20),
+                        _buildGenderOption("Female"),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    customLableField(
+                      lable: "Address",
+                      controller: addressController,
+                    ),
+                    const SizedBox(height: 20),
+                    customLableField(lable: "City", controller: cityController),
+                    const SizedBox(height: 20),
+                    CountryPickerField(
+                      onCountrySelected: (country) => selectedCountry = country,
+                    ),
+                    const SizedBox(height: 20),
+                    _phoneInput(),
+                    const SizedBox(height: 20),
+                    AppButton.appButton(
+                      "Sign Up",
+                      onTap: _validateAdditionalDetails,
+                      context: context,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ))
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _phoneInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText.appText(
+          "Phone Number",
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          textColor: AppTheme.lableText,
+        ),
+        const SizedBox(height: 10),
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xffD4D8E2)),
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+          ),
+          child: PhoneFormField(
+            initialValue: PhoneNumber.parse('+92'),
+            countrySelectorNavigator:
+                const CountrySelectorNavigator.draggableBottomSheet(),
+            autovalidateMode: AutovalidateMode.disabled,
+            onChanged: (phoneNumber) {
+              phoneController.text =
+                  "${phoneNumber.countryCode}${phoneNumber.nsn}";
+            },
+            decoration: const InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -131,11 +181,7 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
               activeColor: AppTheme.appColor,
               onChanged: (value) => setState(() => selectedGender = value!),
             ),
-            AppText.appText(
-              gender,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+            AppText.appText(gender, fontSize: 14, fontWeight: FontWeight.w500),
           ],
         ),
       ),
@@ -143,10 +189,17 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
   }
 
   void _validateAdditionalDetails() {
+    final phone = phoneController.text.trim();
+
     if (addressController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter Address");
     } else if (cityController.text.trim().isEmpty) {
       AppToast.error(context: context, msg: "Please enter City");
+    } else if (phone.isEmpty || phone.length != 12) {
+      AppToast.error(
+        context: context,
+        msg: "Please enter a valid phone number.",
+      );
     } else {
       _googleSignUp(context);
     }
@@ -194,16 +247,46 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
     };
   }
 
-  Future<void> _googleSignUp(
-    context,
-  ) async {
+  Future<void> _googleSignUp(context) async {
     try {
       final name = splitName(widget.userData["displayName"] ?? "");
+      final provider = widget.userData["provider"] ?? "google";
+      final isApple = provider == "apple";
+
+      // final response = await dio.post(
+      //   path: AppUrls.googleSignUp,
+      //   data: {
+      //     "email": (widget.userData["email"] ?? "")
+      //         .toString()
+      //         .trim()
+      //         .toLowerCase(),
+
+      //     if (isApple)
+      //       "appleId": widget.userData["appleId"] ?? widget.userData["id"]
+      //     else
+      //       "googleId": widget.userData["id"],
+
+      //     "firstName": name["firstName"],
+      //     "lastName": name["lastName"],
+      //     "image": widget.userData["photoUrl"] ?? "",
+      //     "accessToken": widget.userData["idToken"] ?? "",
+      //     "provider": provider,
+
+      //     "role": selectedRole.toUpperCase(),
+      //     "address": addressController.text,
+      //     "city": cityController.text,
+      //     "country": selectedCountry,
+      //     "phone": phoneController.text.trim(),
+      //     "gender": selectedGender.toLowerCase(),
+      //   },
+      // );
       final response = await dio.post(
         path: AppUrls.googleSignUp,
         data: {
-          "email":
-              (widget.userData["email"] ?? "").toString().trim().toLowerCase(),
+          "email": (widget.userData["email"] ?? "")
+              .toString()
+              .trim()
+              .toLowerCase(),
           "googleId": widget.userData["id"],
           "firstName": name["firstName"],
           "lastName": name["lastName"],
@@ -213,6 +296,7 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
           "address": addressController.text,
           "city": cityController.text,
           "country": selectedCountry,
+          "phone": phoneController.text.trim(),
           "gender": selectedGender.toLowerCase(),
         },
       );
@@ -235,7 +319,9 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
   }
 
   Future<void> _handleLoginSuccess(
-      context, Map<String, dynamic> responseData) async {
+    context,
+    Map<String, dynamic> responseData,
+  ) async {
     final data = responseData["data"];
     final prefs = await SharedPreferences.getInstance();
 
@@ -246,6 +332,7 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
     await prefs.setString(PrefKey.userLastName, data["lastName"]);
     await prefs.setString(PrefKey.userPic, data["image"] ?? '');
     await prefs.setString(PrefKey.onBoard, data["isOnBoard"] ?? '');
+    await prefs.setString(PrefKey.isGoogleId, data["googleId"] ?? '');
 
     globalUserId = data["id"];
     globalUserFirstName = data["firstName"];
@@ -254,15 +341,14 @@ class _GoogleSignupDetailState extends State<GoogleSignupDetail> {
     globalToken = data["token"];
     globalUserPic = data["image"] ?? '';
     globalUserOnBoardStatus = data["isOnBoard"] ?? '';
+    globalGoogleId = data["googleId"] ?? "";
 
-    if (data["isEmailVerified"] == false && data["isPhoneVerified"] == false) {
+    if (data["isEmailVerified"] == false) {
       push(
         context,
         OtpScreen(
-          mode: OtpMode.both,
           userId: "${data["id"]}",
           email: data["email"].toString().trim().toLowerCase(),
-          phone: "${data["phone"]}",
         ),
       );
     } else if (data["isOnBoard"] == "required" && data["role"] == "TUTOR") {

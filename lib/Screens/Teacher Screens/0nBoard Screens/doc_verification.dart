@@ -2,25 +2,30 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/submission_screen.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class TutorDocVerificationScreen extends StatefulWidget {
   final TutorOnboardData onboardData;
   final VoidCallback onBackTap;
+  final VoidCallback onTap;
 
-  const TutorDocVerificationScreen(
-      {super.key, required this.onboardData, required this.onBackTap});
+  const TutorDocVerificationScreen({
+    super.key,
+    required this.onboardData,
+    required this.onBackTap,
+    required this.onTap,
+  });
 
   @override
   State<TutorDocVerificationScreen> createState() =>
@@ -56,10 +61,7 @@ class _TutorDocVerificationScreenState
                 onTap: () {
                   widget.onBackTap.call();
                 },
-                child: Image.asset(
-                  "assets/images/arrowBack.png",
-                  height: 28,
-                ),
+                child: Image.asset("assets/images/arrowBack.png", height: 28),
               ),
             ),
             _buildHeader(),
@@ -95,7 +97,7 @@ class _TutorDocVerificationScreenState
           ),
           TextSpan(text: ' For Your '),
           TextSpan(
-            text: 'Verifications',
+            text: 'Verification',
             style: TextStyle(
               color: AppTheme.appColor,
               fontWeight: FontWeight.w600,
@@ -133,7 +135,7 @@ class _TutorDocVerificationScreenState
             hint: "(PDF, Max 2MB)",
             type: "resume",
             fileName: fileProvider.resumeFile?.file.name,
-            onTap: () => fileProvider.pickFile("resume"),
+            onTap: () => fileProvider.pickFile("resume", context),
             onDelete: () => fileProvider.removeFile("resume"),
           ),
           const SizedBox(height: 20),
@@ -144,7 +146,7 @@ class _TutorDocVerificationScreenState
             hint: "(JPG/PNG)",
             type: "idFront",
             fileName: fileProvider.idFrontFile?.file.name,
-            onTap: () => fileProvider.pickFile("idFront"),
+            onTap: () => fileProvider.pickFile("idFront", context),
             onDelete: () => fileProvider.removeFile("idFront"),
           ),
           const SizedBox(height: 20),
@@ -155,7 +157,7 @@ class _TutorDocVerificationScreenState
             hint: "(JPG/PNG)",
             type: "idBack",
             fileName: fileProvider.idBackFile?.file.name,
-            onTap: () => fileProvider.pickFile("idBack"),
+            onTap: () => fileProvider.pickFile("idBack", context),
             onDelete: () => fileProvider.removeFile("idBack"),
           ),
         ],
@@ -228,12 +230,15 @@ class _TutorDocVerificationScreenState
         if (fileProvider.resumeFile != null &&
             fileProvider.idFrontFile != null &&
             fileProvider.idBackFile != null) {
-          widget.onboardData.resumeFile =
-              File(fileProvider.resumeFile!.file.path!);
-          widget.onboardData.idFrontFile =
-              File(fileProvider.idFrontFile!.file.path!);
-          widget.onboardData.idBackFile =
-              File(fileProvider.idBackFile!.file.path!);
+          widget.onboardData.resumeFile = File(
+            fileProvider.resumeFile!.file.path!,
+          );
+          widget.onboardData.idFrontFile = File(
+            fileProvider.idFrontFile!.file.path!,
+          );
+          widget.onboardData.idBackFile = File(
+            fileProvider.idBackFile!.file.path!,
+          );
 
           docVerify(context, widget.onboardData);
         } else {
@@ -261,39 +266,61 @@ class _TutorDocVerificationScreenState
       FormData formData = FormData.fromMap({
         "subjects": jsonEncode(data.selectedSubjects),
         "bankName": data.selectedBank,
-        "grade": jsonEncode(data.selectedGrades), // <- encode list as JSON
+        "grade": jsonEncode(data.selectedGrades),
         "curriculum": jsonEncode(data.selectedCurriculums),
         "accountNumber": data.accountNumber?.replaceAll(RegExp(r'\D'), ''),
+        // if (data.resumeFile != null)
+        //   "resume": await MultipartFile.fromFile(
+        //     data.resumeFile!.path,
+        //     filename: 'resume.pdf',
+        //   ),
+        // if (data.idFrontFile != null)
+        //   "idFront": await MultipartFile.fromFile(
+        //     data.idFrontFile!.path,
+        //     filename: 'id_front.pdf',
+        //   ),
+        // if (data.idBackFile != null)
+        //   "idBack": await MultipartFile.fromFile(
+        //     data.idBackFile!.path,
+        //     filename: 'id_back.pdf',
+        //   ),
         if (data.resumeFile != null)
-          "resume": await MultipartFile.fromFile(data.resumeFile!.path,
-              filename: 'resume.pdf'),
+          "resume": await MultipartFile.fromFile(
+            data.resumeFile!.path,
+            filename: data.resumeFile!.path.split('/').last,
+            contentType: MediaType('application', 'pdf'),
+          ),
+
         if (data.idFrontFile != null)
-          "idFront": await MultipartFile.fromFile(data.idFrontFile!.path,
-              filename: 'id_front.pdf'),
+          "idFront": await MultipartFile.fromFile(
+            data.idFrontFile!.path,
+            filename: data.idFrontFile!.path.split('/').last,
+            contentType: MediaType('image', 'jpeg'), // OR detect dynamically
+          ),
+
         if (data.idBackFile != null)
-          "idBack": await MultipartFile.fromFile(data.idBackFile!.path,
-              filename: 'id_back.pdf'),
+          "idBack": await MultipartFile.fromFile(
+            data.idBackFile!.path,
+            filename: data.idBackFile!.path.split('/').last,
+            contentType: MediaType('image', 'jpeg'),
+          ),
       });
 
-      Response response = await dio.post(
-        path: AppUrls.onBoard,
-        data: formData,
-      );
+      Response response = await dio.post(path: AppUrls.onBoard, data: formData);
 
       var responseData = response.data;
 
       if (response.statusCode == 201) {
-        AppToast.success(
-          context: context,
-          msg: "${responseData["message"]}",
-        );
+        AppToast.success(context: context, msg: "${responseData["message"]}");
 
         setState(() => isLoading = false);
 
-        pushUntil(
-          context,
-          const SubmissionCompleteScreen(tutor: true),
-        );
+        widget.onTap();
+
+        // pushUntil(
+        //   context,
+        //   const SubmissionCompleteScreen(tutor: true),
+        // );
       } else {
         setState(() => isLoading = false);
         AppToast.error(
@@ -303,10 +330,7 @@ class _TutorDocVerificationScreenState
       }
     } catch (e) {
       setState(() => isLoading = false);
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     }
   }
 }

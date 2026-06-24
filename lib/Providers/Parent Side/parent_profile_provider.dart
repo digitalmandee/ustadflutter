@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Parent%20Side/child_detail_model.dart';
-import 'package:ustaad/Models/Parent%20Side/child_note_model.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Parent%20Side/child_detail_model.dart';
+import 'package:flutterustad/Models/Parent%20Side/child_note_model.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ParentProfileProvider with ChangeNotifier {
   List<Child> _children = [];
@@ -36,14 +37,17 @@ class ParentProfileProvider with ChangeNotifier {
   String parentImage = '';
   String tasks = "0";
   bool isVerified = false;
+  String profileBalance = "0";
+  String bankName = "";
+  String accountNumber = "";
   String fName = '';
   String lName = '';
   String averageRating = '';
-
   String totalReviews = '';
   String unReadMessages = "";
   bool isTutorSide = false;
   List ratingData = [];
+  List<dynamic> parentTranferredHistory = [];
 
   Future<void> fetchChildren(context) async {
     if (children.isEmpty) {
@@ -64,7 +68,9 @@ class ParentProfileProvider with ChangeNotifier {
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       }
     } catch (e) {
@@ -76,10 +82,7 @@ class ParentProfileProvider with ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -95,8 +98,9 @@ class ParentProfileProvider with ChangeNotifier {
 
     try {
       final response = await _dio.get(
-          path:
-              "${AppUrls.getChildrenNotes}/${(selectedChild!.firstName).toLowerCase()} ${(selectedChild!.lastname).toLowerCase()}");
+        path:
+            "${AppUrls.getChildrenNotes}/${(selectedChild!.firstName).toLowerCase()} ${(selectedChild!.lastname).toLowerCase()}",
+      );
       var responseData = response.data;
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data["data"] as List;
@@ -104,12 +108,79 @@ class ParentProfileProvider with ChangeNotifier {
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       debugPrint("Error fetching child notes: $e");
     } finally {
       _notesLoader = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getPaymentRequests(context) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _dio.get(path: AppUrls.getParentPaymentRequests);
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+        parentTranferredHistory = data;
+      } else {
+        AppToast.error(
+          context: context,
+          msg:
+              response.data["errors"]?[0]?["message"] ?? "Something went wrong",
+        );
+      }
+    } catch (e) {
+      AppToast.error(context: context, msg: "Something went wrong: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateBankDetails(
+    context,
+    String newBankName,
+    String newAccountNumber,
+  ) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final body = {"bankName": newBankName, "accountNumber": newAccountNumber};
+
+      final response = await _dio.patch(
+        path: AppUrls.parentUpdateBank,
+        data: body,
+      );
+
+      if (response.statusCode == 200) {
+        bankName = newBankName;
+        accountNumber = newAccountNumber;
+
+        notifyListeners();
+        return true;
+      } else {
+        AppToast.error(
+          context: context,
+          msg:
+              response.data["errors"]?[0]?["message"] ??
+              "Failed to update bank details",
+        );
+        return false;
+      }
+    } catch (e) {
+      AppToast.error(context: context, msg: "Something went wrong: $e");
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
@@ -134,6 +205,7 @@ class ParentProfileProvider with ChangeNotifier {
     required String gender,
     required String curriculum,
     XFile? imageFile,
+    context,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -154,11 +226,17 @@ class ParentProfileProvider with ChangeNotifier {
 
       final response = await _dio.post(path: AppUrls.addChild, data: body);
 
-      final newChild = Child.fromJson(response.data['data']);
-      _children.add(newChild);
-      _selectedChild = newChild;
-
-      notifyListeners();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final newChild = Child.fromJson(response.data['data']);
+        _children.add(newChild);
+        _selectedChild = newChild;
+        notifyListeners();
+      } else {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+      }
     } catch (e) {
       debugPrint("Error adding child: $e");
       rethrow;
@@ -178,6 +256,7 @@ class ParentProfileProvider with ChangeNotifier {
     required String gender,
     required String curriculum,
     XFile? imageFile,
+    String? base64Image,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -192,15 +271,17 @@ class ParentProfileProvider with ChangeNotifier {
         "schoolName": schoolName,
         "curriculum": curriculum,
         "gender": gender,
-        "image": imageFile != null
-            ? "data:image/jpeg;base64,${base64Encode(File(imageFile.path).readAsBytesSync())}"
-            : "",
       };
+      if (imageFile != null) {
+        body["image"] =
+            "data:image/jpeg;base64,${base64Encode(File(imageFile.path).readAsBytesSync())}";
+      }
+      // ✅ OLD IMAGE (BASE64)
+      else if (base64Image != null && base64Image.isNotEmpty) {
+        body["image"] = base64Image;
+      }
 
-      final response = await _dio.put(
-        path: AppUrls.editChild,
-        data: body,
-      );
+      final response = await _dio.put(path: AppUrls.editChild, data: body);
 
       final updatedChild = Child.fromJson(response.data['data']);
 
@@ -220,21 +301,28 @@ class ParentProfileProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteChild(String id) async {
+  Future<void> deleteChild(String id, context) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      await _dio.delete(path: "${AppUrls.delChild}/$id");
+      final response = await _dio.delete(path: "${AppUrls.delChild}/$id");
 
-      _children.removeWhere((c) => c.id == id);
-      if (_children.isNotEmpty) {
-        _selectedChild = _children.first;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _children.removeWhere((c) => c.id == id);
+        if (_children.isNotEmpty) {
+          _selectedChild = _children.first;
+        } else {
+          _selectedChild = null;
+        }
+        AppToast.success(context: context, msg: "Child Deleted successfully");
+        notifyListeners();
       } else {
-        _selectedChild = null;
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
-
-      notifyListeners();
     } catch (e) {
       debugPrint("Error deleting child: $e");
       rethrow;
@@ -249,8 +337,9 @@ class ParentProfileProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response =
-          await _dio.get(path: "${AppUrls.getParentFromtutor}/$parentId");
+      final response = await _dio.get(
+        path: "${AppUrls.getParentFromtutor}/$parentId",
+      );
       var responseData = response.data;
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data["data"]["children"] as List;
@@ -259,10 +348,10 @@ class ParentProfileProvider with ChangeNotifier {
         isVerified = response.data["data"]["isAdminVerified"];
         fName = response.data["data"]["firstName"];
         lName = response.data["data"]["lastName"];
-        totalReviews =
-            (response.data["data"]["reviewStats"]["totalReviews"]).toString();
-        averageRating =
-            (response.data["data"]["reviewStats"]["averageRating"]).toString();
+        totalReviews = (response.data["data"]["reviewStats"]["totalReviews"])
+            .toString();
+        averageRating = (response.data["data"]["reviewStats"]["averageRating"])
+            .toString();
 
         ratingData = response.data["data"]["reviews"] as List;
 
@@ -272,7 +361,9 @@ class ParentProfileProvider with ChangeNotifier {
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       }
     } catch (e) {
@@ -295,10 +386,19 @@ class ParentProfileProvider with ChangeNotifier {
         profileData = data;
         tasks = data["totalSessions"]?.toString() ?? "0";
         unReadMessages = data["unreadMessageCount"]?.toString() ?? "0";
+        profileBalance = (data["user"]["Parent"]["balance"] ?? '0').toString();
+        bankName = data["user"]["Parent"]["bankName"] ?? "";
+        accountNumber = data["user"]["Parent"]["accountNumber"] ?? "";
         final prefs = await SharedPreferences.getInstance();
 
         await prefs.setString(PrefKey.notiCount, unReadMessages);
         globalNotiCount = unReadMessages;
+      } else if (response.statusCode == 401) {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+        handleTokenExpiration();
       } else {
         AppToast.error(
           context: context,
@@ -315,10 +415,7 @@ class ParentProfileProvider with ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       _getProfileLoader = false;
       notifyListeners();

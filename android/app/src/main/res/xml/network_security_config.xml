@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+
+    <!-- Allow HTTP only for your server -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">15.235.204.49</domain>
+    </domain-config>
+
+</network-security-config>

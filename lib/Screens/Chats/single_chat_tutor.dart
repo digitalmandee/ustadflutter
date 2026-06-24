@@ -5,29 +5,31 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:record/record.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
-import 'package:ustaad/Screens/Chats/parent_card.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Chats/bubble_widget.dart';
-import 'package:ustaad/Screens/Chats/chat_modet.dart';
-import 'package:ustaad/Screens/Chats/offer_sheet.dart';
-import 'package:ustaad/Screens/Chats/socket.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Providers/Chat/all_chat_provider.dart';
+import 'package:flutterustad/Screens/Chats/payfast.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Chats/bubble_widget.dart';
+import 'package:flutterustad/Screens/Chats/chat_modet.dart';
+import 'package:flutterustad/Screens/Chats/offer_sheet.dart';
+import 'package:flutterustad/Screens/Chats/socket.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SingleChatScreen extends StatefulWidget {
   final String conversationId;
@@ -69,7 +71,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   bool _showOptions = false;
   ChatMessage? _previewMessage;
   File? selectedFile;
-  final record = AudioRecorder();
+  // final record = AudioRecorder();
   bool isRecording = false;
   List<dynamic> childrensData = [];
   bool isConversationLoading = false;
@@ -91,7 +93,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       ..androidEncoder = AndroidEncoder.aac
       ..androidOutputFormat = AndroidOutputFormat.mpeg4
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..sampleRate = 44100;
+      ..sampleRate = 44100
+      ..bitRate = 192000;
     _initializeSocket();
   }
 
@@ -102,8 +105,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       );
 
       if (response.statusCode == 200) {
-        Provider.of<AllChatProvider>(context, listen: false)
-            .fetchChats(context);
+        Provider.of<AllChatProvider>(
+          context,
+          listen: false,
+        ).fetchChats(context);
       }
     } catch (e) {
       debugPrint("❌ Error fetching conversation data: $e");
@@ -246,11 +251,12 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         print("audiolength is this $audioLength");
         setState(() {
           messages[index] = messages[index].copyWith(
-              id: messageId,
-              isPending: false,
-              offer: offerData,
-              fileText: fileText,
-              audioDuration: audioLength);
+            id: messageId,
+            isPending: false,
+            offer: offerData,
+            fileText: fileText,
+            audioDuration: audioLength,
+          );
         });
       }
     } else {
@@ -287,13 +293,14 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       messages.insert(
         0,
         ChatMessage(
-            id: tempId,
-            text: text,
-            time: _formatTime(DateTime.now().toIso8601String()),
-            isMe: true,
-            createdAt: now,
-            isPending: true,
-            type: "TEXT"),
+          id: tempId,
+          text: text,
+          time: _formatTime(DateTime.now().toIso8601String()),
+          isMe: true,
+          createdAt: now,
+          isPending: true,
+          type: "TEXT",
+        ),
       );
     });
     _playSendSound();
@@ -314,7 +321,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         final List<dynamic> messagesJson = response.data['data']['messages'];
 
         final newMessages = messagesJson
-            .map((msg) => ChatMessage(
+            .map(
+              (msg) => ChatMessage(
                 id: msg['id'],
                 isPending: false,
                 text: msg['content'] ?? '',
@@ -326,7 +334,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                     ? int.tryParse(msg["metadata"]!["duration"].toString())
                     : null,
                 fileText: msg["metadata"]?["fileOriginalName"],
-                offer: msg["metadata"]?["offer"]))
+                offer: msg["metadata"]?["offer"],
+              ),
+            )
             .toList();
 
         setState(() {
@@ -355,35 +365,87 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     }
   }
 
-  Future<void> startRecording() async {
-    if (await record.hasPermission()) {
-      final dir = Directory.systemTemp;
-      final path =
-          '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
-      await record.start(
-        const RecordConfig(
-            encoder: AudioEncoder.aacLc, bitRate: 128000, sampleRate: 44100),
-        path: path,
-      );
+  Future<void> startRecordingAndroid() async {
+    final dir = Directory.systemTemp;
+    final path =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
+    // await record.start(
+    //   const RecordConfig(
+    //       encoder: AudioEncoder.aacLc, bitRate: 192000, sampleRate: 44100),
+    //   path: path,
+    // );
 
-      await recorderController.record(path: path); // 👈 important
+    await recorderController.record(path: path);
 
+    setState(() {
+      isRecording = true;
+      _recordDuration = 0;
+    });
+
+    _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        isRecording = true;
-        _recordDuration = 0;
+        _recordDuration++;
       });
+    });
+  }
 
-      _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        setState(() {
-          _recordDuration++;
-        });
+  String? _recordingPath;
+
+  Future<void> startRecordingIos() async {
+    final dir = Directory.systemTemp;
+
+    final path =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+    _recordingPath = path;
+
+    await recorderController.record(path: path);
+
+    setState(() {
+      isRecording = true;
+      _recordDuration = 0;
+    });
+
+    _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _recordDuration++;
       });
+    });
+  }
+
+  Future<void> stopRecordingIos({bool cancelled = false}) async {
+    final path = await recorderController.stop();
+    _recordTimer?.cancel();
+
+    setState(() => isRecording = false);
+
+    if (path != null && !cancelled) {
+      try {
+        debugPrint("🎤 iOS original recorded file:");
+        await printAudioFileDetails(path);
+
+        final mp3Path = await NativeAudioConverter.convertToMp3(path);
+
+        debugPrint("✅ iOS converted MP3 file:");
+        await printAudioFileDetails(mp3Path);
+
+        setState(() {
+          _previewAudio = File(mp3Path);
+          _previewAudioDuration = _recordDuration;
+        });
+      } catch (e) {
+        debugPrint("❌ iOS MP3 conversion failed: $e");
+        AppToast.error(
+          context: context,
+          msg: "Audio conversion failed. Please try again.",
+        );
+      }
     }
   }
 
-  Future<void> stopRecording({bool cancelled = false}) async {
-    final path = await record.stop();
-    await recorderController.stop(); // 👈 important
+  Future<void> stopRecordingAndroid({bool cancelled = false}) async {
+    final path = await recorderController.stop();
+    // await recorderController.stop(); // 👈 important
     _recordTimer?.cancel();
 
     setState(() => isRecording = false);
@@ -420,7 +482,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-                left: 20.0, right: 20, top: 50, bottom: 20),
+              left: 20.0,
+              right: 20,
+              top: 50,
+              bottom: 20,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -431,8 +497,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                       onTap: () {
                         _scaffoldKey.currentState?.openEndDrawer();
                       },
-                      child: _roundIcon("assets/images/menu.png",
-                          iconColor: AppTheme.primaryCOlor),
+                      child: _roundIcon(
+                        "assets/images/menu.png",
+                        iconColor: AppTheme.primaryCOlor,
+                      ),
                     ),
                   ],
                 ),
@@ -472,7 +540,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                       child: ListView.builder(
                         reverse: true,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
                           final current = messages[index];
@@ -480,18 +550,21 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                               ? messages[index + 1]
                               : null;
                           final next = index > 0 ? messages[index - 1] : null;
-                          final showAvatar = !current.isMe &&
+                          final showAvatar =
+                              !current.isMe &&
                               (previous == null ||
                                   previous.isMe != current.isMe);
 
                           bool showTime = true;
                           if (next != null) {
                             final sameSender = next.isMe == current.isMe;
-                            final sameMinute =
-                                _isSameMinute(next.time, current.time);
+                            final sameMinute = _isSameMinute(
+                              next.time,
+                              current.time,
+                            );
 
                             if (sameSender && sameMinute) {
-                              showTime = false; // not last message yet
+                              showTime = false;
                             }
                           }
 
@@ -507,27 +580,29 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                               message: messages[index],
                               showAvatar: showAvatar,
                               showTime: showTime,
-                              onStatusChange: (
-                                messageId,
-                                newStatus,
-                              ) async {
+                              onStatusChange: (messageId, newStatus) async {
                                 if (newStatus == "ACCEPTED") {
-                                  final msgIndex = messages
-                                      .indexWhere((m) => m.id == messageId);
+                                  final msgIndex = messages.indexWhere(
+                                    (m) => m.id == messageId,
+                                  );
                                   if (msgIndex == -1 ||
-                                      messages[msgIndex].offer == null) return;
+                                      messages[msgIndex].offer == null) {
+                                    return;
+                                  }
                                   final offerId =
                                       messages[msgIndex].offer!["id"];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          ParentCardScreen(offerId: offerId),
-                                    ),
-                                  ).then((_) => _refreshChatAfterPayment());
+                                  logger.i({
+                                    "event": "parent_chat_accept_tapped",
+                                    "messageId": messageId,
+                                    "offer": messages[msgIndex].offer,
+                                  });
+                                  _openOfferPayment(offerId);
                                 } else if (newStatus == "REJECTED") {
                                   updateOfferStatus(
-                                      context, messageId, newStatus);
+                                    context,
+                                    messageId,
+                                    newStatus,
+                                  );
                                 }
                               },
                             ),
@@ -547,7 +622,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -566,9 +641,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -612,10 +685,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       leading: Icon(icon, color: color),
       title: Text(
         title,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: color, fontWeight: FontWeight.w500),
       ),
       subtitle: subtitle != null
           ? Text(subtitle, style: const TextStyle(fontSize: 12))
@@ -649,7 +719,14 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
 
   Widget _audioPreviewBar() {
     return Container(
-      margin: EdgeInsets.all(8),
+      margin: Platform.isAndroid
+          ? const EdgeInsets.all(8)
+          : EdgeInsets.only(
+              left: 8,
+              right: 8,
+              top: 8,
+              bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 8 : 20,
+            ),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: AppTheme.white,
@@ -690,10 +767,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     return Container(
       height: 32,
       width: 32,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppTheme.white,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: AppTheme.white),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Image.asset(asset, color: iconColor),
@@ -708,71 +782,80 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         onTap: () {
           if (globalUserRole == "PARENT") {
             push(
-                context,
-                TutorProfileScreen(
-                  isParentSide: true,
-                  tutorId: widget.recieverId,
-                  name: widget.recieverName,
-                  isFromChat: true,
-                ));
+              context,
+              TutorProfileScreen(
+                isParentSide: true,
+                tutorId: widget.recieverId,
+                name: widget.recieverName,
+                isFromChat: true,
+              ),
+            );
           } else {
             push(
-                context,
-                ParentProfileScreen(
-                  isTutorSide: true,
-                  parentId: widget.recieverId,
-                ));
+              context,
+              ParentProfileScreen(
+                isTutorSide: true,
+                parentId: widget.recieverId,
+              ),
+            );
           }
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            gradient: LinearGradient(colors: [
-              Color.fromARGB(255, 141, 192, 177),
-              Color(0xff4BB698),
-              Color.fromARGB(255, 35, 165, 209),
-              Color.fromARGB(255, 43, 145, 180),
-              Color(0xff1D83A5),
-            ]),
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 141, 192, 177),
+                Color(0xff4BB698),
+                Color.fromARGB(255, 35, 165, 209),
+                Color.fromARGB(255, 43, 145, 180),
+                Color(0xff1D83A5),
+              ],
+            ),
           ),
           child: Row(
             children: [
               Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: widget.image == "" || widget.image.isEmpty
-                      ? ClipOval(
-                          child: Image.asset(globalUserRole == 'TUTOR'
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                child: widget.image == "" || widget.image.isEmpty
+                    ? ClipOval(
+                        child: Image.asset(
+                          globalUserRole == 'TUTOR'
                               ? "assets/images/parentProfile.jpeg"
-                              : "assets/images/tutorProfile.jpeg"))
-                      : widget.image.startsWith('http')
-                          ? ClipOval(
-                              child: Image.network(
-                                widget.image,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(globalUserRole == 'TUTOR'
-                                      ? "assets/images/parentProfile.jpeg"
-                                      : "assets/images/tutorProfile.jpeg");
-                                },
-                              ),
-                            )
-                          : ClipOval(
-                              child:
-                                  Base64ImageWidget(base64String: widget.image),
-                            )),
+                              : "assets/images/tutorProfile.jpeg",
+                        ),
+                      )
+                    : widget.image.startsWith('http')
+                    ? ClipOval(
+                        child: Image.network(
+                          widget.image,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              globalUserRole == 'TUTOR'
+                                  ? "assets/images/parentProfile.jpeg"
+                                  : "assets/images/tutorProfile.jpeg",
+                            );
+                          },
+                        ),
+                      )
+                    : ClipOval(
+                        child: Base64ImageWidget(base64String: widget.image),
+                      ),
+              ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText.appText("${widget.recieverName}",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      textColor: Colors.white),
+                  AppText.appText(
+                    "${widget.recieverName}",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    textColor: Colors.white,
+                  ),
                   // AppText.appText("Connected Since 2 months",
                   //     fontSize: 12, textColor: Colors.white70),
                 ],
@@ -786,9 +869,17 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
 
   Widget _inputBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: Platform.isAndroid
+          ? EdgeInsets.symmetric(horizontal: 12, vertical: 10)
+          : EdgeInsets.only(
+              left: 12,
+              right: 12,
+              top: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 10 : 20,
+            ),
       decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: AppTheme.borderCOlor))),
+        border: Border(top: BorderSide(color: AppTheme.borderCOlor)),
+      ),
       child: Row(
         children: [
           if (_messageController.text.trim().isEmpty)
@@ -803,11 +894,12 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 });
               },
               child: Icon(
-                  _showOptions == true
-                      ? Icons.highlight_remove_sharp
-                      : Icons.add_circle_outline,
-                  size: 28,
-                  color: AppTheme.primaryCOlor),
+                _showOptions == true
+                    ? Icons.highlight_remove_sharp
+                    : Icons.add_circle_outline,
+                size: 28,
+                color: AppTheme.primaryCOlor,
+              ),
             ),
           const SizedBox(width: 10),
           Expanded(
@@ -834,12 +926,17 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
               },
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 15),
           _messageController.text.trim().isEmpty
               ? GestureDetector(
-                  onTap: startRecording,
-                  child: Image.asset("assets/images/mic.png",
-                      height: 20, color: AppTheme.primaryCOlor),
+                  onTap: Platform.isAndroid
+                      ? startRecordingAndroid
+                      : startRecordingIos,
+                  child: Image.asset(
+                    "assets/images/mic.png",
+                    height: 25,
+                    color: AppTheme.primaryCOlor,
+                  ),
                 )
               : GestureDetector(
                   onTap: () {
@@ -848,6 +945,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                   },
                   child: Icon(Icons.send, color: AppTheme.primaryCOlor),
                 ),
+
+          const SizedBox(width: 10),
         ],
       ),
     );
@@ -920,8 +1019,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
             children: [
               Icon(icon, size: 28, color: AppTheme.primaryCOlor),
               SizedBox(height: 6),
-              Text(label,
-                  textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12),
+              ),
             ],
           ),
         ),
@@ -936,7 +1038,14 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     final seconds = twoDigits(_recordDuration % 60);
 
     return Container(
-      margin: EdgeInsets.all(8),
+      margin: Platform.isAndroid
+          ? const EdgeInsets.all(8)
+          : EdgeInsets.only(
+              left: 8,
+              right: 8,
+              top: 8,
+              bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 8 : 20,
+            ),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: AppTheme.white,
@@ -945,8 +1054,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       ),
       child: Row(
         children: [
-          Image.asset("assets/images/mic.png",
-              height: 24, color: AppTheme.primaryCOlor),
+          Image.asset(
+            "assets/images/mic.png",
+            height: 24,
+            color: AppTheme.primaryCOlor,
+          ),
           const SizedBox(width: 10),
           // 👇 Waveform bar
           AudioWaveforms(
@@ -967,12 +1079,14 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
           const Spacer(),
           IconButton(
             icon: Icon(Icons.delete, color: Colors.red),
-            onPressed: () => stopRecording(cancelled: true),
+            onPressed: () => Platform.isAndroid
+                ? stopRecordingAndroid(cancelled: true)
+                : stopRecordingIos(cancelled: true),
           ),
 
           CircleIconButton(
             onTap: () {
-              stopRecording();
+              Platform.isAndroid ? stopRecordingAndroid() : stopRecordingIos();
             },
             assetPath: "assets/images/ok.png",
             iconColor: AppTheme.primaryCOlor,
@@ -986,7 +1100,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'txt', 'doc', 'docx'],
     );
@@ -1009,8 +1123,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> _pickImageFromGallery() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      requestFullMetadata: false,
+    );
     if (pickedFile != null) {
       setState(() {
         selectedFile = File(pickedFile.path);
@@ -1029,8 +1145,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   Future<void> _openCamera() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+    );
     if (pickedFile != null) {
       setState(() {
         selectedFile = File(pickedFile.path);
@@ -1049,6 +1166,76 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
   ///////////////////////////////////////   API HITING ?????????????????????????????????
 
+  Future<void> _openOfferPayment(String offerId) async {
+    try {
+      final requestData = {"offerId": offerId};
+      final response = await dio.post(
+        path: AppUrls.paymentIntent,
+        data: requestData,
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final payfastUrl = response.data["data"]["payfastUrl"];
+        final Map<String, String> formFields = Map<String, dynamic>.from(
+          response.data["data"]["formFields"],
+        ).map((key, value) => MapEntry(key, value.toString()));
+
+        logger.i({
+          "event": "opening_payfast_webview_from_parent_chat_accept",
+          "paymentIntentPath": AppUrls.paymentIntent,
+          "requestData": requestData,
+          "payfastUrl": payfastUrl,
+          "formFields": formFields,
+          "responseData": response.data["data"],
+        });
+
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                PayFastWebView(payfastUrl: payfastUrl, formFields: formFields),
+          ),
+        );
+
+        if (!mounted) return;
+
+        switch (result) {
+          case "success":
+            AppToast.success(context: context, msg: "Payment Successful ✅");
+            _refreshChatAfterPayment();
+            break;
+          case "failure":
+            AppToast.error(context: context, msg: "Payment Failed ❌");
+            break;
+          case "cancelled":
+            AppToast.error(context: context, msg: "Payment Cancelled ⚠️");
+            break;
+          case "timeout":
+            AppToast.error(context: context, msg: "Payment Timeout ⚠️");
+            break;
+          default:
+            AppToast.error(context: context, msg: "Payment Error ❌");
+        }
+      } else if (response.statusCode == 401 &&
+          response.data["errors"][0]["message"] == "TokenExpired") {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+        handleTokenExpiration();
+      } else {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+      }
+    } catch (e) {
+      debugPrint("Error initiating payment: $e");
+    }
+  }
+
   Future<void> updateOfferStatus(
     context,
     String messageId,
@@ -1061,7 +1248,8 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       final offerId = messages[msgIndex].offer!["id"];
 
       debugPrint(
-          "Message ID: $messageId     status:  $newStatus    offerId $offerId");
+        "Message ID: $messageId     status:  $newStatus    offerId $offerId",
+      );
 
       final response = await dio.patch(
         path: "${AppUrls.offerStatus}$newStatus/$offerId",
@@ -1084,23 +1272,34 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       } else {
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       debugPrint("Error updating offer status: $e");
     }
   }
 
-//////////////////////////////  Send Media Messages ////////////////////////////////////
+  //////////////////////////////  Send Media Messages ////////////////////////////////////
 
   Widget _mediaPreview(ChatMessage message) {
     print("here is the message ${message.text}  type: ${message.type}");
     return Container(
-      margin: EdgeInsets.all(8),
+      margin: Platform.isAndroid
+          ? const EdgeInsets.all(8)
+          : EdgeInsets.only(
+              left: 8,
+              right: 8,
+              top: 8,
+              bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 8 : 20,
+            ),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: AppTheme.white,
@@ -1120,8 +1319,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
               ),
             )
           else
-            Icon(Icons.insert_drive_file,
-                size: 40, color: AppTheme.primaryCOlor),
+            Icon(
+              Icons.insert_drive_file,
+              size: 40,
+              color: AppTheme.primaryCOlor,
+            ),
           SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1138,8 +1340,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
             icon: Icon(Icons.send, color: AppTheme.primaryCOlor),
             onPressed: () {
               _sendMedia(
-                  file: message.filePath,
-                  type: message.type == "IMAGE" ? 'IMAGE' : "FILE");
+                file: message.filePath,
+                type: message.type == "IMAGE" ? 'IMAGE' : "FILE",
+              );
               setState(() => _previewMessage = null);
             },
           ),
@@ -1221,15 +1424,58 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     }
   }
 
+  Future<void> printAudioFileDetails(String path) async {
+    try {
+      final file = File(path);
+
+      if (!await file.exists()) {
+        debugPrint("❌ Audio file does not exist");
+        return;
+      }
+
+      final bytes = await file.length();
+
+      debugPrint("🎤 AUDIO FILE DETAILS");
+      debugPrint("📁 Path: $path");
+      debugPrint("📦 Size: ${(bytes / 1024).toStringAsFixed(2)} KB");
+
+      // Extension
+      final extension = path.split('.').last.toLowerCase();
+      debugPrint("📄 Extension: .$extension");
+
+      // MIME Guess
+      String mimeType = "unknown";
+
+      if (extension == "m4a") {
+        mimeType = "audio/mp4";
+      } else if (extension == "aac") {
+        mimeType = "audio/aac";
+      } else if (extension == "mp3") {
+        mimeType = "audio/mpeg";
+      } else if (extension == "wav") {
+        mimeType = "audio/wav";
+      }
+
+      debugPrint("🎵 MIME Type: $mimeType");
+    } catch (e) {
+      debugPrint("❌ Error reading audio file: $e");
+    }
+  }
+
   Future<Map<String, dynamic>?> _uploadMedia({
     required String file,
     required String type,
     int? duration,
   }) async {
+    await printAudioFileDetails(file);
     try {
       final Map<String, dynamic> formMap = {
         "conversationId": widget.conversationId,
-        "file": await MultipartFile.fromFile(file),
+        "file": await MultipartFile.fromFile(
+          file,
+          filename: file.split('/').last,
+          contentType: type == "AUDIO" ? MediaType.parse("audio/mpeg") : null,
+        ),
       };
 
       // ✅ ONLY for AUDIO
@@ -1251,10 +1497,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
 
       debugPrint("📦 ==========================");
 
-      final response = await dio.post(
-        path: AppUrls.sendMedia,
-        data: formData,
-      );
+      final response = await dio.post(path: AppUrls.sendMedia, data: formData);
 
       if (response.statusCode == 200) {
         return response.data;
@@ -1263,5 +1506,27 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       debugPrint("❌ Upload error: $e");
     }
     return null;
+  }
+}
+
+class NativeAudioConverter {
+  static const MethodChannel _channel = MethodChannel('native_audio_converter');
+
+  static Future<String> convertToMp3(String inputPath) async {
+    final dir = await getTemporaryDirectory();
+
+    final outputPath =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.mp3';
+
+    final mp3Path = await _channel.invokeMethod<String>('convertToMp3', {
+      'inputPath': inputPath,
+      'outputPath': outputPath,
+    });
+
+    if (mp3Path == null) {
+      throw Exception('MP3 conversion failed');
+    }
+
+    return mp3Path;
   }
 }

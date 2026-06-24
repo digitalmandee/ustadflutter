@@ -1,16 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Chats/payfast.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Chats/payfast.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ParentCardScreen extends StatefulWidget {
   final String? offerId;
@@ -39,7 +40,7 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(
-        title: "Payment Methods",
+        title: Staticdata.isActive ? "Accept Offer" : "Payment Methods",
         backArrow: true,
       ),
       body: Padding(
@@ -49,84 +50,107 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                paymentIntentDummy(context);
-                // paymentIntent(context);
+                Staticdata.showPayment
+                    ? paymentIntentDummy(context)
+                    : paymentIntent(context);
               },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.credit_card, color: AppTheme.appColor),
-                    SizedBox(width: 12),
-                    AppText.appText(
-                      "Add New Card",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+              child: Staticdata.isActive
+                  ? Container(
+                      height: 60,
+                      color: Colors.green,
+                      width: double.infinity,
+                      child: Center(
+                        child: AppText.appText(
+                          "Tap to accept",
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          textColor: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.credit_card, color: AppTheme.appColor),
+                          SizedBox(width: 12),
+                          AppText.appText(
+                            "Add New Card",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          Spacer(),
+                          Icon(
+                            Icons.add_circle_outline,
+                            color: AppTheme.appColor,
+                          ),
+                        ],
+                      ),
                     ),
-                    Spacer(),
-                    Icon(Icons.add_circle_outline, color: AppTheme.appColor),
-                  ],
-                ),
-              ),
             ),
             SizedBox(height: 20),
-            AppText.appText("Payment Methods",
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                textColor: AppTheme.lableText),
+            AppText.appText(
+              Staticdata.isActive ? "Accept Offer" : "Payment Methods",
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              textColor: AppTheme.lableText,
+            ),
             SizedBox(height: 10),
             Expanded(
-                child: isLoading
-                    ? GifLoader()
-                    : ListView.builder(
-                        itemCount: cardData.length,
-                        itemBuilder: (context, index) {
-                          final card = cardData[index];
-                          return GestureDetector(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 20.0),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.credit_card,
-                                        color: AppTheme.appColor),
-                                    SizedBox(width: 12),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        AppText.appText(
-                                          "Card Number",
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        SizedBox(height: 5),
-                                        AppText.appText(
-                                          "${card["cardNumber"]}",
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+              child: isLoading
+                  ? GifLoader()
+                  : ListView.builder(
+                      itemCount: cardData.length,
+                      itemBuilder: (context, index) {
+                        final card = cardData[index];
+                        return GestureDetector(
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade300),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.credit_card,
+                                    color: AppTheme.appColor,
+                                  ),
+                                  SizedBox(width: 12),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AppText.appText(
+                                        "Card Number",
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      SizedBox(height: 5),
+                                      AppText.appText(
+                                        "${card["cardNumber"]}",
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        })),
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ],
         ),
       ),
@@ -135,24 +159,32 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
 
   Future<void> paymentIntent(context) async {
     try {
+      final requestData = {"offerId": widget.offerId};
       final response = await dio.post(
         path: AppUrls.paymentIntent,
-        data: {"offerId": widget.offerId},
+        data: requestData,
       );
 
       if (response.statusCode == 200) {
         final payfastUrl = response.data["data"]["payfastUrl"];
-        final Map<String, String> formFields =
-            Map<String, dynamic>.from(response.data["data"]["formFields"])
-                .map((key, value) => MapEntry(key, value.toString()));
+        final Map<String, String> formFields = Map<String, dynamic>.from(
+          response.data["data"]["formFields"],
+        ).map((key, value) => MapEntry(key, value.toString()));
+
+        logger.i({
+          "event": "opening_payfast_webview_from_parent_card",
+          "paymentIntentPath": AppUrls.paymentIntent,
+          "requestData": requestData,
+          "payfastUrl": payfastUrl,
+          "formFields": formFields,
+          "responseData": response.data["data"],
+        });
 
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => PayFastWebView(
-              payfastUrl: payfastUrl,
-              formFields: formFields,
-            ),
+            builder: (_) =>
+                PayFastWebView(payfastUrl: payfastUrl, formFields: formFields),
           ),
         );
 
@@ -175,11 +207,15 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
       } else if (response.statusCode == 401 &&
           response.data["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       debugPrint("Error initiating payment: $e");
@@ -198,11 +234,15 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
       } else if (response.statusCode == 401 &&
           response.data["errors"][0]["message"] == "TokenExpired") {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
         handleTokenExpiration();
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       debugPrint("Error initiating payment: $e");
@@ -228,7 +268,9 @@ class _ParentCardScreenState extends State<ParentCardScreen> {
           isLoading = false;
         });
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Something went wrong: $e");

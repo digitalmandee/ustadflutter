@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom widgets/app_bar.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Providers/notification/notification_provider.dart';
+import 'package:flutterustad/Custom widgets/app_bar.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/notification/notification_provider.dart';
+import 'package:flutterustad/Screens/Chats/single_chat_tutor.dart';
+import 'package:flutterustad/Screens/Drawer/Contracts/contracts.dart';
+import 'package:flutterustad/Screens/Drawer/Earnings/tutor_earning_dashboard.dart';
+import 'package:flutterustad/config/keys/global.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -19,19 +25,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
+    // final provider = Provider.of<NotificationProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<NotificationProvider>(context, listen: false)
-          .fetchNotifications(context);
+      Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      ).fetchNotifications(context);
     });
   }
 
   void _deleteSelected(context) async {
     final provider = Provider.of<NotificationProvider>(context, listen: false);
 
-    await provider.deleteNotifications(
-      context,
-      selectedIds.toList(),
-    );
+    await provider.deleteNotifications(context, selectedIds.toList());
 
     setState(() {
       selectedIds.clear();
@@ -43,8 +49,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(
-        title:
-            selectionMode ? "${selectedIds.length} selected" : "Notifications",
+        title: selectionMode
+            ? "${selectedIds.length} selected"
+            : "Notifications",
         backArrow: true,
         isDel: selectedIds.isNotEmpty ? true : false,
         onDeletePressed: () => _deleteSelected(context),
@@ -64,6 +71,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             itemCount: provider.notifications.length,
             itemBuilder: (context, index) {
               final notification = provider.notifications[index];
+              final notiType = provider.notifications[index]["type"];
               final String id = notification["id"];
 
               final bool isSelected = selectedIds.contains(id);
@@ -76,6 +84,40 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   });
                 },
                 onTap: () {
+                  if (!selectionMode) {
+                    if (notiType == "PAYMENT_STATUS_UPDATE") {
+                      push(context, TutorEarningScreen());
+                    } else if (notiType == "NEW_MESSAGE" ||
+                        notiType == "OFFER_RECEIVED" ||
+                        notiType == "OFFER_REJECTED" ||
+                        notiType == "OFFER_ACCEPTED") {
+                      push(
+                        context,
+                        SingleChatScreen(
+                          conversationId:
+                              '${notification["metadata"]["conversationId"]}',
+                          userId: globalUserId!,
+                          recieverName:
+                              '${notification["metadata"]["senderName"]}',
+                          recieverId:
+                              '${notification["metadata"]["recieverId"]}',
+                          image: '${notification["metadata"]["image"]}',
+                        ),
+                      );
+                    } else if (notiType == "CONTRACT_DISPUTED" ||
+                        notiType == "CONTRACT_COMPLETED" ||
+                        notiType == "CONTRACT_CANCELLED") {
+                      push(
+                        context,
+                        ContractScreen(
+                          isParentSide: globalUserRole == "PARENT"
+                              ? true
+                              : false,
+                        ),
+                      );
+                    }
+                  }
+
                   if (selectionMode) {
                     setState(() {
                       if (isSelected) {
@@ -93,18 +135,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.only(
-                      left: selectionMode == true ? 0 : 16,
-                      right: 16,
-                      top: 16,
-                      bottom: 16),
+                    left: selectionMode == true ? 0 : 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border(
-                      left: BorderSide(
-                        color: AppTheme.primaryCOlor,
-                        width: 4,
-                      ),
+                      left: BorderSide(color: AppTheme.primaryCOlor, width: 4),
                     ),
                     boxShadow: const [
                       BoxShadow(
@@ -180,10 +220,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   static String formatDate(String dateStr) {
     try {
-      final dateTime = DateTime.parse(dateStr);
-      return "${dateTime.day}/${dateTime.month}/${dateTime.year} "
-          "${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
-    } catch (e) {
+      final localDateTime = DateTime.parse(dateStr).toLocal();
+      return DateFormat('d/M/yyyy h:mm a').format(localDateTime);
+    } on FormatException {
       return dateStr;
     }
   }

@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterustad/Helpers/utils.dart';
 
 class SelectedFile {
   final PlatformFile file;
@@ -12,7 +13,7 @@ class FileProvider with ChangeNotifier {
   SelectedFile? idFrontFile;
   SelectedFile? idBackFile;
 
-  Future<void> pickFile(String type) async {
+  Future<void> pickFile(String type, context) async {
     FileType allowedType = FileType.any;
     List<String>? allowedExtensions;
 
@@ -24,7 +25,7 @@ class FileProvider with ChangeNotifier {
       allowedExtensions = ["jpg", "jpeg", "png"];
     }
 
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: allowedType,
       allowedExtensions: allowedExtensions,
     );
@@ -34,7 +35,7 @@ class FileProvider with ChangeNotifier {
 
       // size check (only for resume)
       if (type == "resume" && file.size > 2 * 1024 * 1024) {
-        // greater than 2MB
+        AppToast.error(context: context, msg: 'File is greater than 2MB');
         notifyListeners();
         return;
       }

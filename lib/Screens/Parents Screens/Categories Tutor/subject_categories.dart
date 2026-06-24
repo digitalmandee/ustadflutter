@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Custom widgets/app_bar.dart';
-import 'package:ustaad/Custom widgets/app_text.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor Side/subjects_model.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Categories%20Tutor/category_tutor.dart';
+import 'package:flutterustad/Custom widgets/app_bar.dart';
+import 'package:flutterustad/Custom widgets/app_text.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor Side/subjects_model.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Categories%20Tutor/category_tutor.dart';
 
 class SubjectCategoriesScreen extends StatefulWidget {
   final List<SubjectsModel> data;
@@ -34,8 +34,10 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
     } else {
       setState(() {
         filteredList = widget.data
-            .where((subject) =>
-                subject.name.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (subject) =>
+                  subject.name.toLowerCase().contains(query.toLowerCase()),
+            )
             .toList();
       });
     }
@@ -52,8 +54,12 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
             // 🔍 Search Bar
             const SizedBox(height: 12),
 
-            parentHomeSearchField(context, searchController,
-                hintText: "Search Subject", onChanged: _filterSubjects),
+            parentHomeSearchField(
+              context,
+              searchController,
+              hintText: "Search Subject",
+              onChanged: _filterSubjects,
+            ),
 
             Expanded(
               child: GridView.builder(
@@ -67,8 +73,10 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
                 itemBuilder: (context, index) {
                   final subject = filteredList[index];
                   return InkWell(
-                    onTap: () => push(context,
-                        TutorCategoriesScreen(categoryName: subject.name)),
+                    onTap: () => push(
+                      context,
+                      TutorCategoriesScreen(categoryName: subject.name),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: Column(
@@ -78,9 +86,9 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: AppTheme.primaryCOlor)),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppTheme.primaryCOlor),
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: Container(
@@ -108,7 +116,7 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
                               textColor: AppTheme.grey,
                             ),
                           ),
-                          check(index, filteredList.length)
+                          check(index, filteredList.length),
                         ],
                       ),
                     ),

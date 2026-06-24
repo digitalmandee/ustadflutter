@@ -2,12 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Models/Tutor Side/earning_model.dart'; // <-- apna earning model import karo
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/pref_keys.dart';
-import 'package:ustaad/config/keys/urls.dart';
-import 'package:ustaad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor Side/earning_model.dart'; // <-- apna earning model import karo
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/pref_keys.dart';
+import 'package:flutterustad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
 
 class TutorDashBoardProvider extends ChangeNotifier {
   final AppDio dio;
@@ -67,6 +67,12 @@ class TutorDashBoardProvider extends ChangeNotifier {
         await prefs.setString(PrefKey.notiCount, unReadMessages);
 
         globalNotiCount = unReadMessages;
+      } else if (response.statusCode == 401) {
+        AppToast.error(
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+        handleTokenExpiration();
       } else {
         AppToast.error(
           context: context,
@@ -83,56 +89,47 @@ class TutorDashBoardProvider extends ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateBankDetails(
-      context, String newBankName, String newAccountNumber) async {
+  Future<bool> updateBankDetails(
+    context,
+    String newBankName,
+    String newAccountNumber,
+  ) async {
     isLoading = true;
     notifyListeners();
 
     try {
-      final body = {
-        "bankName": newBankName,
-        "accountNumber": newAccountNumber,
-      };
+      final body = {"bankName": newBankName, "accountNumber": newAccountNumber};
 
       final response = await dio.put(
-        path:
-            "${AppUrls.baseUrl}tutor/bank-details", // ✅ tumhare baseUrl + endpoint
+        path: "${AppUrls.baseUrl}tutor/bank-details",
         data: body,
       );
 
       if (response.statusCode == 200) {
-        // ✅ Update locally after successful API
         bankName = newBankName;
         accountNumber = newAccountNumber;
 
-        AppToast.success(
-          context: context,
-          msg: "Bank details updated successfully",
-        );
-
         notifyListeners();
+        return true;
       } else {
         AppToast.error(
           context: context,
-          msg: response.data["errors"]?[0]?["message"] ??
+          msg:
+              response.data["errors"]?[0]?["message"] ??
               "Failed to update bank details",
         );
+        return false;
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
+      return false;
     } finally {
       isLoading = false;
       notifyListeners();
@@ -169,8 +166,9 @@ class TutorDashBoardProvider extends ChangeNotifier {
         final running =
             responseData["data"]["runningSessions"] as List<dynamic>;
 
-        upcomingSessions =
-            sessions.where((s) => s["status"] == "active").toList();
+        upcomingSessions = sessions
+            .where((s) => s["status"] == "active")
+            .toList();
         runningSessions = running;
       } else if (response.statusCode == 401 &&
           responseData["errors"][0]["message"] == "TokenExpired") {
@@ -194,10 +192,7 @@ class TutorDashBoardProvider extends ChangeNotifier {
         print("here is the error $message");
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -223,10 +218,7 @@ class TutorDashBoardProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      AppToast.error(
-        context: context,
-        msg: "Something went wrong: $e",
-      );
+      AppToast.error(context: context, msg: "Something went wrong: $e");
     } finally {
       isLoading = false;
       notifyListeners();

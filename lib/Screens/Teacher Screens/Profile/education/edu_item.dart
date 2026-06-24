@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/education/add_edu_sheet.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/education/add_edu_sheet.dart';
 
 class EducationItem extends StatelessWidget {
   final dynamic education;
   final bool isParentSide;
 
-  const EducationItem(
-      {super.key, required this.education, required this.isParentSide});
+  const EducationItem({
+    super.key,
+    required this.education,
+    required this.isParentSide,
+  });
 
   String _formatYearSafe(dynamic date) {
     if (date == null) return "";
@@ -29,9 +32,11 @@ class EducationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final startYear = _formatYearSafe(
-        isParentSide ? education["startDate"] : education.startDate);
+      isParentSide ? education["startDate"] : education.startDate,
+    );
     final endYear = _formatYearSafe(
-        isParentSide ? education["endDate"] : education.endDate);
+      isParentSide ? education["endDate"] : education.endDate,
+    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -47,12 +52,8 @@ class EducationItem extends StatelessWidget {
               textColor: const Color(0xff2A2A2A),
             ),
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: _buildEducationDetails(startYear, endYear),
-          ),
+          SizedBox(width: 10),
+          Expanded(child: _buildEducationDetails(startYear, endYear)),
           if (!isParentSide) _buildEditButton(context),
         ],
       ),

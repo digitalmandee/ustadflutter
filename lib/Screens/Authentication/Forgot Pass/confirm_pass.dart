@@ -4,16 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:password_strength_indicator/password_strength_indicator.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/widgets/widgets.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Authentication/SignIn/login_screen.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Authentication/SignIn/login_screen.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ConfirmPassScreen extends StatefulWidget {
   final String? email;
@@ -72,7 +72,10 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [header(), Expanded(child: otpScreen())],
+        children: [
+          header(),
+          Expanded(child: otpScreen()),
+        ],
       ),
     );
   }
@@ -82,11 +85,11 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
       width: ScreenSize(context).width,
       height: 220,
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(
-                "assets/images/Head.png",
-              ),
-              fit: BoxFit.fill)),
+        image: DecorationImage(
+          image: AssetImage("assets/images/Head.png"),
+          fit: BoxFit.fill,
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -95,10 +98,12 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
             const SizedBox(height: 40),
             Image.asset('assets/images/logo1.png', height: 50),
             const SizedBox(height: 30),
-            AppText.appText("OTP Verification",
-                fontSize: 32,
-                fontWeight: FontWeight.w600,
-                textColor: AppTheme.white),
+            AppText.appText(
+              "OTP Verification",
+              fontSize: 32,
+              fontWeight: FontWeight.w600,
+              textColor: AppTheme.white,
+            ),
           ],
         ),
       ),
@@ -113,16 +118,13 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             emailOtpFunction(),
-            SizedBox(
-              height: 40,
-            ),
+            SizedBox(height: 40),
             customLableField(
-                lable: "New Password",
-                controller: _passController,
-                isPassword: true),
-            SizedBox(
-              height: 10,
+              lable: "New Password",
+              controller: _passController,
+              isPassword: true,
             ),
+            SizedBox(height: 10),
             PasswordStrengthIndicator(
               password: _passController.text,
               width: ScreenSize(context).width,
@@ -142,23 +144,23 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
               },
               style: StrengthBarStyle.dashed,
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             passwordRequirements(),
-            SizedBox(
-              height: 50,
-            ),
+            SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppButton.appButton("Cancel", context: context, onTap: () {
-                  Navigator.pop(context);
-                },
-                    width: ScreenSize(context).width * 0.4,
-                    backgroundColor: AppTheme.button2ndCOlor,
-                    textColor: AppTheme.black,
-                    borderColor: Colors.transparent),
+                AppButton.appButton(
+                  "Cancel",
+                  context: context,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  width: ScreenSize(context).width * 0.4,
+                  backgroundColor: AppTheme.button2ndCOlor,
+                  textColor: AppTheme.black,
+                  borderColor: Colors.transparent,
+                ),
                 AppButton.appButton(
                   "Verify",
                   context: context,
@@ -166,11 +168,22 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
                     if (emailOtpController.text.isEmpty ||
                         emailOtpController.text.length < 4) {
                       AppToast.error(
-                          context: context,
-                          msg: "Please enter valid Email OTP");
-                    } else {
-                      changePass(context);
+                        context: context,
+                        msg: "Please enter valid OTP",
+                      );
+                      return;
                     }
+
+                    final passwordError = validatePassword(
+                      _passController.text,
+                    );
+
+                    if (passwordError != null) {
+                      AppToast.error(context: context, msg: passwordError);
+                      return;
+                    }
+
+                    changePass(context);
                   },
                   width: ScreenSize(context).width * 0.4,
                   borderColor: Colors.transparent,
@@ -178,26 +191,40 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
                 ),
               ],
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
+  String? validatePassword(String password) {
+    if (password.isEmpty) {
+      return "Password is required";
+    }
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      return "Password must contain at least one number";
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?\":{}|<>]').hasMatch(password)) {
+      return "Password must contain at least one special character";
+    }
+    return null;
+  }
+
   Widget emailOtpFunction() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image(
-          image: AssetImage("assets/images/otpEmail.png"),
-          height: 48,
-        ),
+        Image(image: AssetImage("assets/images/otpEmail.png"), height: 48),
         SizedBox(height: 20),
         AppText.appText(
-          "Please check your email",
+          "Please check your Email",
           fontSize: 16,
           fontWeight: FontWeight.w600,
           textColor: Colors.black87,
@@ -266,12 +293,12 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
     setState(() {
       isLoading = true;
     });
-    Map<String, dynamic> params = {
-      "email": "${widget.email}",
-    };
+    Map<String, dynamic> params = {"email": "${widget.email}"};
     try {
-      Response response =
-          await dio.post(path: AppUrls.forgotPass, data: params);
+      Response response = await dio.post(
+        path: AppUrls.forgotPass,
+        data: params,
+      );
       var responseData = response.data;
 
       if (response.statusCode == 200) {
@@ -285,7 +312,9 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
           isLoading = false;
         });
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       String message = "Something went wrong";
@@ -296,10 +325,7 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
       setState(() {
         isLoading = false;
       });
@@ -316,11 +342,13 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
       "email": widget.email,
       "otp": emailOtpController.text,
       "type": "email",
-      "purpose": "password_reset"
+      "purpose": "password_reset",
     };
     try {
-      Response response =
-          await dio.post(path: AppUrls.confirmPass, data: params);
+      Response response = await dio.post(
+        path: AppUrls.confirmPass,
+        data: params,
+      );
       var responseData = response.data;
 
       if (response.statusCode == 200) {
@@ -335,7 +363,9 @@ class _ConfirmPassScreenState extends State<ConfirmPassScreen> {
           isLoading = false;
         });
         AppToast.error(
-            context: context, msg: "${responseData["errors"][0]["message"]}");
+          context: context,
+          msg: "${responseData["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) {

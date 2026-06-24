@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/education/edu_item.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/education/edu_item.dart';
 
 class EducationList extends StatelessWidget {
   final List educations;
   final bool isParentSide;
 
-  const EducationList(
-      {super.key, required this.educations, required this.isParentSide});
+  const EducationList({
+    super.key,
+    required this.educations,
+    required this.isParentSide,
+  });
 
   @override
   Widget build(BuildContext context) {

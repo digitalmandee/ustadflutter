@@ -1,14 +1,14 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Parent%20Side/child_detail_model.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Profile/child_notes.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Parent%20Side/child_detail_model.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Profile/child_notes.dart';
 
 class ChildTeacherNotes extends StatefulWidget {
   final bool isTutorSide;
@@ -26,8 +26,10 @@ class _ChildTeacherNotesState extends State<ChildTeacherNotes> {
 
     // First time load notes
     Future.microtask(() {
-      final provider =
-          Provider.of<ParentProfileProvider>(context, listen: false);
+      final provider = Provider.of<ParentProfileProvider>(
+        context,
+        listen: false,
+      );
       provider.fetchChildNotes(context);
     });
   }
@@ -183,9 +185,7 @@ class _ChildTeacherNotesState extends State<ChildTeacherNotes> {
                               textColor: Color.fromARGB(255, 88, 86, 86),
                             ),
                           ),
-                          SizedBox(
-                            width: 30,
-                          ),
+                          SizedBox(width: 30),
                           AppText.appText(
                             "${note.createdAt?.substring(0, 10)}",
                             fontSize: 14,
@@ -202,7 +202,7 @@ class _ChildTeacherNotesState extends State<ChildTeacherNotes> {
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         textColor: Color(0xff616161),
-                      )
+                      ),
                     ],
                   ),
                 ),

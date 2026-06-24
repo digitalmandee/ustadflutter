@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
 
 class RatingStars extends StatelessWidget {
   final double rating;
@@ -22,14 +22,23 @@ class RatingStars extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
         if (index < fullStars) {
-          return Icon(Icons.star_outlined,
-              color: color ?? AppTheme.primaryCOlor, size: size);
+          return Icon(
+            Icons.star_outlined,
+            color: color ?? AppTheme.primaryCOlor,
+            size: size,
+          );
         } else if (index == fullStars && hasHalfStar) {
-          return Icon(Icons.star_half,
-              color: AppTheme.primaryCOlor, size: size);
+          return Icon(
+            Icons.star_half,
+            color: AppTheme.primaryCOlor,
+            size: size,
+          );
         } else {
-          return Icon(Icons.star_outlined,
-              color: Color(0xffECEEF3), size: size);
+          return Icon(
+            Icons.star_outlined,
+            color: Color(0xffECEEF3),
+            size: size,
+          );
         }
       }),
     );

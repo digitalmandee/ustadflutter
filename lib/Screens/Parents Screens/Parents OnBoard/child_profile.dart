@@ -3,21 +3,20 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_field.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Parent%20Side/add_child_model.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_field.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Parent%20Side/add_child_model.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ParentChildProfile extends StatefulWidget {
   final Function()? onTap;
-  final VoidCallback onBackTap;
-  const ParentChildProfile({super.key, this.onTap, required this.onBackTap});
+  const ParentChildProfile({super.key, this.onTap});
 
   @override
   State<ParentChildProfile> createState() => _ParentChildProfileState();
@@ -36,7 +35,24 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
     "Punjab Board",
     "Sindh Board",
     "Local",
-    "Others"
+    "Others",
+  ];
+  final List<String> allGrades = [
+    "Pre-KG",
+    "KG-1",
+    "KG-2",
+    "Grade 1",
+    "Grade 2",
+    "Grade 3",
+    "Grade 4",
+    "Grade 5",
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+    "Matriculation",
+    "Intermediate",
+    "O Level",
+    "A Level",
   ];
   @override
   void initState() {
@@ -58,12 +74,9 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
               alignment: Alignment.centerLeft,
               child: InkWell(
                 onTap: () {
-                  widget.onBackTap.call();
+                  Navigator.pop(context);
                 },
-                child: Image.asset(
-                  "assets/images/arrowBack.png",
-                  height: 28,
-                ),
+                child: Image.asset("assets/images/arrowBack.png", height: 28),
               ),
             ),
             Text.rich(
@@ -132,23 +145,27 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
                 ? const GifLoader()
                 : Column(
                     children: [
-                      AppButton.appButton("Add Another Child",
-                          context: context,
-                          onTap: () =>
-                              addSingleChild(currentChild, context, false),
-                          textColor: AppTheme.black,
-                          border: true,
-                          height: 44,
-                          borderColor: const Color(0xffD4D8E2),
-                          backgroundColor: Colors.transparent),
+                      AppButton.appButton(
+                        "Add Another Child",
+                        context: context,
+                        onTap: () =>
+                            addSingleChild(currentChild, context, false),
+                        textColor: AppTheme.black,
+                        border: true,
+                        height: 44,
+                        borderColor: const Color(0xffD4D8E2),
+                        backgroundColor: Colors.transparent,
+                      ),
                       const SizedBox(height: 12),
-                      AppButton.appButton("Proceed",
-                          context: context,
-                          onTap: () => submitLastChildAndProceed(currentChild),
-                          textColor: AppTheme.white,
-                          border: false,
-                          height: 44,
-                          backgroundColor: AppTheme.primaryCOlor),
+                      AppButton.appButton(
+                        "Proceed",
+                        context: context,
+                        onTap: () => submitLastChildAndProceed(currentChild),
+                        textColor: AppTheme.white,
+                        border: false,
+                        height: 44,
+                        backgroundColor: AppTheme.primaryCOlor,
+                      ),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -169,90 +186,91 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
               radius: 45,
               backgroundImage: child.selectedImage != null
                   ? FileImage(child.selectedImage!)
-                  : const AssetImage("assets/images/user.png") as ImageProvider,
+                  : const AssetImage("assets/images/parentProfile.jpeg")
+                        as ImageProvider,
             ),
             Column(
               children: [
-                AppButton.appButton("Upload New",
-                    context: context,
-                    width: 200,
-                    onTap: () => _pickImage(index - 1),
-                    backgroundColor: const Color(0xffF1FCF9),
-                    border: false,
-                    textColor: AppTheme.appColor),
-                SizedBox(
-                  height: 10,
+                AppButton.appButton(
+                  "Upload New",
+                  context: context,
+                  width: 200,
+                  onTap: () => _pickImage(index - 1),
+                  backgroundColor: const Color(0xffF1FCF9),
+                  border: false,
+                  textColor: AppTheme.appColor,
                 ),
-                AppButton.appButton("Delete Image",
-                    context: context,
-                    width: 200,
-                    onTap: () => _deleteImage(index - 1),
-                    backgroundColor: const Color(0xffFEECEC),
-                    border: false,
-                    textColor: Colors.red),
+                SizedBox(height: 10),
+                AppButton.appButton(
+                  "Delete Image",
+                  context: context,
+                  width: 200,
+                  onTap: () => _deleteImage(index - 1),
+                  backgroundColor: const Color(0xffFEECEC),
+                  border: false,
+                  textColor: Colors.red,
+                ),
               ],
-            )
+            ),
           ],
         ),
         const SizedBox(height: 20),
         customLableField(
-            lable: "Child First Name", controller: child.firstName),
+          lable: "Child First Name",
+          controller: child.firstName,
+        ),
         const SizedBox(height: 20),
         customLableField(lable: "Child Last Name", controller: child.lastname),
         const SizedBox(height: 20),
         AppText.appText(
           "Curriculum",
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w500,
           textColor: AppTheme.lableText,
         ),
         const SizedBox(height: 8),
         DropdownButtonHideUnderline(
-            child: DropdownButton2<String>(
-                isExpanded: true,
-                hint: Text(
-                  'Select Curriculum',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppTheme.hintColor,
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            hint: Text(
+              'Select Curriculum',
+              style: TextStyle(fontSize: 14, color: AppTheme.hintColor),
+            ),
+            items: allCurriculums
+                .map(
+                  (e) => DropdownMenuItem<String>(
+                    value: e,
+                    child: Text(e, style: const TextStyle(fontSize: 14)),
                   ),
-                ),
-                items: allCurriculums
-                    .map((e) => DropdownMenuItem<String>(
-                          value: e,
-                          child: Text(
-                            e,
-                            style: const TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                        ))
-                    .toList(),
-                value: child.selectedCurriculum,
-                onChanged: (value) {
-                  setState(() {
-                    child.selectedCurriculum = value;
-                    if (value != "Others") {
-                      child.otherCurriculum.clear();
-                    }
-                  });
-                },
-                buttonStyleData: ButtonStyleData(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.borderCOlor),
-                  ),
-                ),
-                dropdownStyleData: DropdownStyleData(
-                  maxHeight: 150,
-                  offset: const Offset(0, -5), // 👈 container ke neeche
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ))),
+                )
+                .toList(),
+            value: child.selectedCurriculum,
+            onChanged: (value) {
+              setState(() {
+                child.selectedCurriculum = value;
+                if (value != "Others") {
+                  child.otherCurriculum.clear();
+                }
+              });
+            },
+            buttonStyleData: ButtonStyleData(
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppTheme.borderCOlor),
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 150,
+              offset: const Offset(0, -5), // 👈 container ke neeche
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ),
         if (child.selectedCurriculum == "Others")
           Padding(
             padding: const EdgeInsets.only(top: 10),
@@ -263,32 +281,92 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
             ),
           ),
         const SizedBox(height: 20),
-        AppText.appText("Gender",
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            textColor: AppTheme.lableText),
+        AppText.appText(
+          "Gender",
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          textColor: AppTheme.lableText,
+        ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _genderTile("Male", child),
-            _genderTile("Female", child),
-          ],
+          children: [_genderTile("Male", child), _genderTile("Female", child)],
         ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // spacing: 25,
           children: [
-            customLableField(
-                lable: "Grade",
-                width: ScreenSize(context).width * 0.4,
-                textType: TextInputType.numberWithOptions(),
-                controller: child.grade),
-            customLableField(
+            SizedBox(
+              width: ScreenSize(context).width * 0.4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText.appText(
+                    "Grade",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    textColor: AppTheme.lableText,
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        'Select Grade',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppTheme.hintColor,
+                        ),
+                      ),
+                      items: allGrades
+                          .map(
+                            (e) => DropdownMenuItem<String>(
+                              value: e,
+                              child: Text(
+                                e,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      value: child.selectedGrade,
+                      onChanged: (value) {
+                        setState(() {
+                          child.selectedGrade = value;
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppTheme.borderCOlor),
+                        ),
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 150,
+                        offset: const Offset(0, -5), // 👈 container ke neeche
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Expanded(child: SizedBox()),
+            SizedBox(
+              width: ScreenSize(context).width * 0.4,
+              child: customLableField(
                 lable: "Age",
                 textType: TextInputType.numberWithOptions(),
                 width: ScreenSize(context).width * 0.4,
-                controller: child.age),
+                controller: child.age,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 20),
@@ -329,7 +407,10 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
   }
 
   Future<void> _pickImage(int index) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      requestFullMetadata: false,
+    );
     if (pickedFile != null) {
       setState(() => childList[index].selectedImage = File(pickedFile.path));
     }
@@ -340,7 +421,10 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
   }
 
   Future<void> addSingleChild(
-      ChildProfileModel child, context, bool isLast) async {
+    ChildProfileModel child,
+    context,
+    bool isLast,
+  ) async {
     if (!validateFields(child)) return;
 
     setState(() => isLoading = true);
@@ -352,7 +436,7 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
       "curriculum": child.selectedCurriculum == "Others"
           ? child.otherCurriculum.text.trim()
           : child.selectedCurriculum,
-      "grade": child.grade.text.trim(),
+      "grade": child.selectedGrade,
       "age": child.age.text.trim(),
       "schoolName": child.schoolName.text.trim(),
       "image": child.selectedImage != null
@@ -381,8 +465,9 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
   }
 
   Future<void> submitLastChildAndProceed(ChildProfileModel child) async {
-    final isAllEmpty = child.firstName.text.isEmpty &&
-        child.grade.text.isEmpty &&
+    final isAllEmpty =
+        child.firstName.text.isEmpty &&
+        child.selectedGrade == null &&
         child.age.text.isEmpty &&
         child.schoolName.text.isEmpty &&
         child.selectedGender == null &&
@@ -390,8 +475,9 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
     print("nfelfmlfm $isAllEmpty and ${childList.length}");
     if (isAllEmpty && childList.length == 1) {
       AppToast.error(
-          context: context,
-          msg: "Please add at least one child before proceeding.");
+        context: context,
+        msg: "Please add at least one child before proceeding.",
+      );
       return;
     }
 
@@ -433,7 +519,10 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
       _showError("Please enter age");
       return false;
     }
-
+    if (!RegExp(r'^[0-9]+$').hasMatch(child.age.text.trim())) {
+      AppToast.error(context: context, msg: "Age must contain only digits");
+      return false;
+    }
     final age = int.tryParse(child.age.text.trim());
     if (age == null || age <= 0 || age > 25) {
       _showError("Please enter a valid age");
@@ -441,8 +530,8 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
     }
 
     // 🔹 Grade
-    if (child.grade.text.trim().isEmpty) {
-      _showError("Please enter grade");
+    if (child.selectedGrade == null) {
+      _showError("Please Select Grade");
       return false;
     }
 
@@ -462,9 +551,6 @@ class _ParentChildProfileState extends State<ParentChildProfile> {
   }
 
   void _showError(String message) {
-    AppToast.error(
-      context: context,
-      msg: message,
-    );
+    AppToast.error(context: context, msg: message);
   }
 }

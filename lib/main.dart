@@ -1,93 +1,175 @@
+import 'dart:developer' as dev;
 import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Providers/Chat/all_chat_provider.dart';
+import 'package:flutterustad/Providers/Contracts/contract_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/dashboard_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/get_tutors_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/location_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/subject_cost_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
+import 'package:flutterustad/Providers/notification/notification_provider.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/push_notification_service.dart';
+import 'package:flutterustad/firebase_options.dart';
+import 'package:flutterustad/splash_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ustaad/Providers/Chat/all_chat_provider.dart';
-import 'package:ustaad/Providers/Contracts/contract_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/dashboard_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/get_tutors_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/location_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_about_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_education_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_exp_provider.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_veirfy_provider.dart';
-import 'package:ustaad/Providers/notification/notification_provider.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/firebase_options.dart';
-import 'package:ustaad/splash_screen.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  print("Handling a background message: ${message.messageId}");
-}
-
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'high_importance_channel',
-  'High Importance Notifications',
-  description: 'Used for important notifications.',
-  importance: Importance.high,
-);
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-Future<void> setupFlutterNotifications() async {
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  final DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings();
-
-  final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin,
-    macOS: initializationSettingsDarwin,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: SystemUiOverlay.values,
+  );
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: AppTheme.primaryCOlor,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  dev.log("MAIN LOG: main() started");
+
   try {
+    dev.log("MAIN LOG: Initializing Firebase...");
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    dev.log("MAIN LOG: Firebase initialized successfully");
+
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+    dev.log("MAIN LOG: Firebase background handler registered");
+
+    await _debugFCMDirectCheck();
+
+    dev.log("MAIN LOG: Initializing PushNotificationService...");
+
+    await PushNotificationService.instance.initialize(
+      onNotificationTap: _handleNotificationClick,
+    );
+
+    dev.log("MAIN LOG: PushNotificationService initialized successfully");
+
     await initializeDateFormatting();
-    await setupFlutterNotifications();
+
+    dev.log("MAIN LOG: Date formatting initialized");
   } catch (e) {
-    print("Error during initialization: $e");
+    dev.log("MAIN ERROR: Firebase/notification initialization error: $e");
   }
 
   if (!kIsWeb && Platform.isAndroid) {
     WebViewPlatform.instance = AndroidWebViewPlatform();
+    dev.log("MAIN LOG: Android WebView initialized");
   }
-  await getPrefData();
-  runApp(const MyApp());
+
+  try {
+    dev.log("MAIN LOG: Calling getPrefData...");
+    await getPrefData();
+    dev.log("MAIN LOG: getPrefData completed");
+  } catch (e) {
+    dev.log("MAIN ERROR: getPrefData error: $e");
+  }
+
+  dev.log("MAIN LOG: runApp starting");
+
+  runApp(
+    ScreenUtilInit(
+      designSize: const Size(390, 860),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, child) {
+        return const MyApp();
+      },
+    ),
+  );
+}
+
+Future<void> _debugFCMDirectCheck() async {
+  dev.log("========== DIRECT FCM CHECK START ==========");
+
+  final messaging = FirebaseMessaging.instance;
+
+  final settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  dev.log("DIRECT FCM: Permission = ${settings.authorizationStatus}");
+  dev.log("DIRECT FCM: Alert = ${settings.alert}");
+  dev.log("DIRECT FCM: Badge = ${settings.badge}");
+  dev.log("DIRECT FCM: Sound = ${settings.sound}");
+
+  await messaging.setAutoInitEnabled(true);
+
+  if (Platform.isIOS) {
+    dev.log("DIRECT FCM: iOS detected. Waiting for APNs token...");
+
+    String? apnsToken;
+
+    for (int i = 1; i <= 20; i++) {
+      apnsToken = await messaging.getAPNSToken();
+
+      dev.log("DIRECT FCM: APNs attempt $i = ${apnsToken ?? 'NULL'}");
+
+      if (apnsToken != null && apnsToken.isNotEmpty) {
+        break;
+      }
+
+      await Future.delayed(const Duration(milliseconds: 700));
+    }
+
+    if (apnsToken == null || apnsToken.isEmpty) {
+      dev.log("DIRECT FCM ERROR: APNs token is still NULL");
+      dev.log(
+        "DIRECT FCM HINT: Check Xcode Push Notifications, Background Modes, Remote notifications, APNs key, and Bundle ID.",
+      );
+      return;
+    }
+  }
+
+  final fcmToken = await messaging.getToken();
+
+  dev.log("DIRECT FCM: FCM token = ${fcmToken ?? 'NULL'}");
+  dev.log("========== DIRECT FCM CHECK END ==========");
+}
+
+void _handleNotificationClick(Map<String, dynamic> data) {
+  dev.log("MAIN LOG: Notification click data: $data");
+
+  if (data['type'] == 'chat') {
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(builder: (context) => const SplashScreen()),
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -96,53 +178,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _requestPermission();
-    _initFCM();
-  }
-
-  void _requestPermission() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NotificationSettings settings = await messaging.requestPermission();
-    if (kDebugMode) {
-      print('🔔 Permission granted: ${settings.authorizationStatus}');
-    }
-  }
-
-  void _initFCM() async {
-    try {
-      String? token = await FirebaseMessaging.instance.getToken();
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('fcm_token', token ?? '');
-    } catch (e) {
-      print("Error getting FCM token: $e");
-    }
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channelDescription: channel.description,
-              importance: Importance.high,
-              priority: Priority.high,
-              icon: '@mipmap/ic_launcher',
-            ),
-          ),
-        );
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // print('🚀 Notification clicked: ${message.data}');
-    });
+    dev.log("APP LOG: MyApp initState called");
   }
 
   @override
@@ -162,7 +198,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ParentDashboardProvider(context)),
         ChangeNotifierProvider(create: (_) => ContractProvider(context)),
         ChangeNotifierProvider(
-            create: (_) => TutorEditProfileProvider(context)),
+          create: (_) => TutorEditProfileProvider(context),
+        ),
         ChangeNotifierProvider(create: (_) => NotificationProvider(context)),
       ],
       child: MaterialApp(
@@ -177,6 +214,27 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         title: 'Ustaad',
+        builder: (context, child) {
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: AppTheme.black,
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+              systemNavigationBarColor: Colors.white,
+              systemNavigationBarIconBrightness: Brightness.dark,
+            ),
+            child: ColoredBox(
+              color: AppTheme.primaryCOlor,
+              child: SafeArea(
+                top: true,
+                bottom: Platform.isAndroid,
+                left: true,
+                right: true,
+                child: child!,
+              ),
+            ),
+          );
+        },
         home: const SplashScreen(),
       ),
     );
