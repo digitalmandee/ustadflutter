@@ -3,24 +3,24 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/calculate_duration.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/timeformat.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Custom%20widgets/app_bar.dart';
-import 'package:ustaad/Custom%20widgets/session_cards.dart';
-import 'package:ustaad/Providers/Parent%20Side/parent_profile_provider.dart';
-import 'package:ustaad/Screens/Drawer/tutor_drawer.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Sessions/parent_sub_session.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/checkout.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/global.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/calculate_duration.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/timeformat.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Custom%20widgets/app_bar.dart';
+import 'package:flutterustad/Custom%20widgets/session_cards.dart';
+import 'package:flutterustad/Providers/Parent%20Side/parent_profile_provider.dart';
+import 'package:flutterustad/Screens/Drawer/drawer.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Sessions/parent_sub_session.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/checkout.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/reverse_timer.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ParentSessionScreen extends StatefulWidget {
   const ParentSessionScreen({super.key});
@@ -30,36 +30,6 @@ class ParentSessionScreen extends StatefulWidget {
 }
 
 class _ParentSessionScreenState extends State<ParentSessionScreen> {
-  final completedSessions = [
-    SessionCard(
-      title: "Class at Mir Ahmed's House",
-      toDate: '3 December 2024',
-      fee: 'Rs. 17000/mo',
-      fromDate: "26 June 2024",
-      time: const Text("01:00:00"),
-      isCompleted: true,
-      rating: "4.5",
-    ),
-    SessionCard(
-      title: "Class at Mir Ahmed's House",
-      toDate: '3 December 2024',
-      fee: 'Rs. 17000/mo',
-      fromDate: "26 June 2024",
-      time: const Text("01:00:00"),
-      isCompleted: true,
-      rating: "4.5",
-    ),
-    SessionCard(
-      title: "Class at Mir Ahmed's House",
-      toDate: '3 December 2024',
-      fee: 'Rs. 17000/mo',
-      fromDate: "26 June 2024",
-      time: const Text("01:00:00"),
-      isCompleted: true,
-      rating: "4.5",
-    ),
-  ];
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showUpcoming = true;
   bool isLoading = false;
@@ -88,75 +58,101 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
         crossOnTap: () => _scaffoldKey.currentState?.closeEndDrawer(),
         isTutor: false,
       ),
-      appBar: CustomAppBar(
-          onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
-          taskSummary: provider.tasks),
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 10),
-          Container(
-            height: 40,
-            width: 220,
-            decoration: BoxDecoration(
-                color: Color(0xffECEEF3),
-                borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        showUpcoming = true;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 108,
-                      decoration: BoxDecoration(
-                          color: showUpcoming
-                              ? AppTheme.appColor
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                          child: AppText.appText("Upcoming",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              textColor: showUpcoming
-                                  ? AppTheme.white
-                                  : AppTheme.black)),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        showUpcoming = false;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 108,
-                      decoration: BoxDecoration(
-                          color: !showUpcoming
-                              ? AppTheme.appColor
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                          child: AppText.appText("Completed",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              textColor: !showUpcoming
-                                  ? AppTheme.white
-                                  : AppTheme.black)),
-                    ),
-                  ),
-                ],
-              ),
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/Background.png",
+              fit: BoxFit.fill,
             ),
           ),
-          const SizedBox(height: 10),
-          _buildSessionsContent()
+          Column(
+            children: [
+              CustomAppBar(
+                onMenuTap: () => _scaffoldKey.currentState?.openEndDrawer(),
+                taskSummary: provider.tasks,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      height: 40,
+                      width: 220,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffECEEF3),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showUpcoming = true;
+                                });
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 108,
+                                decoration: BoxDecoration(
+                                  color: showUpcoming
+                                      ? AppTheme.appColor
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: AppText.appText(
+                                    "Upcoming",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    textColor: showUpcoming
+                                        ? AppTheme.white
+                                        : AppTheme.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showUpcoming = false;
+                                });
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 108,
+                                decoration: BoxDecoration(
+                                  color: !showUpcoming
+                                      ? AppTheme.appColor
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: AppText.appText(
+                                    "Completed",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    textColor: !showUpcoming
+                                        ? AppTheme.white
+                                        : AppTheme.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildSessionsContent(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -166,11 +162,19 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
     if (isLoading) return Expanded(child: GifLoader());
 
     if (upcomingParentSessions.isEmpty) {
-      return Expanded(
-        child: Center(
-          child: AppText.appText("No Upcoming Session at this Time"),
-        ),
-      );
+      if (showUpcoming) {
+        return Expanded(
+          child: Center(
+            child: AppText.appText("No Upcoming Session at this Time"),
+          ),
+        );
+      } else {
+        return Expanded(
+          child: Center(
+            child: AppText.appText("No Completed Session at this Time"),
+          ),
+        );
+      }
     }
 
     return Expanded(
@@ -191,21 +195,23 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
             (r) => r["sessionId"] == session["id"] && r["status"] == "CREATED",
           );
 
-          final runningSubSessionId =
-              runningSessions.isNotEmpty ? runningSessions[0]["id"] : "";
+          final runningSubSessionId = runningSessions.isNotEmpty
+              ? runningSessions[0]["id"]
+              : "";
 
           return InkWell(
             onTap: () {
               if (showUpcoming == false) {
                 push(
-                    context,
-                    ParentSubSessionScreen(
-                      name: "${session["parentName"]}",
-                      parentId: "${session["parentId"]}",
-                      tutorId: "${session["tutorId"]}",
-                      sessionId: "${session["id"]}",
-                      childName: capitalizeEachWord(session['childName']),
-                    ));
+                  context,
+                  ParentSubSessionScreen(
+                    name: "${session["parentName"]}",
+                    parentId: "${session["parentId"]}",
+                    tutorId: "${session["tutorId"]}",
+                    sessionId: "${session["id"]}",
+                    childName: capitalizeEachWord(session['childName']),
+                  ),
+                );
               }
             },
             child: SessionCard(
@@ -217,7 +223,8 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
               endTime: formatTimeTo12Hour(session["endTime"]),
               title: showUpcoming
                   ? capitalizeEachWord(
-                      "Class of ${session["tutorName"] ?? ""}'s")
+                      "Class of ${session["tutorName"] ?? ""}'s",
+                    )
                   : capitalizeEachWord("${session["tutorName"] ?? ""}'s"),
               duration: "$duration session",
               fee: "Rs. ${session["price"]}",
@@ -227,13 +234,15 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SessionCheckOut(
-                            ruuningId: runningSubSessionId,
-                            parentId: "${session["parentId"]}",
-                            tutorId: "${session["tutorId"]}",
-                            sessionId: "${session["id"]}",
-                          )),
+                    builder: (context) => SessionCheckOut(
+                      ruuningId: runningSubSessionId,
+                      parentId: "${session["parentId"]}",
+                      tutorId: "${session["tutorId"]}",
+                      sessionId: "${session["id"]}",
+                    ),
+                  ),
                 ).then((_) {
+                  if (!context.mounted) return;
                   getParentSessions(context);
                 });
               },
@@ -287,8 +296,9 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
             responseData["data"]["runningSessions"] as List<dynamic>;
 
         setState(() {
-          upcomingParentSessions =
-              sessions.where((s) => s["status"] == "active").toList();
+          upcomingParentSessions = sessions
+              .where((s) => s["status"] == "active")
+              .toList();
           runningSessions = running;
           isLoading = false;
         });
@@ -317,10 +327,7 @@ class _ParentSessionScreenState extends State<ParentSessionScreen> {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       setState(() => isLoading = false);
     }

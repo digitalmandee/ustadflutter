@@ -1,12 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Models/Parent%20Side/spending_model.dart';
-import 'package:ustaad/Models/Tutor%20Side/earning_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
-import 'package:ustaad/Providers/Parent%20Side/dashboard_provider.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Models/Parent%20Side/spending_model.dart';
+import 'package:flutterustad/Models/Tutor%20Side/earning_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_dashboard_provider.dart';
+import 'package:flutterustad/Providers/Parent%20Side/dashboard_provider.dart';
 
 class EarningsBarChart extends StatelessWidget {
   final bool isParent;
@@ -32,10 +32,7 @@ class EarningsBarChart extends StatelessWidget {
     } else {
       final provider = Provider.of<TutorDashBoardProvider>(context);
       if (provider.isLoading) {
-        return const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: GifLoader(),
-        );
+        return const Padding(padding: EdgeInsets.all(20.0), child: GifLoader());
       }
       if (provider.monthlyEarnings.isEmpty) {
         return const Padding(
@@ -71,8 +68,9 @@ class EarningsBarChart extends StatelessWidget {
     required double Function(T) getValue,
     required String Function(T) getMonth,
   }) {
-    final maxY =
-        (data.isEmpty) ? 0 : data.map(getValue).reduce((a, b) => a > b ? a : b);
+    final maxY = (data.isEmpty)
+        ? 0
+        : data.map(getValue).reduce((a, b) => a > b ? a : b);
 
     final safeMaxY = maxY == 0 ? 250000.0 : maxY;
 
@@ -92,9 +90,13 @@ class EarningsBarChart extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w700)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 30),
                 Expanded(
                   child: BarChart(
@@ -123,19 +125,25 @@ class EarningsBarChart extends StatelessWidget {
                             getTitlesWidget: (value, _) {
                               if (value.toInt() < data.length) {
                                 final month = getMonth(data[value.toInt()]);
-                                final shortMonth =
-                                    month.toString().substring(0, 3);
-                                return Text(shortMonth,
-                                    style: const TextStyle(fontSize: 12));
+                                final shortMonth = month.toString().substring(
+                                  0,
+                                  3,
+                                );
+                                return Text(
+                                  shortMonth,
+                                  style: const TextStyle(fontSize: 12),
+                                );
                               }
                               return const Text("");
                             },
                           ),
                         ),
                         rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
                         topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
                       ),
                       barGroups: data.asMap().entries.map((entry) {
                         final y = getValue(entry.value);
@@ -184,7 +192,7 @@ class EarningsBarChart extends StatelessWidget {
           width: 36.72,
           borderRadius: BorderRadius.circular(6),
           color: AppTheme.appColor,
-        )
+        ),
       ],
     );
   }

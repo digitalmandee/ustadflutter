@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/subject_cost_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/subject_cost_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
-import 'package:ustaad/Screens/Chats/chat_modet.dart';
-import 'package:ustaad/config/dio/app_logger.dart';
-import 'package:ustaad/config/dio/dio.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/subject_cost_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/subject_cost_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Screens/Chats/chat_modet.dart';
+import 'package:flutterustad/config/dio/app_logger.dart';
+import 'package:flutterustad/config/dio/dio.dart';
 
 class CustomOfferSheet extends StatefulWidget {
   final String conversationId;
@@ -84,6 +84,25 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
   final AppLogger logger = AppLogger();
   List<SubjectModel> selectedSubjects = [];
 
+  bool _isSubjectSelected(SubjectModel subject) {
+    return selectedSubjects.any(
+      (selected) =>
+          selected.name.trim().toLowerCase() ==
+          subject.name.trim().toLowerCase(),
+    );
+  }
+
+  String _selectedSubjectsLabel() {
+    return selectedSubjects
+        .map((subject) => capitalizeEachWord(subject.name))
+        .join(", ");
+  }
+
+  SubjectModel? _selectedDropdownSubject(List<SubjectModel> subjects) {
+    final selected = subjects.where(_isSubjectSelected);
+    return selected.isEmpty ? null : selected.first;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -91,8 +110,10 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
     logger.init();
     startDate = DateTime.now();
     if (mounted) {
-      Provider.of<CostSettingProvider>(context, listen: false)
-          .fetchCostSettings(context, true);
+      Provider.of<CostSettingProvider>(
+        context,
+        listen: false,
+      ).fetchCostSettings(context, true);
     }
   }
 
@@ -100,7 +121,9 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom, top: 40),
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        top: 40,
+      ),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -111,9 +134,10 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Send Custom Offer",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                  Text(
+                    "Send Custom Offer",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Icon(Icons.close, color: Colors.grey),
@@ -140,59 +164,63 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<Map<String, dynamic>>(
-                      isExpanded: true,
-                      value: selectedChild,
-                      hint: AppText.appText(
-                        "Select Child",
-                        textColor: AppTheme.hintColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      items: widget.childrens.map((child) {
-                        final isSelected = child == selectedChild;
-                        return DropdownMenuItem<Map<String, dynamic>>(
-                          value: child,
+                    isExpanded: true,
+                    value: selectedChild,
+                    hint: AppText.appText(
+                      "Select Child",
+                      textColor: AppTheme.hintColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    items: widget.childrens.map((child) {
+                      final isSelected = child == selectedChild;
+                      return DropdownMenuItem<Map<String, dynamic>>(
+                        value: child,
+                        child: Text(
+                          capitalizeEachWord(
+                            "${child["firstName"]} ${child["lastName"]}",
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: isSelected
+                                ? AppTheme.appColor
+                                : Colors.black,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    selectedItemBuilder: (context) {
+                      return widget.childrens.map((child) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
                             capitalizeEachWord(
-                                "${child["firstName"]} ${child["lastName"]}"),
+                              "${child["firstName"]} ${child["lastName"]}",
+                            ),
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color:
-                                  isSelected ? AppTheme.appColor : Colors.black,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
+                            style: const TextStyle(
+                              color: Colors.black, // field me black
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         );
-                      }).toList(),
-                      selectedItemBuilder: (context) {
-                        return widget.childrens.map((child) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Text(
-                              capitalizeEachWord(
-                                  "${child["firstName"]} ${child["lastName"]}"),
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.black, // field me black
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                      onChanged: (value) {
-                        setState(() => selectedChild = value);
-                      },
-                      dropdownStyleData: DropdownStyleData(
-                        maxHeight: 150,
-                        offset: const Offset(0, -5), // 👈 container ke neeche
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      )),
+                      }).toList();
+                    },
+                    onChanged: (value) {
+                      setState(() => selectedChild = value);
+                    },
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 150,
+                      offset: const Offset(0, -5), // 👈 container ke neeche
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
                 ),
               ),
 
@@ -200,12 +228,15 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
 
               /// Amount
               customLableField(
-                  lable: "Total Amount*",
-                  controller: amountController,
-                  textType: TextInputType.numberWithOptions()),
+                lable: "Total Amount*",
+                controller: amountController,
+                textType: TextInputType.numberWithOptions(),
+              ),
               const SizedBox(height: 12),
               customLableField(
-                  lable: "Session Numbers", controller: sessionNumbers),
+                lable: "Session Numbers",
+                controller: sessionNumbers,
+              ),
 
               const SizedBox(height: 12),
 
@@ -216,13 +247,13 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppText.appText("Subject",
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            textColor: AppTheme.lableText),
-                        SizedBox(
-                          height: 10,
+                        AppText.appText(
+                          "Subject",
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          textColor: AppTheme.lableText,
                         ),
+                        SizedBox(height: 10),
                         Container(
                           height: 40,
                           decoration: BoxDecoration(
@@ -235,15 +266,21 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                               builder: (context, provider, _) {
                                 return DropdownButton2<SubjectModel>(
                                   isExpanded: true,
+                                  value: _selectedDropdownSubject(
+                                    provider.subjects,
+                                  ),
                                   hint: AppText.appText(
                                     "Select Subject(s)",
                                     textColor: AppTheme.hintColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
+                                    maxlines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   items: provider.subjects.map((subject) {
-                                    final isSelected =
-                                        selectedSubjects.contains(subject);
+                                    final isSelected = _isSubjectSelected(
+                                      subject,
+                                    );
                                     return DropdownMenuItem<SubjectModel>(
                                       value: subject,
                                       child: Text(
@@ -259,9 +296,26 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                                       ),
                                     );
                                   }).toList(),
+                                  selectedItemBuilder: (context) {
+                                    return provider.subjects.map((subject) {
+                                      return Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          _selectedSubjectsLabel(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
                                   onChanged: (value) {
                                     if (value != null &&
-                                        !selectedSubjects.contains(value)) {
+                                        !_isSubjectSelected(value)) {
                                       setState(() {
                                         selectedSubjects.add(value);
                                       });
@@ -333,10 +387,12 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                 ],
               ),
               const SizedBox(height: 12),
-              AppText.appText("Selected Subjects",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  textColor: AppTheme.lableText),
+              AppText.appText(
+                "Selected Subjects",
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                textColor: AppTheme.lableText,
+              ),
               const SizedBox(height: 6),
               Wrap(
                 spacing: 8,
@@ -345,8 +401,11 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                     label: Text(capitalizeEachWord(subject.name)),
                     backgroundColor: AppTheme.appColor,
                     labelStyle: TextStyle(color: Colors.white),
-                    deleteIcon:
-                        Icon(Icons.close, color: Colors.white, size: 18),
+                    deleteIcon: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                     side: BorderSide.none,
                     onDeleted: () {
                       setState(() {
@@ -356,38 +415,43 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
                   );
                 }).toList(),
               ),
-              AppText.appText("Days of Week *",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  textColor: AppTheme.lableText),
+              AppText.appText(
+                "Days of Week *",
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                textColor: AppTheme.lableText,
+              ),
               const SizedBox(height: 6),
               Wrap(
                 spacing: 8,
-                children: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
-                    .map((day) {
-                  final isSelected = selectedDays.contains(day);
-                  return ChoiceChip(
-                    label: Text(day.toUpperCase()),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          selectedDays.add(day);
-                        } else {
-                          selectedDays.remove(day);
-                        }
-                      });
-                    },
-                    backgroundColor: AppTheme.white,
-                    disabledColor: AppTheme.white,
-                    selectedColor: AppTheme.appColor,
-                    labelStyle: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: isSelected ? Colors.white : AppTheme.lighttxtColor,
-                    ),
-                  );
-                }).toList(),
+                children: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(
+                  (day) {
+                    final isSelected = selectedDays.contains(day);
+                    return ChoiceChip(
+                      label: Text(day.toUpperCase()),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            selectedDays.add(day);
+                          } else {
+                            selectedDays.remove(day);
+                          }
+                        });
+                      },
+                      backgroundColor: AppTheme.white,
+                      disabledColor: AppTheme.white,
+                      selectedColor: AppTheme.appColor,
+                      labelStyle: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: isSelected
+                            ? Colors.white
+                            : AppTheme.lighttxtColor,
+                      ),
+                    );
+                  },
+                ).toList(),
               ),
 
               const SizedBox(height: 12),
@@ -435,7 +499,9 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
               onPrimary: Colors.white, // text color on selected date
               onSurface: Colors.black, // default text color
             ),
-            dialogBackgroundColor: Colors.white, // background color
+            dialogTheme: DialogThemeData(
+              backgroundColor: Colors.white,
+            ), // background color
           ),
           child: child!,
         );
@@ -451,8 +517,11 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
     }
   }
 
-  void _pickTime(BuildContext context, TextEditingController controller,
-      bool isStart) async {
+  void _pickTime(
+    BuildContext context,
+    TextEditingController controller,
+    bool isStart,
+  ) async {
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -466,26 +535,26 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
             ),
             timePickerTheme: TimePickerThemeData(
               dialBackgroundColor: Colors.white, // background of the dial
-              hourMinuteTextColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return Colors.white; // selected hour/minute text
                 }
                 return Colors.black; // unselected hour/minute
               }),
-              hourMinuteColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              hourMinuteColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return AppTheme.primaryCOlor; // selected container
                 }
                 return Colors.grey.shade200; // unselected container
               }),
-              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return Colors.white; // AM/PM selected text
                 }
                 return Colors.black; // AM/PM unselected text
               }),
-              dayPeriodColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              dayPeriodColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return AppTheme.primaryCOlor; // AM/PM selected container
                 }
                 return Colors.grey.shade200; // AM/PM unselected container
@@ -536,6 +605,29 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
       _showError("Please select an end time.");
       return;
     }
+    // ✅ Validate Start Time < End Time
+    final now = DateTime.now();
+
+    final startDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedStartTime!.hour,
+      selectedStartTime!.minute,
+    );
+
+    final endDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedEndTime!.hour,
+      selectedEndTime!.minute,
+    );
+
+    if (!startDateTime.isBefore(endDateTime)) {
+      _showError("Start time must be earlier than end time");
+      return;
+    }
     if (selectedDays.isEmpty) {
       _showError("Please select days.");
       return;
@@ -572,7 +664,7 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
     );
   }
 
-// Helper to convert TimeOfDay → HH:mm
+  // Helper to convert TimeOfDay → HH:mm
   String _formatTimeOfDay(TimeOfDay tod) {
     final now = DateTime.now();
     final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
@@ -632,7 +724,9 @@ class _CustomOfferSheetState extends State<CustomOfferSheet> {
         "offer": offerData,
       };
       final response = await dio.post(
-          path: "http://15.235.204.49:5000/chat/messages", data: params);
+        path: "http://15.235.204.49:5000/chat/messages",
+        data: params,
+      );
 
       if (response.statusCode == 200) {
         return true;

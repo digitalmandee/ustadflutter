@@ -31,24 +31,29 @@ class TutorModel {
 
   factory TutorModel.fromJson(Map<String, dynamic> json) {
     final tutor = json['tutor'] ?? {};
+    final tutorProfile = tutor['Tutor'] ?? {};
+    final reviewStats = tutor['reviewStats'] ?? json['reviewStats'] ?? {};
 
     return TutorModel(
-      tutorId: json['tutorId'] ?? '',
+      tutorId: (json['tutorId'] ?? tutor['id'] ?? '').toString(),
       firstName: tutor['firstName'] ?? 'Unknown',
       lastName: tutor['lastName'] ?? 'Unknown',
-      gender: tutor['gender'] ?? 'Unknown',
-      subjects: List<String>.from(
-        tutor['Tutor']?['subjects'] ?? [],
-      ),
+      gender: (tutor['gender'] ?? 'Unknown').toString().toLowerCase(),
+      subjects: List<String>.from(tutorProfile['subjects'] ?? []),
       address: json['address'] ?? 'Unknown Area',
       image: tutor['image'] ?? '',
       email: tutor['email'] ?? '',
       phone: tutor['phone'] ?? '',
-      rating: (json['reviewStats']["averageRating"] ?? 5.0 as num)
-          .toDouble(), // ✅ safe cast
-      experience: (tutor['totalExperience'] ?? 0 as num).toDouble(),
-      grades: List<String>.from(tutor['Tutor']['grade'] ?? []),
-      curriculums: List<String>.from(tutor['Tutor']['curriculum'] ?? []),
+      rating: (reviewStats['averageRating'] as num? ?? 0).toDouble(),
+      experience:
+          ((tutor['totalExperienceMonths'] ??
+                      tutor['totalExperience'] ??
+                      json['totalExperienceMonths'] ??
+                      0)
+                  as num)
+              .toDouble(),
+      grades: List<String>.from(tutorProfile['grade'] ?? []),
+      curriculums: List<String>.from(tutorProfile['curriculum'] ?? []),
     );
   }
 }

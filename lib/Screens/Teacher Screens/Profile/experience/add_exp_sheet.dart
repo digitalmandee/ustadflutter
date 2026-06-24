@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/experience_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_exp_provider.dart';
-import 'package:ustaad/Screens/Authentication/widgets/auth_widgets.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/experience_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/auth_widgets.dart';
 
 class AddExperienceBottomSheet extends StatefulWidget {
   final Experience? experience; // null = add, not null = edit
@@ -64,8 +64,9 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
       padding: MediaQuery.of(context).viewInsets,
       child: SingleChildScrollView(
         child: Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -82,20 +83,24 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                           height: 120,
                           width: 120,
                           decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image:
-                                      AssetImage("assets/images/radial.png"))),
+                            image: DecorationImage(
+                              image: AssetImage("assets/images/radial.png"),
+                            ),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(isEdit
-                                ? "assets/images/editBottom.png"
-                                : "assets/images/addPlus.png"),
+                            child: Image.asset(
+                              isEdit
+                                  ? "assets/images/editBottom.png"
+                                  : "assets/images/addPlus.png",
+                            ),
                           ),
                         ),
                         IconButton(
                           onPressed: () {
                             Navigator.pop(
-                                context); // 👈 only this closes the sheet
+                              context,
+                            ); // 👈 only this closes the sheet
                           },
                           icon: Icon(Icons.close),
                         ),
@@ -107,10 +112,12 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                       fontWeight: FontWeight.w600,
                     ),
                     const SizedBox(height: 10),
-                    AppText.appText("Edit experience to your profile",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        textColor: Color(0xff4D5874)),
+                    AppText.appText(
+                      "Edit experience to your profile",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      textColor: Color(0xff4D5874),
+                    ),
                   ],
                 ),
               ),
@@ -183,7 +190,6 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                 builder: (context, child) {
                                   return Theme(
                                     data: Theme.of(context).copyWith(
-                                      dialogBackgroundColor: Colors.white,
                                       colorScheme: ColorScheme.light(
                                         primary: AppTheme
                                             .primaryCOlor, // selected date bg
@@ -197,6 +203,9 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                               AppTheme.primaryCOlor,
                                         ),
                                       ),
+                                      dialogTheme: DialogThemeData(
+                                        backgroundColor: Colors.white,
+                                      ),
                                     ),
                                     child: child!,
                                   );
@@ -206,8 +215,9 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                               if (pickedDate != null) {
                                 setState(() {
                                   _startDateRaw = pickedDate;
-                                  _startDate.text = DateFormat('dd/MM/yyyy')
-                                      .format(pickedDate);
+                                  _startDate.text = DateFormat(
+                                    'dd/MM/yyyy',
+                                  ).format(pickedDate);
                                 });
                               }
                             },
@@ -235,7 +245,6 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                       builder: (context, child) {
                                         return Theme(
                                           data: Theme.of(context).copyWith(
-                                            dialogBackgroundColor: Colors.white,
                                             colorScheme: ColorScheme.light(
                                               primary: AppTheme.primaryCOlor,
                                               onPrimary: Colors.white,
@@ -243,10 +252,13 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    AppTheme.primaryCOlor,
-                                              ),
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                        AppTheme.primaryCOlor,
+                                                  ),
+                                                ),
+                                            dialogTheme: DialogThemeData(
+                                              backgroundColor: Colors.white,
                                             ),
                                           ),
                                           child: child!,
@@ -257,8 +269,9 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                                     if (pickedDate != null) {
                                       setState(() {
                                         _endDateRaw = pickedDate;
-                                        _endDate.text = DateFormat('dd/MM/yyyy')
-                                            .format(pickedDate);
+                                        _endDate.text = DateFormat(
+                                          'dd/MM/yyyy',
+                                        ).format(pickedDate);
                                       });
                                     }
                                   },
@@ -298,17 +311,74 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                             backgroundColor: Colors.red,
                             onTap: () => _deleteExperience(context, provider),
                           ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                         AppButton.appButton(
                           context: context,
                           isEdit ? "Update" : "Add",
                           width: 83,
                           onTap: () async {
+                            if (_company.text.trim().isEmpty) {
+                              AppToast.error(
+                                context: context,
+                                msg: "Please enter Company Name",
+                              );
+                              return;
+                            }
+
+                            if (_designation.text.trim().isEmpty) {
+                              AppToast.error(
+                                context: context,
+                                msg: "Please enter Designation",
+                              );
+                              return;
+                            }
+
+                            if (_startDateRaw == null) {
+                              AppToast.error(
+                                context: context,
+                                msg: "Please select Start Date",
+                              );
+                              return;
+                            }
+
+                            if (!isContinue && _endDateRaw == null) {
+                              AppToast.error(
+                                context: context,
+                                msg:
+                                    "Please select End Date or mark as Currently Studying",
+                              );
+                              return;
+                            }
+
+                            if (!isContinue &&
+                                _endDateRaw != null &&
+                                _endDateRaw!.isBefore(_startDateRaw!)) {
+                              AppToast.error(
+                                context: context,
+                                msg: "End Date cannot be before Start Date",
+                              );
+                              return;
+                            }
+                            if (_description.text.isEmpty) {
+                              AppToast.error(
+                                context: context,
+                                msg: "Please enter Description",
+                              );
+                              return;
+                            }
+                            if (_description.text.trim().length < 10) {
+                              AppToast.error(
+                                context: context,
+                                msg:
+                                    "Description must be at least 10 characters",
+                              );
+                              return;
+                            }
+
                             final provider = Provider.of<ExperienceProvider>(
-                                context,
-                                listen: false);
+                              context,
+                              listen: false,
+                            );
                             final exp = Experience(
                               id: widget.experience?.id ?? '',
                               company: _company.text.trim(),
@@ -319,17 +389,43 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
                               description: _description.text.trim(),
                               designation: _designation.text.trim(),
                             );
-
-                            bool success;
+                            bool success = false;
                             if (isEdit) {
-                              success =
-                                  await provider.updateExperience(exp, context);
+                              if (!_hasChanges()) {
+                                AppToast.error(
+                                  context: context,
+                                  msg: "No changes detected",
+                                );
+                                return;
+                              }
+
+                              success = await provider.updateExperience(
+                                exp,
+                                context,
+                              );
                             } else {
-                              success =
-                                  await provider.addExperience(exp, context);
+                              if (provider.addExpLoader == false) {
+                                success = await provider.addExperience(
+                                  exp,
+                                  context,
+                                );
+                              }
                             }
 
-                            if (success) Navigator.pop(context);
+                            if (success) {
+                              Navigator.pop(context);
+                              await Future.delayed(
+                                const Duration(milliseconds: 200),
+                              );
+                              if (mounted) {
+                                AppToast.success(
+                                  context: context,
+                                  msg: isEdit
+                                      ? "Experience Updated successfully"
+                                      : "Experience Added successfully",
+                                );
+                              }
+                            }
                           },
                         ),
                       ],
@@ -344,26 +440,58 @@ class _AddExperienceBottomSheetState extends State<AddExperienceBottomSheet> {
     );
   }
 
+  bool _hasChanges() {
+    if (widget.experience == null) return true;
+
+    final original = widget.experience!;
+
+    final currentStart = _startDateRaw?.toIso8601String() ?? '';
+    final currentEnd = isContinue
+        ? "Present"
+        : _endDateRaw?.toIso8601String() ?? '';
+
+    return original.company != _company.text.trim() ||
+        original.designation != _designation.text.trim() ||
+        original.description != _description.text.trim() ||
+        original.startDate != currentStart ||
+        original.endDate != currentEnd;
+  }
+
   Future<void> _deleteExperience(context, ExperienceProvider provider) async {
     final confirmed = await showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        backgroundColor: Color.fromARGB(255, 204, 227, 234),
         title: const Text("Delete Experience"),
         content: const Text("Are you sure you want to delete this?"),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel")),
+            onPressed: () => Navigator.pop(context, false),
+            child: AppText.appText("Cancel", textColor: AppTheme.primaryCOlor),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text("Delete")),
+            onPressed: () => Navigator.pop(context, true),
+            child: AppText.appText("Delete", textColor: AppTheme.primaryCOlor),
+          ),
         ],
       ),
     );
     if (confirmed == true) {
-      bool success =
-          await provider.deleteExperience(widget.experience!.id, context);
-      if (success) Navigator.pop(context);
+      bool success = await provider.deleteExperience(
+        widget.experience!.id,
+        context,
+      );
+
+      if (success) {
+        Navigator.pop(context);
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (mounted) {
+          AppToast.success(
+            context: context,
+            msg: "Experience Deleted successfully",
+          );
+        }
+      }
     }
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/Authentication/widgets/widgets.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/bank_selection.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/doc_verification.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/0nBoard%20Screens/subject_screen.dart';
+import 'package:flutterustad/Screens/Authentication/widgets/widgets.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/bank_selection.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/data_model.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/doc_verification.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/location_add.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/0nBoard%20Screens/subject_screen.dart';
+import 'package:flutterustad/Helpers/static_data.dart';
 
 class TutorOnboardScreen extends StatefulWidget {
   const TutorOnboardScreen({super.key});
@@ -22,13 +23,25 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     onboardData = TutorOnboardData();
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return PopScope(
+      canPop: _tabController.index == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _goToPreviousStep();
+        }
+      },
       child: Scaffold(
         body: Column(
           children: [
@@ -37,14 +50,32 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
               child: Row(
                 children: [
                   stepIndicator(
-                      "Subjects", 0, context, ScreenSize(context).width * 0.27,
-                      controller: _tabController),
+                    "Subjects",
+                    0,
+                    context,
+                    controller: _tabController,
+                  ),
+                  SizedBox(width: 5),
                   stepIndicator(
-                      "Banks", 1, context, ScreenSize(context).width * 0.27,
-                      controller: _tabController),
-                  stepIndicator("Verifications", 2, context,
-                      ScreenSize(context).width * 0.27,
-                      controller: _tabController),
+                    Staticdata.isActive ? "Next" : "Banks",
+                    1,
+                    context,
+                    controller: _tabController,
+                  ),
+                  SizedBox(width: 5),
+                  stepIndicator(
+                    "Verify",
+                    2,
+                    context,
+                    controller: _tabController,
+                  ),
+                  SizedBox(width: 5),
+                  stepIndicator(
+                    "Location",
+                    3,
+                    context,
+                    controller: _tabController,
+                  ),
                 ],
               ),
             ),
@@ -55,47 +86,39 @@ class _TutorOnboardScreenState extends State<TutorOnboardScreen>
                 children: [
                   SubjectSelectionScreen(
                     onboardData: onboardData,
-                    onTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
+                    onTap: _goToNextStep,
                   ),
                   BankSelectionScreen(
                     onboardData: onboardData,
-                    onTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index + 1);
-                        });
-                      }
-                    },
-                    onBackTap: () {
-                      if (_tabController.index < 2) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
+                    onTap: _goToNextStep,
+                    onBackTap: _goToPreviousStep,
                   ),
                   TutorDocVerificationScreen(
                     onboardData: onboardData,
-                    onBackTap: () {
-                      if (_tabController.index < 3) {
-                        setState(() {
-                          _tabController.animateTo(_tabController.index - 1);
-                        });
-                      }
-                    },
+                    onBackTap: _goToPreviousStep,
+                    onTap: _goToNextStep,
                   ),
+                  OnboardLocation(onBackTap: _goToPreviousStep),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _goToPreviousStep() {
+    if (_tabController.index == 0) return;
+    setState(() {
+      _tabController.animateTo(_tabController.index - 1);
+    });
+  }
+
+  void _goToNextStep() {
+    if (_tabController.index == _tabController.length - 1) return;
+    setState(() {
+      _tabController.animateTo(_tabController.index + 1);
+    });
   }
 }

@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Dashboard/dashboard.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
-import 'package:ustaad/Screens/Parents%20Screens/Parent%20Sessions/parent_session.dart';
-import 'package:ustaad/Screens/Chats/chat.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/HomeScreen/dash_board.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Sessions/tutor_session.dart';
+import 'package:provider/provider.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_exp_provider.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Dashboard/dashboard.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Profile/parent_profile.dart';
+import 'package:flutterustad/Screens/Parents%20Screens/Parent%20Sessions/parent_session.dart';
+import 'package:flutterustad/Screens/Chats/chat.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/HomeScreen/dash_board.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/tutor_profile.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Sessions/tutor_session.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/guest_helper.dart';
 
 class BottomNavView extends StatefulWidget {
   final bool tutor;
   final int index;
+  final String? snackbarMessage;
 
   const BottomNavView({
     super.key,
     required this.tutor,
     this.index = 0,
+    this.snackbarMessage,
   });
 
   @override
@@ -24,6 +31,7 @@ class BottomNavView extends StatefulWidget {
 
 class _BottomNavViewState extends State<BottomNavView> {
   int _currentIndex = 0;
+  bool _profileDialogShown = false;
 
   final List<String> _titles = ["Home", "Chat", "Sessions", "Profile"];
   final List<String> _icons = [
@@ -51,33 +59,145 @@ class _BottomNavViewState extends State<BottomNavView> {
   void initState() {
     super.initState();
     _currentIndex = widget.index;
+    if (widget.snackbarMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(widget.snackbarMessage!)));
+      });
+    }
+    if (widget.tutor) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkTutorProfileCompletion();
+      });
+    }
+  }
+
+  Future<void> _checkTutorProfileCompletion() async {
+    if (!mounted || _profileDialogShown) return;
+
+    final educationProvider = context.read<EducationProvider>();
+    final experienceProvider = context.read<ExperienceProvider>();
+
+    await Future.wait([
+      educationProvider.fetchEducation(context),
+      experienceProvider.fetchExperiences(context),
+    ]);
+
+    if (!mounted || _profileDialogShown) return;
+
+    final hasNoEducation = educationProvider.education.isEmpty;
+    final hasNoExperience = experienceProvider.experiences.isEmpty;
+
+    if (hasNoEducation || hasNoExperience) {
+      _profileDialogShown = true;
+      _showProfileIncompleteDialog();
+    }
+  }
+
+  void _showProfileIncompleteDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Profile Incomplete",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppTheme.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 22),
+                const Text(
+                  "Kindly complete your profile to\nproceed further.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xff0B2B66),
+                    fontSize: 21,
+                    fontWeight: FontWeight.w400,
+                    height: 1.25,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  height: 58,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      if (!mounted) return;
+                      setState(() => _currentIndex = 3);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff0D6EFD),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                    ),
+                    child: const Text(
+                      "Open Profile",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 22),
+                GestureDetector(
+                  onTap: () => Navigator.of(dialogContext).pop(),
+                  child: Text(
+                    "I will do it later",
+                    style: TextStyle(
+                      color: AppTheme.grey,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_currentIndex != 0) {
+    final bottomInset = MediaQuery.of(context).viewPadding.bottom;
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _currentIndex != 0) {
           setState(() => _currentIndex = 0);
-          return false;
         }
-        return true;
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             _screens[_currentIndex],
-
-            // 👇 Floating Bottom Bar
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              child: SafeArea(
-                top: false,
-                child: _customBottomNav(),
-              ),
+              child: _customBottomNav(bottomInset),
             ),
           ],
         ),
@@ -87,10 +207,10 @@ class _BottomNavViewState extends State<BottomNavView> {
 
   // ===================== CUSTOM NAV BAR =====================
 
-  Widget _customBottomNav() {
+  Widget _customBottomNav(double bottomInset) {
     return Container(
       color: Colors.transparent,
-      height: 90,
+      height: 90 + bottomInset,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -110,7 +230,11 @@ class _BottomNavViewState extends State<BottomNavView> {
                 return Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() => _currentIndex = index);
+                      if (isGuest && index != 0) {
+                        showLoginRequiredDialog(context, _titles[index]);
+                      } else {
+                        setState(() => _currentIndex = index);
+                      }
                     },
                     child: Container(
                       color: Colors.transparent,
@@ -231,7 +355,11 @@ class CurvedNavPainter extends CustomPainter {
     // Bottom-right corner
     path.lineTo(size.width, size.height - borderRadius);
     path.quadraticBezierTo(
-        size.width, size.height, size.width - borderRadius, size.height);
+      size.width,
+      size.height,
+      size.width - borderRadius,
+      size.height,
+    );
 
     // Bottom-left corner
     path.lineTo(borderRadius, size.height);

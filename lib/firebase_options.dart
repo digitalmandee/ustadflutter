@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -47,28 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDE06MhNfwmleJ8VgfY9i27QIHBwoitTRY',
-    appId: '1:349544989753:android:52d0bbc63734ee7ac2b9e8',
-    messagingSenderId: '349544989753',
-    projectId: 'ustaad-5011f',
-    storageBucket: 'ustaad-5011f.firebasestorage.app',
+    apiKey: 'AIzaSyDdpyqxGUn8tlHqGGPJu0-UdIRA2q9cTyI',
+    appId: '1:1022247289156:android:e51d8a215e9d0071301711',
+    messagingSenderId: '1022247289156',
+    projectId: 'flutterustad',
+    storageBucket: 'flutterustad.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCovfKy8EHDpU1zNV7qUSqGxxdoPIX1FH0',
-    appId: '1:349544989753:ios:65946f861337b0bec2b9e8',
-    messagingSenderId: '349544989753',
-    projectId: 'ustaad-5011f',
-    storageBucket: 'ustaad-5011f.firebasestorage.app',
-    iosBundleId: 'com.example.ustaad',
-  );
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDE06MhNfwmleJ8VgfY9i27QIHBwoitTRY',
-    appId: '1:349544989753:web:placeholder',
-    messagingSenderId: '349544989753',
-    projectId: 'ustaad-5011f',
-    authDomain: 'ustaad-5011f.firebaseapp.com',
-    storageBucket: 'ustaad-5011f.firebasestorage.app',
+    apiKey: 'AIzaSyArwmZckMTDK3OQZ_vczrQX_28l1_1VzPE',
+    appId: '1:1022247289156:ios:9332c5c73aeefc3e301711',
+    messagingSenderId: '1022247289156',
+    projectId: 'flutterustad',
+    storageBucket: 'flutterustad.firebasestorage.app',
+    androidClientId: '1022247289156-clnm5bhbp7ck9a2hu2ods7fr0dj410sh.apps.googleusercontent.com',
+    iosClientId: '1022247289156-pdcks60lshoun3ds71cjpgbl7jatsr14.apps.googleusercontent.com',
+    iosBundleId: 'com.dm.ustaad',
   );
 }

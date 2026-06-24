@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Models/Parent%20Side/get_nearby_tutor_model.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Models/Parent%20Side/get_nearby_tutor_model.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class GetTutorsProvider extends ChangeNotifier {
   final AppDio dio;
@@ -39,7 +39,7 @@ class GetTutorsProvider extends ChangeNotifier {
     "FBISE",
     "Punjab Board",
     "Sindh Board",
-    "Local"
+    "Local",
   ];
   final List<String> availableSubjects = [
     "Urdu",
@@ -73,7 +73,7 @@ class GetTutorsProvider extends ChangeNotifier {
     "Persian",
     "Arabic",
     "French",
-    "Home Economics"
+    "Home Economics",
   ];
 
   Future<void> fetchTutors({
@@ -98,8 +98,14 @@ class GetTutorsProvider extends ChangeNotifier {
         },
       );
 
-      final List data = res.data['data'];
-      print("here is the data: ${data[0]["tutor"]['gender']}");
+      final responseData = res.data['data'];
+      if (res.statusCode != 200 || responseData is! List) {
+        _tutors = [];
+        _filteredTutors = [];
+        return;
+      }
+
+      final List data = responseData;
       _tutors = data.map((e) => TutorModel.fromJson(e)).toList();
       _filteredTutors = List.from(_tutors);
     } catch (e) {
@@ -127,26 +133,32 @@ class GetTutorsProvider extends ChangeNotifier {
         if (availableSubjects
             .map((s) => s.toLowerCase().trim())
             .contains(normalizedFilter)) {
-          matches = matches &&
-              tutor.subjects
-                  .any((s) => s.toLowerCase().trim() == normalizedFilter);
+          matches =
+              matches &&
+              tutor.subjects.any(
+                (s) => s.toLowerCase().trim() == normalizedFilter,
+              );
         }
         /////////////// Grades /////////////////
         if (availableGrades
             .map((e) => e.toLowerCase())
             .contains(normalizedFilter)) {
-          matches = matches &&
-              tutor.grades
-                  .any((g) => g.toLowerCase().trim() == normalizedFilter);
+          matches =
+              matches &&
+              tutor.grades.any(
+                (g) => g.toLowerCase().trim() == normalizedFilter,
+              );
         }
 
         // 🎯 CURRICULUM
         if (availableCurriculums
             .map((e) => e.toLowerCase())
             .contains(normalizedFilter)) {
-          matches = matches &&
-              tutor.curriculums
-                  .any((c) => c.toLowerCase().trim() == normalizedFilter);
+          matches =
+              matches &&
+              tutor.curriculums.any(
+                (c) => c.toLowerCase().trim() == normalizedFilter,
+              );
         }
 
         // 🎯 Rating filter
@@ -187,8 +199,10 @@ class GetTutorsProvider extends ChangeNotifier {
       _filteredTutors = List.from(_tutors);
     } else {
       _filteredTutors = _tutors
-          .where((tutor) =>
-              tutor.firstName.toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (tutor) =>
+                tutor.firstName.toLowerCase().contains(query.toLowerCase()),
+          )
           .toList();
     }
     notifyListeners();

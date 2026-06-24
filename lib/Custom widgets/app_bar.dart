@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/base_image.dart';
-import 'package:ustaad/Helpers/capitalize.dart';
-import 'package:ustaad/Helpers/loader.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Providers/Profile%20Setting/profile_setting_prov.dart';
-import 'package:ustaad/Screens/Drawer/Tutor%20Drawer%20Screens/Setting/setting_screen.dart';
-import 'package:ustaad/Screens/Notifications/notification_screen.dart';
-import 'package:ustaad/config/keys/global.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/base_image.dart';
+import 'package:flutterustad/Helpers/capitalize.dart';
+import 'package:flutterustad/Helpers/loader.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Providers/Profile%20Setting/profile_setting_prov.dart';
+import 'package:flutterustad/Screens/Drawer/Setting/setting_screen.dart';
+import 'package:flutterustad/Screens/Notifications/notification_screen.dart';
+import 'package:flutterustad/config/keys/global.dart';
+import 'package:flutterustad/Helpers/guest_helper.dart';
 
 class CircleIconButton extends StatelessWidget {
   final String assetPath;
@@ -45,10 +46,7 @@ class CircleIconButton extends StatelessWidget {
         ),
         child: Padding(
           padding: padding,
-          child: Image.asset(
-            assetPath,
-            color: iconColor,
-          ),
+          child: Image.asset(assetPath, color: iconColor),
         ),
       ),
     );
@@ -85,36 +83,42 @@ class ProfileAvatar extends StatelessWidget {
             padding: const EdgeInsets.all(2.0),
             child: InkWell(
               onTap: () {
-                push(context, SettingScreen());
+                if (isGuest) {
+                  showLoginRequiredDialog(context, "Settings");
+                } else {
+                  push(context, SettingScreen());
+                }
               },
               child: Container(
                 height: size,
                 width: size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle),
                 child: profileProvider.picLoading
                     ? GifLoader()
                     : displayImage.isEmpty
-                        ? ClipOval(
-                            child: Image.asset(globalUserRole == 'TUTOR'
-                                ? 'assets/images/tutorProfile.jpeg'
-                                : "assets/images/parentProfile.jpeg"))
-                        : displayImage.startsWith('http')
-                            ? ClipOval(
-                                child: Image.network(
-                                  displayImage,
-                                  fit: BoxFit.fill,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Image.asset(globalUserRole == 'TUTOR'
-                                          ? 'assets/images/tutorProfile.jpeg'
-                                          : "assets/images/parentProfile.jpeg"),
-                                ),
-                              )
-                            : ClipOval(
-                                child: Base64ImageWidget(
-                                    base64String: displayImage),
+                    ? ClipOval(
+                        child: Image.asset(
+                          globalUserRole == 'TUTOR'
+                              ? 'assets/images/tutorProfile.jpeg'
+                              : "assets/images/parentProfile.jpeg",
+                        ),
+                      )
+                    : displayImage.startsWith('http')
+                    ? ClipOval(
+                        child: Image.network(
+                          displayImage,
+                          fit: BoxFit.fill,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                                globalUserRole == 'TUTOR'
+                                    ? 'assets/images/tutorProfile.jpeg'
+                                    : "assets/images/parentProfile.jpeg",
                               ),
+                        ),
+                      )
+                    : ClipOval(
+                        child: Base64ImageWidget(base64String: displayImage),
+                      ),
               ),
             ),
           ),
@@ -177,36 +181,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const ProfileAvatar(),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText.appText(
-                          globalUserFirstName == null
-                              ? "Usama Shoaib"
-                              : capitalizeEachWord(
-                                  "$globalUserFirstName $globalUserLastName"),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Row(
+                    children: [
+                      const ProfileAvatar(),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText.appText(
+                              isGuest
+                                  ? "Guest"
+                                  : globalUserFirstName == null
+                                  ? "Usama Shoaib"
+                                  : capitalizeEachWord(
+                                      "$globalUserFirstName $globalUserLastName",
+                                    ),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              maxlines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            AppText.appText(
+                              isGuest
+                                  ? "Welcome to Ustaad"
+                                  : "$taskSummary tasks for Today",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              textColor: AppTheme.grey,
+                            ),
+                          ],
                         ),
-                        AppText.appText(
-                          "$taskSummary tasks for Today",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          textColor: AppTheme.grey,
-                        ),
-                      ],
-                    )
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
                 Row(
                   children: [
                     InkWell(
                       onTap: () {
-                        push(context, NotificationScreen());
+                        if (isGuest) {
+                          showLoginRequiredDialog(context, "Notifications");
+                        } else {
+                          push(context, NotificationScreen());
+                        }
                       },
                       child: SizedBox(
                         height: 32,
@@ -244,9 +263,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ],
             ),
-            SizedBox(
-              height: 10,
-            )
+            SizedBox(height: 10),
           ],
         ),
       ),
@@ -274,17 +291,11 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 40),
+      padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 15),
       child: Column(
         children: [
-          Image.asset(
-            "assets/images/ustaad.png",
-            height: 28,
-            width: 78,
-          ),
-          SizedBox(
-            height: 20,
-          ),
+          Image.asset("assets/images/ustaad.png", height: 28, width: 78),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -293,16 +304,9 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
                 InkWell(
                   borderRadius: BorderRadius.circular(24),
                   onTap: () => Navigator.pop(context),
-                  child: Image.asset(
-                    "assets/images/arrowBack.png",
-                    height: 30,
-                  ),
+                  child: Image.asset("assets/images/arrowBack.png", height: 30),
                 ),
-              AppText.appText(
-                title,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
+              AppText.appText(title, fontSize: 20, fontWeight: FontWeight.w700),
               isDel == true
                   ? InkWell(
                       onTap: onDeletePressed,
@@ -316,9 +320,7 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
                     )
-                  : SizedBox(
-                      width: 10,
-                    )
+                  : SizedBox(width: 10),
             ],
           ),
         ],

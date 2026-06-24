@@ -2,17 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Models/Tutor%20Side/experience_model.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_about_provider.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Models/Tutor%20Side/experience_model.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_about_provider.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ExperienceProvider with ChangeNotifier {
   final List<Experience> _experiences = [];
   List<Experience> get experiences => _experiences;
 
   final AppDio dio;
+  bool addExpLoader = false;
 
   ExperienceProvider(BuildContext context) : dio = AppDio(context);
 
@@ -27,7 +28,9 @@ class ExperienceProvider with ChangeNotifier {
         notifyListeners();
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Fetch error: $e");
@@ -35,6 +38,8 @@ class ExperienceProvider with ChangeNotifier {
   }
 
   Future<bool> addExperience(Experience experience, context) async {
+    addExpLoader = true;
+    notifyListeners();
     Map<String, dynamic> params = {
       "company": experience.company,
       "startDate": experience.startDate,
@@ -43,30 +48,40 @@ class ExperienceProvider with ChangeNotifier {
       "designation": experience.designation,
     };
     try {
-      Response response =
-          await dio.post(path: AppUrls.addTutorExp, data: params);
+      Response response = await dio.post(
+        path: AppUrls.addTutorExp,
+        data: params,
+      );
 
       if (response.statusCode == 201) {
         final newExp = Experience(
-            id: response.data['data']['id'].toString(),
-            company: experience.company,
-            startDate: experience.startDate,
-            endDate: experience.endDate,
-            description: experience.description,
-            designation: experience.designation);
+          id: response.data['data']['id'].toString(),
+          company: experience.company,
+          startDate: experience.startDate,
+          endDate: experience.endDate,
+          description: experience.description,
+          designation: experience.designation,
+        );
         _experiences.add(newExp);
 
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
-
+        addExpLoader = false;
+        notifyListeners();
         return true;
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
+        addExpLoader = false;
+        notifyListeners();
       }
     } catch (e) {
       if (kDebugMode) print("Add error: $e");
+      addExpLoader = false;
+      notifyListeners();
     }
     return false;
   }
@@ -90,14 +105,16 @@ class ExperienceProvider with ChangeNotifier {
         if (index != -1) {
           _experiences[index] = experience;
         }
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
 
         return true;
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Update error: $e");
@@ -111,13 +128,15 @@ class ExperienceProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         _experiences.removeWhere((e) => e.id == id);
-        AppToast.success(context: context, msg: "${response.data["message"]}");
+        // AppToast.success(context: context, msg: "${response.data["message"]}");
         notifyListeners();
         _fetchAboutInBackground(context);
         return true;
       } else {
         AppToast.error(
-            context: context, msg: "${response.data["errors"][0]["message"]}");
+          context: context,
+          msg: "${response.data["errors"][0]["message"]}",
+        );
       }
     } catch (e) {
       if (kDebugMode) print("Delete error: $e");
@@ -128,8 +147,10 @@ class ExperienceProvider with ChangeNotifier {
   void _fetchAboutInBackground(context) {
     Future.microtask(() async {
       try {
-        final aboutProvider =
-            Provider.of<AboutProvider>(context, listen: false);
+        final aboutProvider = Provider.of<AboutProvider>(
+          context,
+          listen: false,
+        );
         await aboutProvider.fetchAboutData(context);
         if (kDebugMode) print("About data fetched successfully in background");
       } catch (e) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Custom%20widgets/app_text.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/Screens/BottomNavBar/bottom_bar.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Custom%20widgets/app_text.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/Screens/BottomNavBar/bottom_bar.dart';
 
 class SubmissionCompleteScreen extends StatelessWidget {
   final bool tutor;
@@ -21,12 +21,11 @@ class SubmissionCompleteScreen extends StatelessWidget {
               // Green checkmark icon
               Card(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100)),
+                  borderRadius: BorderRadius.circular(100),
+                ),
                 color: AppTheme.white,
                 child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle),
                   padding: const EdgeInsets.all(12),
                   child: Icon(
                     Icons.check_circle,
@@ -71,11 +70,7 @@ class SubmissionCompleteScreen extends StatelessWidget {
                 border: true,
                 borderColor: Colors.grey.shade300,
                 onTap: () {
-                  push(
-                      context,
-                      BottomNavView(
-                        tutor: tutor,
-                      ));
+                  push(context, BottomNavView(tutor: tutor));
                 },
               ),
             ],

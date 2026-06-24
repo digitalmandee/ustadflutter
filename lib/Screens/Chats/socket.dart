@@ -18,7 +18,7 @@ class SocketService {
   Function(Map<String, dynamic>)? _onMessageCallback;
   Function(String messageId)? _onMessageDeleted;
   Function()? _onDisconnectedCallback;
-
+  bool get isConnecting => _isConnecting;
   bool get isConnected => _socket?.connected ?? false;
 
   void connect({
@@ -49,7 +49,6 @@ class SocketService {
           .setAuth({'token': token})
           .build(),
     );
-    print("🔄 Socket instance created: $_socket");
     _setupEventListeners();
     _socket!.connect();
   }

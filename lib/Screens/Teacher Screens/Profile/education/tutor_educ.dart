@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ustaad/Custom%20widgets/app_button.dart';
-import 'package:ustaad/Helpers/app_theme.dart';
-import 'package:ustaad/Providers/Tutor%20Side/tutor_education_provider.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/education/add_edu_sheet.dart';
-import 'package:ustaad/Screens/Teacher%20Screens/Profile/education/education_list.dart';
+import 'package:flutterustad/Custom%20widgets/app_button.dart';
+import 'package:flutterustad/Helpers/app_theme.dart';
+import 'package:flutterustad/Providers/Tutor%20Side/tutor_education_provider.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/education/add_edu_sheet.dart';
+import 'package:flutterustad/Screens/Teacher%20Screens/Profile/education/education_list.dart';
 
 class TutorEducationScreen extends StatefulWidget {
   final bool isParentSide;
   final Map<String, dynamic>? data;
-  const TutorEducationScreen(
-      {super.key, required this.isParentSide, this.data});
+  const TutorEducationScreen({
+    super.key,
+    required this.isParentSide,
+    this.data,
+  });
 
   @override
   State<TutorEducationScreen> createState() => _TutorEducationScreenState();
@@ -21,8 +24,10 @@ class _TutorEducationScreenState extends State<TutorEducationScreen> {
   void initState() {
     super.initState();
     if (!widget.isParentSide) {
-      Provider.of<EducationProvider>(context, listen: false)
-          .fetchEducation(context);
+      Provider.of<EducationProvider>(
+        context,
+        listen: false,
+      ).fetchEducation(context);
     }
   }
 

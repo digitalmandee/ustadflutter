@@ -2,14 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/config/dio/interceptor.dart';
-import 'package:ustaad/config/keys/headers.dart';
+import 'package:flutterustad/config/dio/interceptor.dart';
+import 'package:flutterustad/config/keys/headers.dart';
 
 class AppDio {
-  Dio _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 3),
-    receiveTimeout: const Duration(seconds: 3),
-  ));
+  Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 3),
+      receiveTimeout: const Duration(seconds: 3),
+    ),
+  );
   final BuildContext context;
   static bool initialize = false;
   final bool customRequest;
@@ -39,8 +41,9 @@ class AppDio {
       options.headers?.addAll({HttpHeaders.acceptHeader: Application.json});
     } else {
       options = Options(
-          contentType: Application.xFormUrlEncoded,
-          headers: {HttpHeaders.acceptHeader: Application.json});
+        contentType: Application.xFormUrlEncoded,
+        headers: {HttpHeaders.acceptHeader: Application.json},
+      );
     }
     return _dio.get(
       path,
@@ -66,8 +69,9 @@ class AppDio {
       options.headers!.addAll({HttpHeaders.acceptHeader: Application.json});
     } else {
       options = Options(
-          contentType: Application.xFormUrlEncoded,
-          headers: {HttpHeaders.acceptHeader: Application.json});
+        contentType: Application.xFormUrlEncoded,
+        headers: {HttpHeaders.acceptHeader: Application.json},
+      );
     }
     return _dio.post(
       path,
@@ -121,8 +125,9 @@ class AppDio {
       options.headers!.addAll({HttpHeaders.acceptHeader: Application.json});
     } else {
       options = Options(
-          contentType: Application.xFormUrlEncoded,
-          headers: {HttpHeaders.acceptHeader: Application.json});
+        contentType: Application.xFormUrlEncoded,
+        headers: {HttpHeaders.acceptHeader: Application.json},
+      );
     }
     return _dio.put(
       path,
@@ -176,8 +181,9 @@ class AppDio {
       options.headers!.addAll({HttpHeaders.acceptHeader: Application.json});
     } else {
       options = Options(
-          contentType: Application.xFormUrlEncoded,
-          headers: {HttpHeaders.acceptHeader: Application.json});
+        contentType: Application.xFormUrlEncoded,
+        headers: {HttpHeaders.acceptHeader: Application.json},
+      );
     }
     return _dio.patch(
       path,

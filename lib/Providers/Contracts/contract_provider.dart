@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ustaad/Helpers/utils.dart';
-import 'package:ustaad/config/dio/dio.dart';
-import 'package:ustaad/config/keys/urls.dart';
+import 'package:flutterustad/Helpers/utils.dart';
+import 'package:flutterustad/config/dio/dio.dart';
+import 'package:flutterustad/config/keys/urls.dart';
 
 class ContractProvider extends ChangeNotifier {
   final AppDio dio;
@@ -27,7 +27,7 @@ class ContractProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        allContracts = response.data["data"]["contracts"] ;
+        allContracts = response.data["data"]["contracts"];
       } else {
         AppToast.error(
           context: context,
@@ -43,10 +43,7 @@ class ContractProvider extends ChangeNotifier {
         message = e.toString();
       }
 
-      AppToast.error(
-        context: context,
-        msg: message,
-      );
+      AppToast.error(context: context, msg: message);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -56,17 +53,18 @@ class ContractProvider extends ChangeNotifier {
   // ---------------------------
   // TERMINATE CONTRACT → DISPUTE
   // ---------------------------
-  Future<bool> terminateContract(BuildContext context, String contractId,
-      String reason, bool isParentSide) async {
+  Future<bool> terminateContract(
+    BuildContext context,
+    String contractId,
+    String reason,
+    bool isParentSide,
+  ) async {
     try {
       final response = await dio.post(
         path: isParentSide
             ? "${AppUrls.cancelParentContract}/$contractId"
             : "${AppUrls.cancelTutorContract}/$contractId",
-        data: {
-          "status": "DISPUTE",
-          "reason": reason,
-        },
+        data: {"status": "DISPUTE", "reason": reason},
       );
 
       if (response.statusCode == 200) {
@@ -83,15 +81,16 @@ class ContractProvider extends ChangeNotifier {
   // COMPLETE CONTRACT → rating pop later
   // ---------------------------
   Future<bool> completeContract(
-      BuildContext context, String contractId, bool isParentSide) async {
+    BuildContext context,
+    String contractId,
+    bool isParentSide,
+  ) async {
     try {
       final response = await dio.post(
         path: isParentSide
             ? "${AppUrls.cancelParentContract}/$contractId"
             : "${AppUrls.cancelTutorContract}/$contractId",
-        data: {
-          "status": "PENDING_COMPLETION",
-        },
+        data: {"status": "PENDING_COMPLETION"},
       );
 
       if (response.statusCode == 200) {
@@ -104,9 +103,9 @@ class ContractProvider extends ChangeNotifier {
     }
   }
 
-// ---------------------------
-// SUBMIT RATING API
-// ---------------------------
+  // ---------------------------
+  // SUBMIT RATING API
+  // ---------------------------
   Future<bool> submitRating(
     context,
     bool isParentSide,
@@ -119,18 +118,11 @@ class ContractProvider extends ChangeNotifier {
         path: isParentSide
             ? "parent/contracts/$contractId/rating"
             : "tutor/contracts/$contractId/rating",
-        data: {
-          "rating": rating.toInt(),
-          "review": review,
-        },
+        data: {"rating": rating.toInt(), "review": review},
       );
 
       if (response.statusCode == 200) {
-        AppToast.success(
-          context: context,
-          msg: "Rating submitted successfully",
-        );
-        getContracts(context, isParentSide);
+        // getContracts(context, isParentSide);
         return true;
       } else {
         AppToast.error(
@@ -151,8 +143,12 @@ class ContractProvider extends ChangeNotifier {
 
   List getRunning() {
     return allContracts.where((e) {
-      return ["ACTIVE", "CREATED", "DISPUTE", "PENDING_COMPLETION"]
-          .contains(e["status"]);
+      return [
+        "ACTIVE",
+        "CREATED",
+        "DISPUTE",
+        "PENDING_COMPLETION",
+      ].contains(e["status"]);
     }).toList();
   }
 
@@ -164,15 +160,13 @@ class ContractProvider extends ChangeNotifier {
 
   List getCancelled() {
     return allContracts.where((e) {
-      return ["CANCELLED", "EXPIRED"].contains(e["status"]);
+      return ["CANCELLED", "EXPIRED", "REFUNDED"].contains(e["status"]);
     }).toList();
   }
 
-
   void clear() {
-  allContracts = [];
-  isLoading = false;
-  notifyListeners();
-}
-
+    allContracts = [];
+    isLoading = false;
+    notifyListeners();
+  }
 }
